@@ -36,7 +36,7 @@ class LambdaMod {
         const val GITHUB_API = "https://api.github.com/"
         private const val MAIN_ORG = "lambda-client"
         const val PLUGIN_ORG = "lambda-plugins"
-        private const val REPO_NAME = "lambda"
+        private const val REPO_NAME = "defrag"
         const val CAPES_JSON = "https://raw.githubusercontent.com/monch-bread/monch-client-data/main/capes/uuids/users.json"
         const val RELEASES_API = "${GITHUB_API}repos/${MAIN_ORG}/${REPO_NAME}/releases"
         const val DOWNLOAD_LINK = "https://github.com/${MAIN_ORG}/${REPO_NAME}/releases"

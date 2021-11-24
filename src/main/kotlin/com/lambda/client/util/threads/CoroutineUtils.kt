@@ -9,7 +9,7 @@ import kotlinx.coroutines.newSingleThreadContext
  * Single thread scope to use in Lambda
  */
 @Suppress("EXPERIMENTAL_API_USAGE")
-val mainScope = CoroutineScope(newSingleThreadContext("Lambda Main"))
+val mainScope = CoroutineScope(newSingleThreadContext("Defrag Main"))
 
 /**
  * Common scope with [Dispatchers.Default]

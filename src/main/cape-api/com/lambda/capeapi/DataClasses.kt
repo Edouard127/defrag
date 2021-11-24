@@ -70,7 +70,7 @@ data class PlayerProfile(
 enum class CapeType(val realName: String, val imageKey: String, val color: CapeColor) {
     DEV("Dev", "github", CapeColor("ff0000", "00ff00")),
     BREAD("Bread", "github", CapeColor("ff0000", "00ff00")),
-    MATRIX("Matrix", "github", CapeColor("ff0000", "00ff00"))
-    //CONTRIBUTOR("Contributor", "github", CapeColor("272727", "363636"))
+    MATRIX("Matrix", "github", CapeColor("ff0000", "00ff00")),
+    CONTRIBUTOR("Contributor", "github", CapeColor("272727", "363636"))
 }
 

@@ -298,11 +298,11 @@ object Capes : Module(
     }
 
     private enum class CapeTexture(val location: ResourceLocation) {
-        DEV_TEXT(ResourceLocation("defrag/textures/capes/dev-text.png")),
-        MATRIX(ResourceLocation("defrag/textures/capes/matrix-standalone.png")),
-        BREAD(ResourceLocation("defrag/textures/capes/bread-only-cape.png")),
-        PRIMARY(ResourceLocation("defrag/textures/capes/primary.png")),
-        BORDER(ResourceLocation("defrag/textures/capes/border.png"))
+        DEV_TEXT(ResourceLocation("breadmod/textures/capes/dev-text.png")),
+        MATRIX(ResourceLocation("breadmod/textures/capes/matrix-standalone.png")),
+        BREAD(ResourceLocation("breadmod/textures/capes/bread-only-cape.png")),
+        PRIMARY(ResourceLocation("breadmod/textures/capes/primary.png")),
+        BORDER(ResourceLocation("breadmod/textures/capes/border.png"))
     }
 
 }

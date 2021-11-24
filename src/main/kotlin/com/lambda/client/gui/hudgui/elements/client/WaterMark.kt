@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL11.glScalef
 internal object WaterMark : LabelHud(
     name = "Watermark",
     category = Category.CLIENT,
-    description = "Lambda watermark",
+    description = "defrag watermark",
     enabledByDefault = true
 ) {
 

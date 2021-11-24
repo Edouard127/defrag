@@ -2,7 +2,6 @@ package com.lambda.client.mixin.client.gui;
 
 import com.lambda.client.LambdaMod;
 import com.lambda.client.gui.mc.LambdaGuiPluginManager;
-import com.lambda.client.module.modules.client.MenuShader;
 import com.lambda.client.util.WebUtils;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -28,7 +27,6 @@ public abstract class MixinGuiMainMenu extends GuiScreen {
     public void initGui$Inject$RETURN(CallbackInfo ci) {
         buttonList.removeIf(button -> button.id == 14);
         realmsButton = addButton(new GuiButton(9001, width / 2 + 2, height / 4 + 48 + 24 * 2, 98, 20, "Lambda"));
-        MenuShader.reset();
     }
 
     @Inject(method = "actionPerformed", at = @At("HEAD"), cancellable = true)
@@ -66,18 +64,7 @@ public abstract class MixinGuiMainMenu extends GuiScreen {
         }
     }
 
-    @Redirect(method = "drawScreen", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiMainMenu;drawGradientRect(IIIIII)V"))
-    private void drawScreen$Redirect$INVOKE$drawGradientRect(GuiMainMenu guiMainMenu, int left, int top, int right, int bottom, int startColor, int endColor) {
-        if (MenuShader.INSTANCE.isDisabled()) {
-            drawGradientRect(left, top, right, bottom, startColor, endColor);
-        }
-    }
 
-    @Inject(method = "renderSkybox", at = @At("HEAD"), cancellable = true)
-    private void renderSkybox$Inject$HEAD(int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-        if (MenuShader.INSTANCE.isEnabled()) {
-            MenuShader.render();
-            ci.cancel();
-        }
-    }
+
+
 }
