@@ -26,7 +26,7 @@ class LambdaMod {
         lateinit var inventoryManager: Any
         const val NAME = "Defragmentation"
         const val ID = "defrag"
-        const val DIRECTORY = "lambda/"
+        const val DIRECTORY = "defrag/"
 
         const val VERSION = "Defrag 1.0"
         const val VERSION_MAJOR = "Defrag 1.0"
