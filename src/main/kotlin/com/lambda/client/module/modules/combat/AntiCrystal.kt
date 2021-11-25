@@ -72,7 +72,7 @@ private val deadlyCrystal: Entity?
             if (crystal !is EntityEnderCrystal || mc.player.getDistanceSq(crystal) > 169.0 || calculateDamage(
                     crystal,
                     (mc.player as Entity)
-                ).also { damage = it } < minDmg/*.getValue().floatValue()*/
+                ).also { damage = it } < minDmg.getValue().floatValue()
             ) continue
             if (bestcrystal == null) {
                 bestcrystal = crystal
