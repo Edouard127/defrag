@@ -56,7 +56,7 @@ object BedAura : Module(
     private var clickPos = BlockPos(0, -6969, 0)
     private var lastRotation = Vec2f.ZERO
     private var hitTickCount = 0
-    private var inactiveTicks = 0
+    var inactiveTicks = 0
 
     private enum class State {
         NONE, PLACE, EXPLODE

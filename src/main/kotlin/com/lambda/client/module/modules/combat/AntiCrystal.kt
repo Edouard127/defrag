@@ -1,7 +1,6 @@
 package com.lambda.client.module.modules.combat
 
 import com.lambda.client.manager.managers.CombatManager
-import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.module.modules.combat.AntiCrystal.breakDelay
 import com.lambda.client.module.modules.combat.AntiCrystal.checkDelay
@@ -10,7 +9,10 @@ import com.lambda.client.module.modules.combat.AntiCrystal.rotate
 import com.lambda.client.module.modules.combat.AntiCrystal.selfDmg
 import com.lambda.client.module.modules.combat.AntiCrystal.switcher
 import com.lambda.client.module.modules.combat.AntiCrystal.wallsRange
+import com.lambda.client.module.modules.combat.KillAura.range
+import com.lambda.client.util.BlockUtil
 import com.lambda.client.util.BlockUtil.placeCrystalOnBlock
+import com.lambda.client.util.BlockUtil.rayTracePlaceCheck
 import com.lambda.client.util.DamageUtil.calculateDamage
 import com.lambda.client.util.DamageUtil.canBreakWeakness
 import com.lambda.client.util.MathUtil
@@ -26,29 +28,31 @@ import net.minecraft.init.Items
 import net.minecraft.util.EnumHand
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
+import com.lambda.client.module.Category
 
-@CombatManager.CombatModule
 object AntiCrystal : Module(
     name = "AntiCrystal",
-    alias = arrayOf("AC", "AntiCrystal"),
     description = "Block enemies crystals",
     category = Category.COMBAT,
-    modulePriority = 80
 ) {
-    val page = setting("Page", CrystalAura.Page.GENERAL)
-    val mc: Minecraft = Minecraft.getMinecraft()
-    val range by setting("Range", 6.0f, 0.0f..10.0f, 10.0f, page.atValue(CrystalAura.Page.GENERAL))
-    val wallsRange by setting("WallsRange", 3.5f, 0.0f..10.0f, 10.0f, page.atValue(CrystalAura.Page.GENERAL))
-    val minDmg by setting("Min Damage Place", 4.75f, 0.0f..10.0f, 0.25f, page.atValue(CrystalAura.Page.GENERAL))
-    val selfDmg by setting("Self Damage", 2.0f, 0.0f..10.0f, 10.0f, page.atValue(CrystalAura.Page.GENERAL))
-    val placeDelay by setting("Place Delay", 0, 0..0, 500, page.atValue(CrystalAura.Page.GENERAL))
-    val breakDelay by setting("Break Delay", 0, 0..0, 500, page.atValue(CrystalAura.Page.GENERAL))
-    val checkDelay by setting("Check Delay", 0, 0..0, 500, page.atValue(CrystalAura.Page.GENERAL))
-    val wasteAmount by setting("Waste Amount", 1, 1..1, 5, page.atValue(CrystalAura.Page.GENERAL))
-    val switcher by setting("Switch", true, page.atValue(CrystalAura.Page.GENERAL))
-    val rotate by setting("Rotate", true, page.atValue(CrystalAura.Page.GENERAL))
-    val packet by setting("Packet", true, page.atValue(CrystalAura.Page.GENERAL))
-    val rotations by setting("Spoofs", 1, 1..1, 20, page.atValue(CrystalAura.Page.GENERAL))
+    public val page = setting("Page", CrystalAura.Page.GENERAL)
+    public val mc: Minecraft = Minecraft.getMinecraft()
+    public val range by setting("Range", 6.0f, 0.0f..10.0f, 10.0f)
+    public val wallsRange by setting("WallsRange", 3.5f, 0.0f..10.0f, 10.0f)
+    public val minDmg by setting("Min Damage Place", 4.75f, 0.0f..10.0f, 0.25f)
+    public val selfDmg by setting("Self Damage", 2.0f, 0.0f..10.0f, 10.0f)
+    public val placeDelay by setting("Place Delay", 0, 0..0, 500)
+    public val breakDelay by setting("Break Delay", 0, 0..0, 500)
+    public val checkDelay by setting("Check Delay", 0, 0..0, 500)
+    public val wasteAmount by setting("Waste Amount", 1, 1..1, 5)
+    public val switcher by setting("Switch", true)
+    public val rotate by setting("Rotate", true)
+    public val packet by setting("Packet", true)
+    public val rotations by setting("Spoofs", 1, 1..1, 20)
+    init {
+        onEnable {
+        }
+    }
 }
 
 private var damage: Float = 0.0f
@@ -61,6 +65,8 @@ private var breakTarget: Entity? = null
 private val timer = Timer()
 private val breakTimer = Timer()
 private val checkTimer = Timer()
+
+
 
 fun onToggle() {
     rotating = false
@@ -89,25 +95,13 @@ private val deadlyCrystal: Entity?
         return bestcrystal
     }
 
-private fun getSafetyCrystals(deadlyCrystal: Entity): Int {
-    var count = 0
-    for (entity in mc.world.loadedEntityList) {
-        var damage: Float
-        if (entity is EntityEnderCrystal || calculateDamage(entity, (mc.player as Entity)).also {
-                damage = it
-            } > 2.0f || deadlyCrystal.getDistanceSq(entity) > 144.0) continue
-        ++count
-    }
-    return count
-}
-
-/*private fun getPlaceTarget(deadlyCrystal: Entity): BlockPos? {
+    private fun getPlaceTarget(deadlyCrystal: Entity): BlockPos? {
     var closestPos: BlockPos? = null
     var smallestDamage = 10.0f
     for (pos in BlockUtil.possiblePlacePositions(range.getValue().floatValue())) {
         val damage = calculateDamage(pos, (mc.player as Entity))
         if (damage > 2.0f || deadlyCrystal.getDistanceSq(pos) > 144.0 || mc.player.getDistanceSq(pos) >= MathUtil.square(
-                wallsRange.getValue().floatValue()
+                wallsRange.getValue().floatValue() as Double
             ) && rayTracePlaceCheck(pos, true, 1.0f)
         ) continue
         if (closestPos == null) {
@@ -123,11 +117,27 @@ private fun getSafetyCrystals(deadlyCrystal: Entity): Int {
         closestPos = pos
     }
     return closestPos
-}*/
+}
 
+private operator fun Any.iterator(): Iterator<BlockPos> {
+    return this.iterator()
 
+}
 
+private fun Any.floatValue(): Any {
+    return this.toFloat()
 
+}
+
+private fun Any.toFloat(): Any {
+    return this
+
+}
+
+private fun Any.getValue(): Any {
+    return this
+
+}
 
 
 @OptIn(ExperimentalStdlibApi::class) fun onTick() {
@@ -151,10 +161,6 @@ private fun Any.add(element: Entity): Entity {
 
 }
 
-fun getPlaceTarget(deadlyCrystal: Entity): Entity {
-    return deadlyCrystal
-
-}
 
 fun checkTimer(value: Any): Any {
     return value
