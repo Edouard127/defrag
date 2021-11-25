@@ -122,7 +122,7 @@ private fun getPlaceTarget(deadlyCrystal: Entity): BlockPos? {
             if (placeTarget != null) {
                 targets.add(placeTarget)
             }
-            placeCrystal(deadlyCrystal)
+            placeCrystal()
             breakTarget = getBreakTarget(deadlyCrystal)
             breakCrystal()
         }
@@ -155,14 +155,16 @@ fun getBreakTarget(deadlyCrystal: Entity?): Entity? {
         if (damage >= smallestDamage && (smallestDamage != 0.0f || mc.player.getDistanceSq(entity) >= mc.player.getDistanceSq(
                 smallestCrystal
             ))
-        ) continue
+        ) {
+            continue
+        }
         smallestCrystal = entity
         smallestDamage = damage
     }
     return smallestCrystal
 }
 
-private fun placeCrystal(deadlyCrystal: Entity) {
+private fun placeCrystal() {
     val offhand: Boolean = mc.player.heldItemOffhand.item === Items.END_CRYSTAL
     run {
         if (switcher && mc.player.heldItemMainhand
