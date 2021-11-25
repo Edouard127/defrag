@@ -127,7 +127,7 @@ object CrystalAura : Module(
     private val wallExplodeRange by setting("Wall Explode Range", 3.5f, 0.0f..5.0f, 0.25f, page.atValue(Page.EXPLODE_TWO))
     /* End of settings */
 
-    enum class Page {
+    private enum class Page {
         GENERAL, FORCE_PLACE, PLACE_ONE, PLACE_TWO, EXPLODE_ONE, EXPLODE_TWO
     }
 

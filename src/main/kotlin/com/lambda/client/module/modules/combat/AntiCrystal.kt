@@ -1,6 +1,6 @@
 package com.lambda.client.module.modules.combat
 
-import com.lambda.client.manager.managers.CombatManager
+import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.module.modules.combat.AntiCrystal.breakDelay
 import com.lambda.client.module.modules.combat.AntiCrystal.checkDelay
@@ -28,45 +28,36 @@ import net.minecraft.init.Items
 import net.minecraft.util.EnumHand
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
-import com.lambda.client.module.Category
 
 object AntiCrystal : Module(
     name = "AntiCrystal",
     description = "Block enemies crystals",
     category = Category.COMBAT,
 ) {
-    public val page = setting("Page", CrystalAura.Page.GENERAL)
-    public val mc: Minecraft = Minecraft.getMinecraft()
+
     public val range by setting("Range", 6.0f, 0.0f..10.0f, 10.0f)
     public val wallsRange by setting("WallsRange", 3.5f, 0.0f..10.0f, 10.0f)
     public val minDmg by setting("Min Damage Place", 4.75f, 0.0f..10.0f, 0.25f)
     public val selfDmg by setting("Self Damage", 2.0f, 0.0f..10.0f, 10.0f)
-    public val placeDelay by setting("Place Delay", 0, 0..0, 500)
-    public val breakDelay by setting("Break Delay", 0, 0..0, 500)
-    public val checkDelay by setting("Check Delay", 0, 0..0, 500)
-    public val wasteAmount by setting("Waste Amount", 1, 1..1, 5)
+    public val placeDelay by setting("Place Delay", 0, 0..100, 500)
+    public val breakDelay by setting("Break Delay", 0, 0..100, 500)
+    public val checkDelay by setting("Check Delay", 0, 0..100, 500)
     public val switcher by setting("Switch", true)
     public val rotate by setting("Rotate", true)
     public val packet by setting("Packet", true)
     public val rotations by setting("Spoofs", 1, 1..1, 20)
-    init {
-        onEnable {
-        }
-    }
 }
+public val mc: Minecraft = Minecraft.getMinecraft()
+
 
 private var damage: Float = 0.0f
 internal var yaw = 0.0f
 internal var pitch = 0.0f
 private var rotating = false
-private var rotationPacketsSpoofed = 0
 private val targets: MutableList<BlockPos> = ArrayList()
 private var breakTarget: Entity? = null
-private val timer = Timer()
 private val breakTimer = Timer()
 private val checkTimer = Timer()
-
-
 
 fun onToggle() {
     rotating = false
@@ -95,49 +86,32 @@ private val deadlyCrystal: Entity?
         return bestcrystal
     }
 
-    private fun getPlaceTarget(deadlyCrystal: Entity): BlockPos? {
+private fun getPlaceTarget(deadlyCrystal: Entity): BlockPos? {
     var closestPos: BlockPos? = null
     var smallestDamage = 10.0f
     for (pos in BlockUtil.possiblePlacePositions(range.getValue().floatValue())) {
         val damage = calculateDamage(pos, (mc.player as Entity))
-        if (damage > 2.0f || deadlyCrystal.getDistanceSq(pos) > 144.0 || mc.player.getDistanceSq(pos) >= MathUtil.square(
-                wallsRange.getValue().floatValue() as Double
-            ) && rayTracePlaceCheck(pos, true, 1.0f)
-        ) continue
+        if (!(damage <= 2.0f && deadlyCrystal.getDistanceSq(pos.up()) <= 144.0 && !(mc.player.getDistanceSq(pos.up()) >= MathUtil.square(
+                wallsRange.getValue().floatValue()
+            ) && rayTracePlaceCheck(pos, true, 1.0f)))
+        )
         if (closestPos == null) {
             smallestDamage = damage
             closestPos = pos
-            continue
         }
-        if (damage >= smallestDamage && (damage != smallestDamage || mc.player.getDistanceSq(pos) >= mc.player.getDistanceSq(
+        if (damage >= smallestDamage && (damage != smallestDamage || mc.player.getDistanceSq(pos.up()) >= mc.player.getDistanceSq(
                 closestPos
             ))
-        ) continue
+        )
         smallestDamage = damage
         closestPos = pos
     }
     return closestPos
 }
 
-private operator fun Any.iterator(): Iterator<BlockPos> {
-    return this.iterator()
 
-}
 
-private fun Any.floatValue(): Any {
-    return this.toFloat()
 
-}
-
-private fun Any.toFloat(): Any {
-    return this
-
-}
-
-private fun Any.getValue(): Any {
-    return this
-
-}
 
 
 @OptIn(ExperimentalStdlibApi::class) fun onTick() {
@@ -156,11 +130,6 @@ private fun Any.getValue(): Any {
     }
 }
 
-private fun Any.add(element: Entity): Entity {
-    return element
-
-}
-
 
 fun checkTimer(value: Any): Any {
     return value
@@ -168,37 +137,33 @@ fun checkTimer(value: Any): Any {
 }
 
 fun getBreakTarget(deadlyCrystal: Entity?): Entity? {
-    var damage: Float
     var smallestCrystal: Entity? = null
     var smallestDamage = 10.0f
     for (entity in mc.world.loadedEntityList) {
-        var damage: Float
         if (entity !is EntityEnderCrystal || calculateDamage(entity, (mc.player as Entity)).also {
                 damage = it
             } > selfDmg || entity.getDistanceSq(deadlyCrystal) > 144.0 || mc.player.getDistanceSq(entity) > MathUtil.square(
                 wallsRange
             )) continue
         if (smallestCrystal == null) {
-            var damage: Float = 0.0f
             smallestCrystal = entity
             smallestDamage = damage
             continue
         }
 
 
-        if (0.0f >= smallestDamage && (smallestDamage != 0.0f || mc.player.getDistanceSq(entity) >= mc.player.getDistanceSq(
+        if (damage >= smallestDamage && (smallestDamage != 0.0f || mc.player.getDistanceSq(entity) >= mc.player.getDistanceSq(
                 smallestCrystal
             ))
         ) continue
         smallestCrystal = entity
-        smallestDamage = 0.0f
+        smallestDamage = damage
     }
     return smallestCrystal
 }
 
 private fun placeCrystal(deadlyCrystal: Entity) {
-    val offhand: Boolean
-    offhand = mc.player.heldItemOffhand.item === Items.END_CRYSTAL
+    val offhand: Boolean = mc.player.heldItemOffhand.item === Items.END_CRYSTAL
     val bl = offhand
     run {
         if (switcher && mc.player.heldItemMainhand
@@ -207,12 +172,7 @@ private fun placeCrystal(deadlyCrystal: Entity) {
             doSwitch()
         }
         rotateToPos(targets[targets.size - 1])
-        placeCrystalOnBlock(
-            targets[targets.size - 1],
-            if (offhand) EnumHand.OFF_HAND else EnumHand.MAIN_HAND,
-            true,
-            true
-        )
+        placeCrystalOnBlock(targets[targets.size - 1], if (offhand) EnumHand.OFF_HAND else EnumHand.MAIN_HAND, true, true)
         timer.reset()
     }
 }
