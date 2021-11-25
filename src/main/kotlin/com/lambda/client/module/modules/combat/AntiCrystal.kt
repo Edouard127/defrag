@@ -164,7 +164,6 @@ fun getBreakTarget(deadlyCrystal: Entity?): Entity? {
 
 private fun placeCrystal(deadlyCrystal: Entity) {
     val offhand: Boolean = mc.player.heldItemOffhand.item === Items.END_CRYSTAL
-    val bl = offhand
     run {
         if (switcher && mc.player.heldItemMainhand
                 .item !== Items.END_CRYSTAL && !offhand
@@ -181,7 +180,6 @@ private fun doSwitch() {
     var crystalSlot: Int
     crystalSlot =
         if (mc.player.heldItemMainhand.item === Items.END_CRYSTAL) mc.player.inventory.currentItem else -1
-    val n = crystalSlot
     if (crystalSlot == -1) {
         for (l in 0..8) {
             if (mc.player.inventory.getStackInSlot(l).item !== Items.END_CRYSTAL) continue
