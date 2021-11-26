@@ -1,5 +1,5 @@
 
-package me.earth.phobos.util;
+package com.lambda.client.module;
 
 import java.awt.Color;
 import java.math.RoundingMode;
@@ -11,13 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import me.earth.phobos.Phobos;
-import me.earth.phobos.features.modules.client.Managers;
-import me.earth.phobos.features.modules.combat.Killaura;
-import me.earth.phobos.features.modules.player.Blink;
-import me.earth.phobos.features.modules.player.FakePlayer;
-import me.earth.phobos.features.modules.player.Freecam;
-import me.earth.phobos.mixin.mixins.accessors.IEntityLivingBase;
+
 import me.earth.phobos.util.BlockUtil;
 import me.earth.phobos.util.MathUtil;
 import me.earth.phobos.util.Util;
@@ -208,7 +202,7 @@ implements Util {
 
     public static boolean isCrystalAtFeet(EntityEnderCrystal crystal, double range) {
         for (EntityPlayer player : EntityUtil.mc.world.playerEntities) {
-            if (EntityUtil.mc.player.getDistanceSq((Entity)player) > range * range || Phobos.friendManager.isFriend(player)) continue;
+            if (EntityUtil.mc.player.getDistanceSq((Entity)player) > range * range) continue;
             for (Vec3d vec : doubleLegOffsetList) {
                 if (new BlockPos(player.getPositionVector()).add(vec.x, vec.y, vec.z) != crystal.getPosition()) continue;
                 return true;
@@ -497,7 +491,7 @@ implements Util {
     }
 
     public static boolean isntValid(Entity entity, double range) {
-        return entity == null || EntityUtil.isDead(entity) || entity.equals((Object)EntityUtil.mc.player) || entity instanceof EntityPlayer && Phobos.friendManager.isFriend(entity.getName()) || EntityUtil.mc.player.getDistanceSq(entity) > MathUtil.square(range);
+        return entity == null || EntityUtil.isDead(entity) || entity.equals((Object)EntityUtil.mc.player) || entity instanceof EntityPlayer || EntityUtil.mc.player.getDistanceSq(entity) > MathUtil.square(range);
     }
 
     public static boolean isValid(Entity entity, double range) {
@@ -612,40 +606,14 @@ implements Util {
     public static Color getColor(Entity entity, int red, int green, int blue, int alpha, boolean colorFriends) {
         Color color = new Color((float)red / 255.0f, (float)green / 255.0f, (float)blue / 255.0f, (float)alpha / 255.0f);
         if (entity instanceof EntityPlayer) {
-            if (colorFriends && Phobos.friendManager.isFriend((EntityPlayer)entity)) {
-                color = new Color(0.33333334f, 1.0f, 1.0f, (float)alpha / 255.0f);
-            }
-            Killaura killaura = Phobos.moduleManager.getModuleByClass(Killaura.class);
-            if (killaura.info.getValue().booleanValue()) {
-                if (Killaura.target != null) {
-                    if (Killaura.target.equals((Object)entity)) {
-                        color = new Color(1.0f, 0.0f, 0.0f, (float)alpha / 255.0f);
-                    }
-                }
-            }
+
+
+
         }
         return color;
     }
 
-    public static boolean isFakePlayer(EntityPlayer player) {
-        Freecam freecam = Freecam.getInstance();
-        FakePlayer fakePlayer = FakePlayer.getInstance();
-        Blink blink = Blink.getInstance();
-        int playerID = player.getEntityId();
-        if (freecam.isOn() && playerID == 69420) {
-            return true;
-        }
-        if (fakePlayer.isOn()) {
-            for (int id : fakePlayer.fakePlayerIdList) {
-                if (id != playerID) continue;
-                return true;
-            }
-        }
-        if (blink.isOn()) {
-            return playerID == 6942069;
-        }
-        return false;
-    }
+
 
     public static boolean isMoving() {
         return (double)EntityUtil.mc.player.moveForward != 0.0 || (double)EntityUtil.mc.player.moveStrafing != 0.0;
@@ -794,7 +762,7 @@ implements Util {
         StringBuilder healthSB = new StringBuilder();
         StringBuilder distanceSB = new StringBuilder();
         for (EntityPlayer player : EntityUtil.mc.world.playerEntities) {
-            if (player.isInvisible() && !Managers.getInstance().tRadarInv.getValue().booleanValue() || player.getName().equals(EntityUtil.mc.player.getName())) continue;
+            if (player.isInvisible() && player.getName().equals(EntityUtil.mc.player.getName())) continue;
             int hpRaw = (int)EntityUtil.getHealth((Entity)player);
             String hp = dfHealth.format(hpRaw);
             healthSB.append("\u00a7");
@@ -821,7 +789,6 @@ implements Util {
                 distanceSB.append("c");
             }
             distanceSB.append(distance);
-            output.put(healthSB.toString() + " " + (Phobos.friendManager.isFriend(player) ? "\u00a7b" : "\u00a7r") + player.getName() + " " + distanceSB.toString() + " " + "\u00a7f" + Phobos.totemPopManager.getTotemPopString(player) + Phobos.potionManager.getTextRadarPotion(player), (int)EntityUtil.mc.player.getDistance((Entity)player));
             healthSB.setLength(0);
             distanceSB.setLength(0);
         }
@@ -835,11 +802,6 @@ implements Util {
         ItemStack stack = entity.getHeldItem(hand);
         if (!stack.isEmpty() && stack.getItem().onEntitySwing(entity, stack)) {
             return;
-        }
-        if (!entity.isSwingInProgress || entity.swingProgressInt >= ((IEntityLivingBase)entity).getArmSwingAnimationEnd() / 2 || entity.swingProgressInt < 0) {
-            entity.swingProgressInt = -1;
-            entity.isSwingInProgress = true;
-            entity.swingingHand = hand;
         }
     }
 

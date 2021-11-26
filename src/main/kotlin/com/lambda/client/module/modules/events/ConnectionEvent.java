@@ -2,7 +2,7 @@
 package com.lambda.client.module.modules.events;
 
 import java.util.UUID;
-import me.earth.phobos.event.EventStage;
+import com.lambda.client.module.modules.EventStage;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class ConnectionEvent

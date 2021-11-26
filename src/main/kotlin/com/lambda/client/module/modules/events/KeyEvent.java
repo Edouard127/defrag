@@ -1,7 +1,7 @@
 
 package com.lambda.client.module.modules.events;
 
-import me.earth.phobos.event.EventStage;
+import com.lambda.client.module.modules.EventStage;
 
 public class KeyEvent
 extends EventStage {

@@ -1,7 +1,7 @@
 
 package com.lambda.client.module.modules.events;
 
-import me.earth.phobos.event.EventStage;
+import com.lambda.client.module.modules.EventStage;
 import net.minecraft.util.math.BlockPos;
 
 public class BlockBreakingEvent
