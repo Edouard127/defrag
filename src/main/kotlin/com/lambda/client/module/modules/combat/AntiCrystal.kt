@@ -17,9 +17,6 @@ import com.lambda.client.util.BlockUtil.possiblePlacePositions
 import com.lambda.client.util.BlockUtil.rayTracePlaceCheck
 import com.lambda.client.util.DamageUtil
 import com.lambda.client.util.MathUtil.square
-import com.lambda.client.module.EntityUtil
-import com.lambda.client.module.EntityUtil.attackEntity
-import com.lambda.client.module.EntityUtil.rayTraceHitCheck
 import com.lambda.client.util.BlockUtil.placeCrystalOnBlock
 import com.lambda.client.util.MathUtil.calcAngle
 import net.minecraft.client.Minecraft
