@@ -1,16 +1,18 @@
-package com.lambda.client.module.modules
+package com.lambda.client.util
 
 import net.minecraftforge.fml.common.eventhandler.Event
 
-open class EventStage : Event {
-    fun getStage(): Any {
-        return this.stage
-    }
 
+class EventStage : Event {
     var stage = 0
+
 
     constructor() {}
     constructor(stage: Int) {
         this.stage = stage
+    }
+
+    @JvmName("getStage1") fun getStage(): Int {
+        return stage
     }
 }
