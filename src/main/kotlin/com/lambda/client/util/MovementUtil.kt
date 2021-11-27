@@ -38,7 +38,7 @@ class MovementUtil<`val`, mc> {
         }
 
         fun calculateLineNoY(x1: Vec2f, x2: Vec2f, distance: Double): Vec2f {
-            val length = Math.sqrt(multiply((x2.x - x1.x).toDouble()) + multiply((x2.y - x1.y).toDouble()))
+            val length = sqrt(multiply((x2.x - x1.x).toDouble()) + multiply((x2.y - x1.y).toDouble()))
             val unitSlopeX = (x2.x - x1.x).toDouble() / length
             val unitSlopeZ = (x2.y - x1.y).toDouble() / length
             val x = (x1.x.toDouble() + unitSlopeX * distance).toFloat()

@@ -114,7 +114,7 @@ object DamageUtil {
             if (entity.isPotionActive(MobEffects.RESISTANCE)) {
                 damage -= damage / 4.0f
             }
-            damage = Math.max(damage, 0.0f)
+            damage = damage.coerceAtLeast(0.0f)
             return damage
         }
         damage = CombatRules.getDamageAfterAbsorb(

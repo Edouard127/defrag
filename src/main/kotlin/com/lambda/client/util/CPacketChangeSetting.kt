@@ -18,7 +18,9 @@ class CPacketChangeSetting(module: String, setting: String, value: String) : Pac
         buf.writeString(setting)
     }
 
-    override fun processPacket(handler: INetHandlerPlayServer?) {}
+    override fun processPacket(handler: INetHandlerPlayServer?) {
+
+    }
 
     init {
         this.setting = "$setting-$module-$value"

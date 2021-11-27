@@ -77,6 +77,7 @@ object CrystalUtils {
     }
     /* End of position finding */
 
+
     /* Damage calculation */
     fun SafeClientEvent.calcCrystalDamage(crystal: EntityEnderCrystal, entity: EntityLivingBase, entityPos: Vec3d? = entity.positionVector, entityBB: AxisAlignedBB? = entity.entityBoundingBox) =
         calcCrystalDamage(crystal.positionVector, entity, entityPos, entityBB)

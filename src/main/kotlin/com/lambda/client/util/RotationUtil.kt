@@ -13,6 +13,8 @@ import net.minecraft.util.EnumFacing
 import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3i
+import kotlin.math.atan2
+import kotlin.math.sqrt
 
 object RotationUtil {
     @JvmStatic
@@ -37,9 +39,9 @@ object RotationUtil {
         val diffX = vec.x - eyesPos.x
         val diffY = vec.y - eyesPos.y
         val diffZ = vec.z - eyesPos.z
-        val diffXZ = Math.sqrt(diffX * diffX + diffZ * diffZ)
-        val yaw = Math.toDegrees(Math.atan2(diffZ, diffX)).toFloat() - 90.0f
-        val pitch = (-Math.toDegrees(Math.atan2(diffY, diffXZ))).toFloat()
+        val diffXZ = sqrt(diffX * diffX + diffZ * diffZ)
+        val yaw = Math.toDegrees(atan2(diffZ, diffX)).toFloat() - 90.0f
+        val pitch = (-Math.toDegrees(atan2(diffY, diffXZ))).toFloat()
         return floatArrayOf(
             mc.player.rotationYaw + MathHelper.wrapDegrees((yaw - mc.player.rotationYaw) as Float),
             mc.player.rotationPitch + MathHelper.wrapDegrees((pitch - mc.player.rotationPitch) as Float)
