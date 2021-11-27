@@ -38,7 +38,7 @@ object Surround : Module(
     description = "Surrounds you with obsidian to take less damage",
     modulePriority = 400
 ) {
-    private val placeSpeed by setting("Places Per Tick", 4f, 0.25f..5f, 0.25f)
+    private val placeSpeed by setting("Places Per Tick", 4f, 0.25f..50f, 0.25f)
     private val disableStrafe by setting("Disable Strafe", true)
     private val strictDirection by setting("Strict Direction", false)
     private val autoDisable by setting("Auto Disable", AutoDisableMode.OUT_OF_HOLE)

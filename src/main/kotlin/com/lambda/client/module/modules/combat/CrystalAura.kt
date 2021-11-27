@@ -159,7 +159,7 @@ object CrystalAura : Module(
     private var hitCount = 0
     private var yawDiffIndex = 0
 
-    var inactiveTicks = 20; private set
+    var inactiveTicks = 1; private set
     val minDamage get() = max(minDamageP, minDamageE)
     val maxSelfDamage get() = min(maxSelfDamageP, maxSelfDamageE)
 
