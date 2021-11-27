@@ -42,6 +42,9 @@ import com.lambda.commons.interfaces.DisplayEnum
 import com.lambda.event.listener.listener
 import it.unimi.dsi.fastutil.ints.Int2LongMaps
 import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import net.minecraft.client.entity.EntityPlayerSP
 import net.minecraft.entity.item.EntityEnderCrystal
 import net.minecraft.init.Items
@@ -158,6 +161,8 @@ object CrystalAura : Module(
     private var hitTimer = 0
     private var hitCount = 0
     private var yawDiffIndex = 0
+
+    val scope = CoroutineScope(Dispatchers.IO)
 
     var inactiveTicks = 20; private set
     val minDamage get() = max(minDamageP, minDamageE)
@@ -280,12 +285,15 @@ object CrystalAura : Module(
     }
 
     private fun updateYawSpeed() {
-        val yawDiff = abs(RotationUtils.normalizeAngle(PlayerPacketManager.prevServerSideRotation.x - PlayerPacketManager.serverSideRotation.x))
-        yawDiffList[yawDiffIndex] = yawDiff
-        yawDiffIndex = (yawDiffIndex + 1) % 20
+        scope.launch {
+            val yawDiff = abs(RotationUtils.normalizeAngle(PlayerPacketManager.prevServerSideRotation.x - PlayerPacketManager.serverSideRotation.x))
+            yawDiffList[yawDiffIndex] = yawDiff
+            yawDiffIndex = (yawDiffIndex + 1) % 20
+        }
     }
 
     private fun SafeClientEvent.updateMap() {
+        scope.launch {
         placeMap = CombatManager.placeMap
         crystalMap = CombatManager.crystalMap
 
@@ -308,6 +316,8 @@ object CrystalAura : Module(
                 placedBBMap.clear()
             }
         }
+
+    }
     }
 
     private fun SafeClientEvent.place() {
@@ -455,6 +465,7 @@ object CrystalAura : Module(
 
     @Suppress("UnconditionalJumpStatementInLoop") // The linter is wrong here, it will continue until it's supposed to return
     private fun SafeClientEvent.getPlacingPos(): BlockPos? {
+
         if (placeMap.isEmpty()) return null
 
         val eyePos = player.getPositionEyes(1f)
@@ -494,7 +505,7 @@ object CrystalAura : Module(
         return null
     }
 
-    private fun SafeClientEvent.canPlaceCollide(pos: BlockPos): Boolean {
+     fun SafeClientEvent.canPlaceCollide(pos: BlockPos): Boolean {
         val placingBB = CrystalUtils.getCrystalPlacingBB(pos.up())
         return world.getEntitiesWithinAABBExcludingEntity(null, placingBB).all {
             !it.isEntityAlive || lastCrystalID == it.entityId && pos == BlockPos(it.posX, it.posY - 1.0, it.posZ)
