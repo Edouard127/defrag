@@ -24,8 +24,5 @@ abstract class Module(
     enabledByDefault,
     ModuleConfig
 ) {
-    abstract fun processMultiThreading()
 
-    abstract val threadMode: Any
-    abstract var threadName: String
 }

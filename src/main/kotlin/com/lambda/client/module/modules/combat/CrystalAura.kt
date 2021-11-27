@@ -163,15 +163,6 @@ object CrystalAura : Module(
     var inactiveTicks = 20; private set
     val minDamage get() = max(minDamageP, minDamageE)
     val maxSelfDamage get() = min(maxSelfDamageP, maxSelfDamageE)
-    override fun processMultiThreading() {
-        TODO("Not yet implemented")
-    }
-
-    override val threadMode: Any
-        get() = TODO("Not yet implemented")
-    override var threadName: String
-        get() = TODO("Not yet implemented")
-        set(value) {}
 
     override fun isActive() = isEnabled && inactiveTicks <= 20
 
