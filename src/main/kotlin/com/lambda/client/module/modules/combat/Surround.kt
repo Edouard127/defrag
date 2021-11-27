@@ -36,7 +36,7 @@ object Surround : Module(
     name = "Surround",
     category = Category.COMBAT,
     description = "Surrounds you with obsidian to take less damage",
-    modulePriority = 200
+    modulePriority = 400
 ) {
     private val placeSpeed by setting("Places Per Tick", 4f, 0.25f..5f, 0.25f)
     private val disableStrafe by setting("Disable Strafe", true)

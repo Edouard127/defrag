@@ -1,4 +1,4 @@
-package me.han.muffin.client.event.events.world;
+package com.lambda.client.event.events.world;
 
 import net.minecraft.client.multiplayer.WorldClient;
 
