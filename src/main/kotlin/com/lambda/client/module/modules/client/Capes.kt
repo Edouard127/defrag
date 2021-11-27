@@ -8,7 +8,6 @@ import com.lambda.capeapi.CapeUser
 import com.lambda.client.LambdaMod
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
-import com.lambda.client.module.modules.misc.DiscordRPC
 import com.lambda.client.util.EntityUtils
 import com.lambda.client.util.color.ColorConverter
 import com.lambda.client.util.color.ColorHolder
@@ -99,7 +98,6 @@ object Capes : Module(
             }
 
             updated = true
-            DiscordRPC.setCustomIcons(capeType)
             LambdaMod.LOG.info("Capes loaded")
         } catch (e: Exception) {
             LambdaMod.LOG.warn("Failed parsing capes", e)

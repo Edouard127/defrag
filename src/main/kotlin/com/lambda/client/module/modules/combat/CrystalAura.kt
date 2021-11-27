@@ -19,7 +19,6 @@ import com.lambda.client.module.Module
 import com.lambda.client.util.Bind
 import com.lambda.client.util.EntityUtils
 import com.lambda.client.util.InfoCalculator
-import com.lambda.client.util.MultiThread.startThreadLoop
 import com.lambda.client.util.TickTimer
 import com.lambda.client.util.combat.CombatUtils.equipBestWeapon
 import com.lambda.client.util.combat.CombatUtils.scaledHealth
@@ -169,7 +168,6 @@ object CrystalAura : Module(
     init {
         onEnable {
             runSafeR {
-                startThreadLoop()
                 resetRotation()
             } ?: disable()
         }

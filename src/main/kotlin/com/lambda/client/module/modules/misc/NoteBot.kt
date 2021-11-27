@@ -42,7 +42,7 @@ import kotlin.math.roundToInt
 object NoteBot : Module(
     name = "NoteBot",
     category = Category.MISC,
-    description = "Plays music with note blocks; put .mid or .nbs songs in .minecraft/lambda/songs"
+    description = "Plays music with note blocks; put .mid or .nbs songs in .minecraft/defrag/songs"
 ) {
 
     private val togglePlay = setting("Toggle Play", false)

@@ -29,6 +29,7 @@ buildscript {
         classpath "com.viaversion:viabackwards:4.0.1"
         classpath "org.yaml:snakeyaml:1.29"
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.0.9'
+
         //classpath "space.vectrix.flare-fastutil:2.0.0"
     }
 }
@@ -111,6 +112,10 @@ dependencies {
     implementation 'space.vectrix.flare:flare-fastutil:1.0.0'
     implementation 'space.vectrix.flare:flare:1.0.0'
     implementation 'fastutil:fastutil:5.0.9'
+    implementation 'org.slf4j:slf4j-api:1.7.32'
+    implementation 'org.json:json:20210307'
+    compile group: 'com.cosium.junixsocket', name: 'junixsocket-common', version: '2.0.4.3'
+    compile group: 'org.json', name: 'json', version: '20210307'
     //deobfCompile group: group, name: 'LunatriusCore', version: "${project.version_minecraft}-${project.version_lunatriuscore}", classifier: 'universal'
 
 

@@ -30,6 +30,7 @@ class LambdaMod {
 
         const val VERSION = "Defrag 1.0"
         const val VERSION_MAJOR = "Defrag 1.0"
+        const val VERSION_SIMPLE = VERSION
 
         const val APP_ID = 835368493150502923 // DiscordIPC
 
