@@ -1,0 +1,245 @@
+version project.modVersion
+group project.modGroup
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://repo.spongepowered.org/maven/' }
+        maven { url = "https://repo.spongepowered.org/repository/maven-public" }
+        jcenter()
+        maven { url = "https://repo.viaversion.com" }
+        maven {
+            name = 'sonatype'
+            url = 'https://oss.sonatype.org/content/repositories/snapshots/'
+        }
+        maven {
+            name = 'gradle plugins'
+            url "https://plugins.gradle.org/m2/"
+        }
+
+    }
+
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:4.+'
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
+        classpath "com.viaversion:viaversion:4.0.1"
+        classpath "com.viaversion:viabackwards:4.0.1"
+        classpath "org.yaml:snakeyaml:1.29"
+        classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.0.9'
+
+        //classpath "space.vectrix.flare-fastutil:2.0.0"
+    }
+}
+
+apply plugin: 'idea'
+apply plugin: 'kotlin'
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.jetbrains.dokka'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: "java"
+apply plugin: "maven-publish"
+apply plugin: 'com.matthewprenger.cursegradle'
+
+
+
+sourceSets.main.java {
+    srcDirs += 'src/main/cape-api'
+    srcDirs += 'src/main/command'
+    srcDirs += 'src/main/commons'
+    srcDirs += 'src/main/event'
+    //srcDirs += 'src/main/java/de'
+
+}
+configurations {
+    include
+    implementation.extendsFrom(include)
+}
+
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
+    options.encoding = 'UTF-8'
+}
+
+compileKotlin.kotlinOptions {
+    freeCompilerArgs += '-Xlambdas=indy'
+    freeCompilerArgs += '-Xopt-in=kotlin.RequiresOptIn'
+    freeCompilerArgs += '-Xopt-in=kotlin.contracts.ExperimentalContracts'
+}
+
+repositories {
+    maven { url = 'https://repo.spongepowered.org/maven/' }
+    maven { url = 'https://impactdevelopment.github.io/maven/' }
+    maven { url = "https://jitpack.io" }
+    mavenCentral()
+    maven { url = "https://repo.viaversion.com" }
+    ivy {
+        name = 'lunatrius\' ivy repo'
+        url 'http://mc.lunatri.us/files'
+    }
+}
+
+minecraft {
+    mappings channel: "$mappingsChannel", version: "$mappingsVersion"
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            property 'fml.coreMods.load', 'com.lambda.client.mixin.MixinLoaderForge'
+            property 'mixin.env.disableRefMap', 'true' // Disable refmap so we don't get trolled by Baritone
+
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+        }
+    }
+}
+
+configurations {
+    jarLibs
+    // Force choosing the correct nightly build because Mac OS chooses an invalid one
+    all {
+        resolutionStrategy {
+            force 'org.lwjgl.lwjgl:lwjgl-platform:2.9.4-nightly-20150209'
+        }
+    }
+}
+
+dependencies {
+    implementation "com.viaversion:viabackwards:4.0.2-SNAPSHOT"
+    implementation "com.viaversion:viaversion:4.0.2-SNAPSHOT"
+    implementation 'space.vectrix.flare:flare-fastutil:1.0.0'
+    implementation 'space.vectrix.flare:flare:1.0.0'
+    implementation 'fastutil:fastutil:5.0.9'
+    implementation 'org.slf4j:slf4j-api:1.7.32'
+    implementation 'org.json:json:20210307'
+    compile group: 'com.cosium.junixsocket', name: 'junixsocket-common', version: '2.0.4.3'
+    compile group: 'org.json', name: 'json', version: '20210307'
+    //deobfCompile group: group, name: 'LunatriusCore', version: "${project.version_minecraft}-${project.version_lunatriuscore}", classifier: 'universal'
+
+
+    // Forge
+    minecraft "net.minecraftforge:forge:$minecraftVersion-$forgeVersion"
+    jarLibs('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
+        exclude module: 'commons-io'
+        exclude module: 'gson'
+        exclude module: 'guava'
+        exclude module: 'launchwrapper'
+        exclude module: 'log4j-core' // we want to exclude this as well because 0.7.11 includes it too new for MC
+    }
+
+    // Hacky way to get mixin work
+    annotationProcessor('org.spongepowered:mixin:0.8.2:processor') {
+        exclude module: 'gson'
+    }
+
+    jarLibs('org.reflections:reflections:0.9.12') {
+        exclude module: 'gson'
+        exclude module: 'guava'
+    }
+
+    // Kotlin libs
+    // kotlin-stdlib-common and annotations aren't required at runtime
+    jarLibs("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion") {
+        exclude module: 'kotlin-stdlib-common'
+        exclude module: 'annotations'
+    }
+
+    jarLibs("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion") {
+        exclude module: 'kotlin-stdlib-common'
+        exclude module: 'annotations'
+    }
+
+    jarLibs("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion") {
+        exclude module: 'kotlin-stdlib-common'
+        exclude module: 'annotations'
+    }
+
+    jarLibs("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") {
+        exclude module: 'kotlin-stdlib-common'
+        exclude module: 'annotations'
+    }
+
+    jarLibs("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion") {
+        exclude module: 'kotlin-stdlib-common'
+        exclude module: 'annotations'
+    }
+
+
+    // Add them back to compileOnly (provided)
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+    compileOnly 'org.jetbrains:annotations:20.1.0'
+
+    // This Baritone will NOT be included in the jar
+    implementation 'com.github.cabaletta:baritone:1.2.14'
+
+    // This Baritone WILL be included in the jar
+    jarLibs 'cabaletta:baritone-api:1.2'
+
+    // Add everything in jarLibs to implementation (compile)
+    implementation configurations.jarLibs
+}
+
+mixin {
+    defaultObfuscationEnv 'searge'
+    add sourceSets.main, 'mixins.lambda.refmap.json'
+}
+
+processResources {
+    inputs.property 'version', project.version
+
+    exclude '**/rawimagefiles'
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        include "com.viaversion:viaversion:4.0.2-SNAPSHOT"
+        include "com.viaversion:viabackwards:4.0.2-SNAPSHOT"
+        include "org.yaml:snakeyaml:1.29"
+        expand 'version': project.version
+    }
+}
+
+task sourceJar(type: Jar) { // Generate sources
+    group 'build'
+    description 'Assemble API library source archive'
+
+    archiveClassifier.set('api-source')
+    from sourceSets.main.allSource
+}
+
+task apiJar(type: Jar) {
+    group 'build'
+    description 'Assemble API library archive'
+
+    archiveClassifier.set('api')
+    from sourceSets.main.output
+}
+
+// Don't put baritone mixin here please c:
+jar {
+    manifest.attributes(
+            'Manifest-Version': 1.0,
+            'MixinConfigs': 'mixins.lambda.json',
+            'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
+            'TweakOrder': 0,
+            'FMLCorePluginContainsFMLMod': 'true',
+            'FMLCorePlugin': 'com.lambda.client.mixin.MixinLoaderForge',
+            'ForceLoadAsMod': 'true',
+            'Main-Class': 'com.lambda.client.installer.Installer'
+    )
+
+    // Copy needed libs to jar
+    from {
+        configurations.jarLibs.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+
+task buildApi {
+    group 'build'
+    dependsOn sourceJar
+    dependsOn apiJar
+    description 'Assemble API library archives'
+}

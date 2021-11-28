@@ -40,6 +40,7 @@ import com.lambda.client.util.world.getClosestVisibleSide
 import com.lambda.commons.extension.synchronized
 import com.lambda.commons.interfaces.DisplayEnum
 import com.lambda.event.listener.listener
+import ibxm.Player
 import it.unimi.dsi.fastutil.ints.Int2LongMaps
 import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap
 import net.minecraft.client.entity.EntityPlayerSP
@@ -47,6 +48,7 @@ import net.minecraft.entity.item.EntityEnderCrystal
 import net.minecraft.init.Items
 import net.minecraft.init.MobEffects
 import net.minecraft.init.SoundEvents
+import net.minecraft.item.ItemStack
 import net.minecraft.item.ItemSword
 import net.minecraft.item.ItemTool
 import net.minecraft.network.Packet
@@ -61,12 +63,14 @@ import net.minecraft.util.SoundCategory
 import net.minecraft.util.math.AxisAlignedBB
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
+import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.fml.common.gameevent.InputEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import org.lwjgl.input.Keyboard
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
+
 
 @CombatManager.CombatModule
 object CrystalAura : Module(
@@ -443,6 +447,7 @@ object CrystalAura : Module(
     /* End of main functions */
 
     /* Placing */
+
     private fun SafeClientEvent.canPlace() =
         doPlace
             && checkTimer()
@@ -612,6 +617,11 @@ object CrystalAura : Module(
         lastLookAt = CombatManager.target?.positionVector ?: Vec3d.ZERO
     }
     /* End of rotation */
+}
+
+private fun PlayerInteractEvent.getPlayer(): Player {
+    return getPlayer()
+
 }
 
 private fun Any.getValue(): Any {
