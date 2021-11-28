@@ -48,7 +48,9 @@ object CrystalUtils {
     /** Checks if the block is valid for placing crystal */
     fun SafeClientEvent.canPlaceOn(pos: BlockPos): Boolean {
         val block = mc.world?.getBlockState(pos)?.block
-        return block == Blocks.BEDROCK || block == Blocks.OBSIDIAN
+        return if(block != Blocks.ANVIL || block != Blocks.CRAFTING_TABLE || block != Blocks.ENCHANTING_TABLE || block != Blocks.ENDER_CHEST) {
+            block == Blocks.BEDROCK || block == Blocks.OBSIDIAN
+        } else false
     }
 
     private fun isValidMaterial(material: Material) =
