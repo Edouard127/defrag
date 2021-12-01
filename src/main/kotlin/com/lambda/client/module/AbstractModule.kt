@@ -40,7 +40,7 @@ abstract class AbstractModule(
     val fullSettingList get() = (config as NameableConfig<Nameable>).getSettings(this)
     val settingList: List<AbstractSetting<*>> get() = fullSettingList.filter { it != bind && it != enabled && it != visible && it != default && it != clicks }
 
-    val isEnabled: Boolean get() = enabled.value || alwaysEnabled
+    var isEnabled: Boolean get() = enabled.value || alwaysEnabled
     val isDisabled: Boolean get() = !isEnabled
     val chatName: String get() = "[${name}]"
     val isVisible: Boolean get() = visible.value

@@ -452,6 +452,13 @@ object CrystalAura : Module(
     /* End of main functions */
 
     /* Placing */
+    private fun SafeClientEvent.getGapple(): Boolean {
+        return if (player.heldItemMainhand.item == GOLDEN_APPLE) {
+            MessageSendHelper.sendChatMessage("debug")
+            return true
+        }
+        else return false
+    }
 
     private fun SafeClientEvent.canPlace() =
         doPlace
@@ -465,11 +472,22 @@ object CrystalAura : Module(
 
     @Suppress("UnconditionalJumpStatementInLoop") // The linter is wrong here, it will continue until it's supposed to return
     private fun SafeClientEvent.getPlacingPos(): BlockPos? {
+
         if (placeMap.isEmpty()) return null
 
         val eyePos = player.getPositionEyes(1f)
 
         for ((pos, crystalDamage) in placeMap) {
+            if(getGapple()){
+                MessageSendHelper.sendChatMessage("debug")
+                while(player.heldItemMainhand.item == GOLDEN_APPLE)
+                {
+                isEnabled = false
+                }
+                isEnabled = true
+            }
+
+
             // Damage check
             if (!noSuicideCheck(crystalDamage.selfDamage)) continue
             if (!checkDamagePlace(crystalDamage)) continue
@@ -559,12 +577,6 @@ object CrystalAura : Module(
     private fun SafeClientEvent.noSuicideCheck(selfDamage: Float) = player.scaledHealth - selfDamage > noSuicideThreshold
 
     private fun SafeClientEvent.isHoldingTool(): Boolean {
-        if(player.heldItemMainhand.item == GOLDEN_APPLE){
-            MessageSendHelper.sendChatMessage("debug")
-        }
-        if(player.heldItemMainhand.item == ENDER_PEARL){
-            MessageSendHelper.sendChatMessage("debug")
-        }
         val item = player.heldItemMainhand.item
         return item is ItemTool || item is ItemSword
     }
