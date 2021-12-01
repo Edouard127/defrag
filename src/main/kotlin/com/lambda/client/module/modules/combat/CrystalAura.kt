@@ -1,5 +1,6 @@
 package com.lambda.client.module.modules.combat
 
+import com.github.lunatrius.core.client.renderer.GeometryTessellator.getInstance
 import com.lambda.client.event.Phase
 import com.lambda.client.event.SafeClientEvent
 import com.lambda.client.event.events.OnUpdateWalkingPlayerEvent
@@ -43,9 +44,12 @@ import com.lambda.event.listener.listener
 import ibxm.Player
 import it.unimi.dsi.fastutil.ints.Int2LongMaps
 import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap
+import net.minecraft.client.Minecraft
 import net.minecraft.client.entity.EntityPlayerSP
 import net.minecraft.entity.item.EntityEnderCrystal
 import net.minecraft.init.Items
+import net.minecraft.init.Items.ENDER_PEARL
+import net.minecraft.init.Items.GOLDEN_APPLE
 import net.minecraft.init.MobEffects
 import net.minecraft.init.SoundEvents
 import net.minecraft.item.ItemStack
@@ -67,6 +71,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.fml.common.gameevent.InputEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import org.lwjgl.input.Keyboard
+import sun.audio.AudioPlayer.player
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -551,10 +556,15 @@ object CrystalAura : Module(
             else -> null
         }
     }
-
     private fun SafeClientEvent.noSuicideCheck(selfDamage: Float) = player.scaledHealth - selfDamage > noSuicideThreshold
 
     private fun SafeClientEvent.isHoldingTool(): Boolean {
+        if(player.heldItemMainhand.item == GOLDEN_APPLE){
+            MessageSendHelper.sendChatMessage("debug")
+        }
+        if(player.heldItemMainhand.item == ENDER_PEARL){
+            MessageSendHelper.sendChatMessage("debug")
+        }
         val item = player.heldItemMainhand.item
         return item is ItemTool || item is ItemSword
     }
