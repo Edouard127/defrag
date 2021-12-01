@@ -31,7 +31,7 @@ abstract class AbstractModule(
 ) : Nameable, Alias, SettingRegister<Nameable> by config as NameableConfig<Nameable> {
 
     val bind = BindSetting("Bind", Bind(), { !alwaysEnabled }).also(::addSetting)
-    private val enabled = BooleanSetting("Enabled", false, { false }).also(::addSetting)
+    val enabled = BooleanSetting("Enabled", false, { false }).also(::addSetting)
     private val visible = BooleanSetting("Visible", showOnArray).also(::addSetting)
     private val default = BooleanSetting("Default", false, { settingList.isNotEmpty() }).also(::addSetting)
     val priorityForGui = IntegerSetting("Priority In GUI", 0, 0..1000, 50, { ClickGUI.sortBy.value == ClickGUI.SortByOptions.CUSTOM }, fineStep = 1).also(::addSetting)
@@ -40,7 +40,7 @@ abstract class AbstractModule(
     val fullSettingList get() = (config as NameableConfig<Nameable>).getSettings(this)
     val settingList: List<AbstractSetting<*>> get() = fullSettingList.filter { it != bind && it != enabled && it != visible && it != default && it != clicks }
 
-    var isEnabled: Boolean get() = enabled.value || alwaysEnabled
+    val isEnabled: Boolean get() = enabled.value || alwaysEnabled
     val isDisabled: Boolean get() = !isEnabled
     val chatName: String get() = "[${name}]"
     val isVisible: Boolean get() = visible.value

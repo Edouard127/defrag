@@ -453,11 +453,11 @@ object CrystalAura : Module(
 
     /* Placing */
     private fun SafeClientEvent.getGapple(): Boolean {
+        MessageSendHelper.sendChatMessage("debug")
         return if (player.heldItemMainhand.item == GOLDEN_APPLE) {
-            MessageSendHelper.sendChatMessage("debug")
             return true
         }
-        else return false
+        else false
     }
 
     private fun SafeClientEvent.canPlace() =
@@ -482,9 +482,9 @@ object CrystalAura : Module(
                 MessageSendHelper.sendChatMessage("debug")
                 while(player.heldItemMainhand.item == GOLDEN_APPLE)
                 {
-                isEnabled = false
+                enabled.value = false
                 }
-                isEnabled = true
+                enabled.value = true
             }
 
 
