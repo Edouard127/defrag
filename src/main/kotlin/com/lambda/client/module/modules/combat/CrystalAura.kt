@@ -452,13 +452,16 @@ object CrystalAura : Module(
     /* End of main functions */
 
     /* Placing */
-    private fun SafeClientEvent.getGapple(): Boolean {
+    /*private fun SafeClientEvent.getGapple(): Int {
+        var n = 0
         MessageSendHelper.sendChatMessage("debug")
-        return if (player.heldItemMainhand.item == GOLDEN_APPLE) {
-            return true
+        if (player.heldItemMainhand.item == GOLDEN_APPLE) {
+            MessageSendHelper.sendChatMessage("debug")
+            n+= 1
+            return n
         }
-        else false
-    }
+        else return 0
+    }*/
 
     private fun SafeClientEvent.canPlace() =
         doPlace
@@ -478,13 +481,9 @@ object CrystalAura : Module(
         val eyePos = player.getPositionEyes(1f)
 
         for ((pos, crystalDamage) in placeMap) {
-            if(getGapple()){
+            if (player.heldItemMainhand.item == GOLDEN_APPLE) {
                 MessageSendHelper.sendChatMessage("debug")
-                while(player.heldItemMainhand.item == GOLDEN_APPLE)
-                {
-                enabled.value = false
-                }
-                enabled.value = true
+
             }
 
 
