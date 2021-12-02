@@ -17,6 +17,7 @@ import com.lambda.client.mixin.extension.id
 import com.lambda.client.mixin.extension.packetAction
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
+import com.lambda.client.module.modules.combat.CrystalAura.placeDelayMs
 import com.lambda.client.util.Bind
 import com.lambda.client.util.EntityUtils
 import com.lambda.client.util.InfoCalculator
@@ -341,6 +342,7 @@ object CrystalAura : Module(
     }
 
     private fun SafeClientEvent.swapToCrystal() {
+
         if (autoSwap && player.heldItemOffhand.item != Items.END_CRYSTAL) {
             if (spoofHotbar) {
                 val slot = if (player.serverSideItem.item == Items.END_CRYSTAL) HotbarManager.serverSideHotbar
@@ -479,12 +481,24 @@ object CrystalAura : Module(
         if (placeMap.isEmpty()) return null
 
         val eyePos = player.getPositionEyes(1f)
+        //val oldPlaceTimer = placeTimerTicks
 
         for ((pos, crystalDamage) in placeMap) {
-            if (player.heldItemMainhand.item == GOLDEN_APPLE) {
-                enabled.value = false
-
+           /*  if(player.heldItemMainhand.item == GOLDEN_APPLE) {
+                 placeTimerTicks = -1
             }
+            if(player.heldItemMainhand.item !== GOLDEN_APPLE){
+                placeTimerTicks = oldPlaceTimer
+                    try {
+                        while (player.heldItemMainhand.item == GOLDEN_APPLE) {
+                            Thread.sleep(5000L)
+                        }
+                    } finally {
+
+                    }*/
+
+
+
 
 
 

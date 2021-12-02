@@ -35,6 +35,7 @@ import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.item.EntityEnderCrystal
 import net.minecraft.entity.passive.AbstractHorse
 import net.minecraft.entity.passive.EntityTameable
+import net.minecraft.init.Items.GOLDEN_APPLE
 import net.minecraft.item.ItemFood
 import net.minecraft.item.ItemPickaxe
 import net.minecraft.util.EnumHand
@@ -83,6 +84,7 @@ object CombatSetting : Module(
     /* Render */
     private val renderPredictedPos = setting("Render Predicted Position", false, { page == Page.RENDER })
 
+
     private enum class Page {
         TARGETING, IN_COMBAT, RENDER
     }
@@ -120,6 +122,7 @@ object CombatSetting : Module(
         pauseForEating
             && (PauseProcess.isPausing(AutoEat) || player.isHandActive && player.activeItemStack.item is ItemFood)
             && (!ignoreOffhandEating || player.activeHand != EnumHand.OFF_HAND)
+
 
     override fun isActive() = KillAura.isActive() || BedAura.isActive() || CrystalAura.isActive() || Surround.isActive()
 
@@ -178,6 +181,14 @@ object CombatSetting : Module(
         val prediction = target?.let { getPrediction(it) }
 
         for (pos in getPlacePos(target, player, 8f)) {
+            if(CrystalAura.isEnabled){
+            if(player.heldItemMainhand.item == GOLDEN_APPLE){
+                CrystalAura.enabled.value = false
+            }
+            if(player.heldItemMainhand.item !== GOLDEN_APPLE){
+                CrystalAura.enabled.value = true
+            }
+            }
             val dist = eyePos.distanceTo(pos.toVec3dCenter(0.0, 0.5, 0.0))
             val damage = target?.let { calcCrystalDamage(pos, it, prediction?.first, prediction?.second) } ?: 0.0f
             val selfDamage = calcCrystalDamage(pos, player)
