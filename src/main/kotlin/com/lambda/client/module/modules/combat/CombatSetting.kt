@@ -118,7 +118,7 @@ object CombatSetting : Module(
             && player.heldItemMainhand.item is ItemPickaxe
             && playerController.isHittingBlock
 
-    private fun SafeClientEvent.checkEating() =
+     fun SafeClientEvent.checkEating() =
         pauseForEating
             && (PauseProcess.isPausing(AutoEat) || player.isHandActive && player.activeItemStack.item is ItemFood)
             && (!ignoreOffhandEating || player.activeHand != EnumHand.OFF_HAND)
@@ -181,14 +181,16 @@ object CombatSetting : Module(
         val prediction = target?.let { getPrediction(it) }
 
         for (pos in getPlacePos(target, player, 8f)) {
+            /*var storeValueCA = CrystalAura.isEnabled.value
             if(CrystalAura.isEnabled){
             if(player.heldItemMainhand.item == GOLDEN_APPLE){
                 CrystalAura.enabled.value = false
+                CrystalAura.enabled.value = storeValueCA as Boolean
             }
             if(player.heldItemMainhand.item !== GOLDEN_APPLE){
                 CrystalAura.enabled.value = true
             }
-            }
+            }*/
             val dist = eyePos.distanceTo(pos.toVec3dCenter(0.0, 0.5, 0.0))
             val damage = target?.let { calcCrystalDamage(pos, it, prediction?.first, prediction?.second) } ?: 0.0f
             val selfDamage = calcCrystalDamage(pos, player)

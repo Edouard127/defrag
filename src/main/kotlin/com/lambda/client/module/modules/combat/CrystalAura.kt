@@ -17,6 +17,7 @@ import com.lambda.client.mixin.extension.id
 import com.lambda.client.mixin.extension.packetAction
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
+import com.lambda.client.module.modules.combat.CombatSetting.checkEating
 import com.lambda.client.module.modules.combat.CrystalAura.placeDelayMs
 import com.lambda.client.util.Bind
 import com.lambda.client.util.EntityUtils
@@ -501,7 +502,7 @@ object CrystalAura : Module(
 
 
 
-
+            checkEating()
             // Damage check
             if (!noSuicideCheck(crystalDamage.selfDamage)) continue
             if (!checkDamagePlace(crystalDamage)) continue

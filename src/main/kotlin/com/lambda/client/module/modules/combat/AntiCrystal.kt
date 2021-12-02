@@ -225,7 +225,7 @@ private val Int.value: Byte
     get() {
         return value
     }
-private val Boolean.value: Any
+val Boolean.value: Any
     get() {
         return value
     }
