@@ -482,9 +482,10 @@ object CrystalAura : Module(
 
         for ((pos, crystalDamage) in placeMap) {
             if (player.heldItemMainhand.item == GOLDEN_APPLE) {
-                MessageSendHelper.sendChatMessage("debug")
+                enabled.value = false
 
             }
+
 
 
             // Damage check
