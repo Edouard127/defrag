@@ -174,6 +174,6 @@ object DiscordRPC : Module(
     }
 
     init {
-        presence.largeImageText = ""
+        presence.largeImageText = "defrag"
     }
 }
