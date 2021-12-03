@@ -127,10 +127,15 @@ object CrystalAura : Module(
     private val retryTimeout by setting("Retry Timeout", 1000, 0..5000, 50, page.atValue(Page.EXPLODE_TWO) { hitAttempts > 0 })
     private val explodeRange by setting("Explode Range", 4.25f, 0.0f..5.0f, 0.25f, page.atValue(Page.EXPLODE_TWO))
     private val wallExplodeRange by setting("Wall Explode Range", 3.5f, 0.0f..5.0f, 0.25f, page.atValue(Page.EXPLODE_TWO))
+    /*GAPPLE PAGE*/
+    private val yes by setting("Enable OffHandGapple", false, page.atValue(Page.AUTO_GAPPLE))
+    private val minHealthTriggerGappleOffHand by setting("Min Health Trigger", 10.1f, 7f..20f, 0.25f, page.atValue(Page.AUTO_GAPPLE))
+    private val autoEatOffHand by setting("Auto Eat OffHand Healh Trigger", 7f, 5f..15f, 0.25f, page.atValue(Page.AUTO_GAPPLE))
+    private val offhandAutoOffHandValue by setting("Switch back OffHand", 5f, 3f..10f, 0.25f, page.atValue(Page.AUTO_GAPPLE))
     /* End of settings */
 
     private enum class Page {
-        GENERAL, FORCE_PLACE, PLACE_ONE, PLACE_TWO, EXPLODE_ONE, EXPLODE_TWO
+        GENERAL, FORCE_PLACE, PLACE_ONE, PLACE_TWO, EXPLODE_ONE, EXPLODE_TWO, AUTO_GAPPLE
     }
 
     @Suppress("UNUSED")
@@ -488,14 +493,18 @@ object CrystalAura : Module(
                     } finally {
 
 */
-            if (player.serverSideItem.item == GOLDEN_APPLE){
-                    CrystalAuraGapple.enabled.value = true
-                if(player.health < 7f){
-                    MessageSendHelper.sendChatMessage("Health lower than 7, disabling")
-                    CrystalAuraGapple.enabled.value = false
+            if(yes){
+            if (player.serverSideItem.item == GOLDEN_APPLE && player.health > minHealthTriggerGappleOffHand){
+                AutoOffhand.type = AutoOffhand.Type.GAPPLE
+                if(player.health < autoEatOffHand){
+                    CPacketPlayerTryUseItem(EnumHand.OFF_HAND)
+                }
+                if(player.health < offhandAutoOffHandValue){
+                    MessageSendHelper.sendChatMessage("Health lower than $offhandAutoOffHandValue")
                     AutoOffhand.type = AutoOffhand.Type.TOTEM
                 }
                 }
+            }
 
 
 
