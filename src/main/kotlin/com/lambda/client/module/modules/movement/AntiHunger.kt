@@ -30,6 +30,7 @@ object AntiHunger : Module(
                     }
                 }
                 is CPacketPlayer -> {
+
                     it.packet.onGround = (player.fallDistance <= 0 || mc.playerController.isHittingBlock) && player.isElytraFlying
                 }
             }

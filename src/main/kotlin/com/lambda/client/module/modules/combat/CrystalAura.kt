@@ -1,6 +1,5 @@
 package com.lambda.client.module.modules.combat
 
-import com.github.lunatrius.core.client.renderer.GeometryTessellator.getInstance
 import com.lambda.client.event.Phase
 import com.lambda.client.event.SafeClientEvent
 import com.lambda.client.event.events.OnUpdateWalkingPlayerEvent
@@ -17,12 +16,10 @@ import com.lambda.client.mixin.extension.id
 import com.lambda.client.mixin.extension.packetAction
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
+import com.lambda.client.module.modules.combat.AutoOffhand.checkOffhandItem
+import com.lambda.client.module.modules.combat.AutoOffhand.getItemSlot
 import com.lambda.client.module.modules.combat.CombatSetting.checkEating
-import com.lambda.client.module.modules.combat.CrystalAura.placeDelayMs
-import com.lambda.client.util.Bind
-import com.lambda.client.util.EntityUtils
-import com.lambda.client.util.InfoCalculator
-import com.lambda.client.util.TickTimer
+import com.lambda.client.util.*
 import com.lambda.client.util.combat.CombatUtils.equipBestWeapon
 import com.lambda.client.util.combat.CombatUtils.scaledHealth
 import com.lambda.client.util.combat.CrystalUtils
@@ -46,21 +43,16 @@ import com.lambda.event.listener.listener
 import ibxm.Player
 import it.unimi.dsi.fastutil.ints.Int2LongMaps
 import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap
-import net.minecraft.client.Minecraft
 import net.minecraft.client.entity.EntityPlayerSP
 import net.minecraft.entity.item.EntityEnderCrystal
 import net.minecraft.init.Items
-import net.minecraft.init.Items.ENDER_PEARL
 import net.minecraft.init.Items.GOLDEN_APPLE
 import net.minecraft.init.MobEffects
 import net.minecraft.init.SoundEvents
-import net.minecraft.item.ItemStack
 import net.minecraft.item.ItemSword
 import net.minecraft.item.ItemTool
 import net.minecraft.network.Packet
-import net.minecraft.network.play.client.CPacketAnimation
-import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock
-import net.minecraft.network.play.client.CPacketUseEntity
+import net.minecraft.network.play.client.*
 import net.minecraft.network.play.server.SPacketSoundEffect
 import net.minecraft.network.play.server.SPacketSpawnObject
 import net.minecraft.util.EnumFacing
@@ -73,7 +65,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.fml.common.gameevent.InputEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import org.lwjgl.input.Keyboard
-import sun.audio.AudioPlayer.player
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -496,8 +487,15 @@ object CrystalAura : Module(
                         }
                     } finally {
 
-                    }*/
-
+*/
+            if (player.serverSideItem.item == GOLDEN_APPLE){
+                    CrystalAuraGapple.enabled.value = true
+                if(player.health < 7f){
+                    MessageSendHelper.sendChatMessage("Health lower than 7, disabling")
+                    CrystalAuraGapple.enabled.value = false
+                    AutoOffhand.type = AutoOffhand.Type.TOTEM
+                }
+                }
 
 
 
