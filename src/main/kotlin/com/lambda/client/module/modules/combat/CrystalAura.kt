@@ -494,14 +494,20 @@ object CrystalAura : Module(
 
 */
             if(yes){
+                var ImEatingDumbass: Boolean = false
             if (player.serverSideItem.item == GOLDEN_APPLE && player.health > minHealthTriggerGappleOffHand){
                 AutoOffhand.type = AutoOffhand.Type.GAPPLE
                 if(player.health < autoEatOffHand){
-                    CPacketPlayerTryUseItem(EnumHand.OFF_HAND)
+                    if(player.heldItemOffhand.item == GOLDEN_APPLE) {
+                        ImEatingDumbass = true
+                        CPacketPlayerTryUseItem(EnumHand.OFF_HAND)
+                    }
                 }
                 if(player.health < offhandAutoOffHandValue){
-                    MessageSendHelper.sendChatMessage("Health lower than $offhandAutoOffHandValue")
-                    AutoOffhand.type = AutoOffhand.Type.TOTEM
+                    if(!ImEatingDumbass) {
+                        MessageSendHelper.sendChatMessage("Health lower than $offhandAutoOffHandValue")
+                        AutoOffhand.type = AutoOffhand.Type.TOTEM
+                    }
                 }
                 }
             }
