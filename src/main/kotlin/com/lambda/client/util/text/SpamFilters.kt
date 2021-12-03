@@ -94,7 +94,9 @@ object SpamFilters {
         "Whoa .+ didn't mean to offend you, .+.",
         ".+ im not pvping .+, im WWE'ing .+.",
         "Did you know? .+ just joined The Vortex Coalition!",
-        ".+, are you even human? You act like my dog, holy shit.")
+        ".+, are you even human? You act like my dog, holy shit.",
+        "^(.*?(\\ez\\)[^\$]*)\$"
+    )
     val greeter = arrayOf( // WWE
         "Bye, Bye .+",
         "Farwell, .+",  // Others(?)
