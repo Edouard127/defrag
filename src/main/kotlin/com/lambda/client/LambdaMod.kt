@@ -13,6 +13,9 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.io.File
+import club.minnced.discord.rpc.*
+import club.minnced.discord.rpc.DiscordEventHandlers.*
+import kotlin.concurrent.thread
 
 @Suppress("UNUSED_PARAMETER")
 @Mod(
@@ -28,12 +31,11 @@ class LambdaMod {
         const val ID = "defrag"
         const val DIRECTORY = "defrag/"
 
-        const val VERSION = "Defrag 1.1.0"
-        const val VERSION_MAJOR = "Defrag 1.1.0"
+        const val VERSION = "Defrag 1.1.1"
+        const val VERSION_MAJOR = "Defrag 1.1.1"
         const val VERSION_SIMPLE = VERSION
 
-        const val APP_ID = 835368493150502923 // DiscordIPC
-
+        const val APP_ID = "916140766240321589" //discordrpc
         const val GITHUB_API = "https://api.github.com/"
         private const val MAIN_ORG = "lambda-client"
         const val PLUGIN_ORG = "lambda-plugins"

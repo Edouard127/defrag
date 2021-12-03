@@ -18,7 +18,6 @@ package club.minnced.discord.rpc;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,7 +25,7 @@ import javax.annotation.Nullable;
 /**
  * Core library binding for the official <a href="https://github.com/discordapp/discord-rpc" target="_blank">Discord RPC SDK</a>.
  * <br>Use {@link #INSTANCE} to access this library.
- * 
+ *
  * <h1>Supported Architectures</h1>
  * <ul>
  *   <li>Windows x86</li>
@@ -47,8 +46,8 @@ public interface DiscordRPC extends Library
      * @see #DISCORD_REPLY_YES
      */
     int DISCORD_REPLY_NO = 0;
-    /** 
-     * Used to accept a request via {@link #Discord_Respond(String, int)} 
+    /**
+     * Used to accept a request via {@link #Discord_Respond(String, int)}
      * @see #DISCORD_REPLY_NO
      */
     int DISCORD_REPLY_YES = 1;
@@ -63,9 +62,9 @@ public interface DiscordRPC extends Library
      * Initializes the library, supply with application details and event handlers.
      * Handlers are only called when the {@link #Discord_RunCallbacks()} method is invoked!
      * <br><b>Before closing the application it is recommended to call {@link #Discord_Shutdown()}</b>
-     * 
+     *
      * @param applicationId
-     *        The ID for this RPC application, 
+     *        The ID for this RPC application,
      *        retrieved from the <a href="https://discordappc.com/developers/applications/me" target="_blank">developer dashboard</a>
      * @param handlers
      *        Nullable instance of {@link club.minnced.discord.rpc.DiscordEventHandlers}
@@ -78,7 +77,7 @@ public interface DiscordRPC extends Library
                             @Nullable DiscordEventHandlers handlers,
                             boolean autoRegister,
                             @Nullable String steamId);
-    
+
     /**
      * Shuts the RPC connection down.
      * If not currently connected, this does nothing.
@@ -88,7 +87,7 @@ public interface DiscordRPC extends Library
     /**
      * Executes the registered handlers for currently queued events.
      * <br>If this is not called the handlers will not receive any events!
-     * 
+     *
      * <p>It is recommended to call this in a <u>2 second interval</u>
      */
     void Discord_RunCallbacks();
@@ -97,7 +96,7 @@ public interface DiscordRPC extends Library
      * Polls events from the RPC pipe and pushes the currently queued presence.
      * <br>This will be performed automatically if the attached binary
      * has an enabled IO thread (default)
-     * 
+     *
      * <p><b>If the IO-Thread has been enabled this will not be supported!</b>
      */
     void Discord_UpdateConnection();
@@ -106,10 +105,10 @@ public interface DiscordRPC extends Library
      * Updates the currently set presence of the logged in user.
      * <br>Note that the client only updates its presence every <b>15 seconds</b>
      * and queues all additional presence updates.
-     * 
+     *
      * @param struct
      *        The new presence to use
-     * 
+     *
      * @see club.minnced.discord.rpc.DiscordRichPresence
      */
     void Discord_UpdatePresence(@Nullable DiscordRichPresence struct);
@@ -121,19 +120,19 @@ public interface DiscordRPC extends Library
 
     /**
      * Responds to the given user with the specified reply type.
-     * 
+     *
      * <h1>Possible Replies</h1>
      * <ul>
      *   <li>{@link #DISCORD_REPLY_NO}</li>
      *   <li>{@link #DISCORD_REPLY_YES}</li>
      *   <li>{@link #DISCORD_REPLY_IGNORE}</li>
      * </ul>
-     * 
+     *
      * @param userid
      *        The id of the user to respond to
      * @param reply
      *        The reply type
-     * 
+     *
      * @see   club.minnced.discord.rpc.DiscordUser#userId DiscordUser.userId
      */
     void Discord_Respond(@Nonnull String userid, int reply);
@@ -148,7 +147,7 @@ public interface DiscordRPC extends Library
 
     /**
      * Registers the given application so it can be run by the discord client. {@code discord-<appid>://}
-     * 
+     *
      * @param applicationId
      *        The ID of the application to register
      * @param command
@@ -158,15 +157,13 @@ public interface DiscordRPC extends Library
     void Discord_Register(String applicationId, String command);
 
     /**
-     * Similar to {@link #Discord_Register(String, String)} but uses the steam 
+     * Similar to {@link #Discord_Register(String, String)} but uses the steam
      * game's installation path.
-     * 
+     *
      * @param applicationId
      *        The ID of the application to register
      * @param steamId
      *        The steam ID for the game
      */
     void Discord_RegisterSteamGame(String applicationId, String steamId);
-
-    void Discord_Initialize(long appId, @NotNull DiscordEventHandlers discordEventHandlers, boolean b, @NotNull String s);
 }
