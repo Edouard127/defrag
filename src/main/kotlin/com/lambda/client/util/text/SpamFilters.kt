@@ -95,7 +95,11 @@ object SpamFilters {
         ".+ im not pvping .+, im WWE'ing .+.",
         "Did you know? .+ just joined The Vortex Coalition!",
         ".+, are you even human? You act like my dog, holy shit.",
-        "^(.*?(\\ez\\)[^\$]*)\$"
+        "^(.*?(\\ez\\)[^\$]*)\$",
+        "\\ez.*\\",
+        "ez.*",
+        "ez(z)?",
+        "ez.+"
     )
     val greeter = arrayOf( // WWE
         "Bye, Bye .+",
@@ -148,6 +152,10 @@ object SpamFilters {
         "cunt",
         "puss(ie|y)",
         "bitch",
-        "twat"
+        "twat",
+        "ez",
+        "e+z",
+        "e+z{1,}"
+
     )
 }

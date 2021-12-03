@@ -32,6 +32,7 @@ object FastUse : Module(
     private val bow by setting("Bow", true, { !allItems })
     private val chargeSetting by setting("Bow Charge", 3, 0..20, 1, { allItems || bow })
     private val chargeVariation by setting("Charge Variation", 5, 0..20, 1, { allItems || bow })
+    private val bowbomb by setting("Bow Bomb", false)
 
     private var lastUsedHand = EnumHand.MAIN_HAND
     private var randomVariation = 0

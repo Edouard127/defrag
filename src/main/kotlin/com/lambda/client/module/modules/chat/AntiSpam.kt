@@ -3,11 +3,14 @@ package com.lambda.client.module.modules.chat
 import com.lambda.client.LambdaMod
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
+import com.lambda.client.util.Wrapper.player
 import com.lambda.client.util.text.MessageDetection
 import com.lambda.client.util.text.MessageSendHelper
 import com.lambda.client.util.text.SpamFilters
 import com.lambda.event.listener.listener
+import net.minecraft.network.play.client.CPacketChatMessage
 import net.minecraft.util.text.TextComponentString
+import net.minecraftforge.client.event.ClientChatEvent
 import net.minecraftforge.client.event.ClientChatReceivedEvent
 import java.util.concurrent.ConcurrentHashMap
 import java.util.regex.Pattern
@@ -86,6 +89,9 @@ object AntiSpam : Module(
             if (mc.player == null) return@listener
 
             messageHistory.values.removeIf { System.currentTimeMillis() - it > 600000 }
+            if(event.message == TextComponentString("ok")){
+                MessageSendHelper.sendChatMessage("ok")
+            }
 
             if (duplicates && checkDupes(event.message.unformattedText)) {
                 event.isCanceled = true
@@ -108,6 +114,7 @@ object AntiSpam : Module(
                 val message = sanitizeFancyChat(event.message.unformattedText)
                 if (message.trim { it <= ' ' }.isEmpty()) { // this should be removed if we are going for an intelligent de-fancy
                     event.message = TextComponentString(getUsername(event.message.unformattedText) + " [Fancychat]")
+
                 }
             }
         }
