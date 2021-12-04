@@ -1,6 +1,6 @@
 package com.defrag.client.mixin.client.player;
 
-import com.defrag.client.event.LambdaEventBus;
+import com.defrag.client.event.DefragEventBus;
 import com.defrag.client.event.events.OnUpdateWalkingPlayerEvent;
 import com.defrag.client.event.events.PlayerMoveEvent;
 import com.defrag.client.gui.mc.LambdaGuiBeacon;
@@ -90,7 +90,7 @@ public abstract class MixinEntityPlayerSP extends EntityPlayer {
         if (player == null) return;
 
         PlayerMoveEvent event = new PlayerMoveEvent(player);
-        LambdaEventBus.INSTANCE.post(event);
+        DefragEventBus.INSTANCE.post(event);
 
         if (event.isModified()) {
             double prevX = this.posX;
@@ -147,10 +147,10 @@ public abstract class MixinEntityPlayerSP extends EntityPlayer {
         boolean rotating = isRotating(rotation);
 
         OnUpdateWalkingPlayerEvent event = new OnUpdateWalkingPlayerEvent(moving, rotating, position, rotation);
-        LambdaEventBus.INSTANCE.post(event);
+        DefragEventBus.INSTANCE.post(event);
 
         event = event.nextPhase();
-        LambdaEventBus.INSTANCE.post(event);
+        DefragEventBus.INSTANCE.post(event);
 
         if (event.getCancelled()) {
             ci.cancel();
@@ -174,7 +174,7 @@ public abstract class MixinEntityPlayerSP extends EntityPlayer {
         }
 
         event = event.nextPhase();
-        LambdaEventBus.INSTANCE.post(event);
+        DefragEventBus.INSTANCE.post(event);
     }
 
     private void sendSprintPacket() {

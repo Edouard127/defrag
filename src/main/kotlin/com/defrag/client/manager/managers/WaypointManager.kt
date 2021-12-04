@@ -3,7 +3,7 @@ package com.defrag.client.manager.managers
 import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
 import com.defrag.client.LambdaMod
-import com.defrag.client.event.LambdaEventBus
+import com.defrag.client.event.DefragEventBus
 import com.defrag.client.event.events.WaypointUpdateEvent
 import com.defrag.client.manager.Manager
 import com.defrag.client.util.ConfigUtils
@@ -42,7 +42,7 @@ object WaypointManager : Manager {
             false
         }
 
-        LambdaEventBus.post(WaypointUpdateEvent(WaypointUpdateEvent.Type.CLEAR, null))
+        DefragEventBus.post(WaypointUpdateEvent(WaypointUpdateEvent.Type.CLEAR, null))
         return success
     }
 
@@ -61,13 +61,13 @@ object WaypointManager : Manager {
 
     fun get(id: Int): Waypoint? {
         val waypoint = waypoints.firstOrNull { it.id == id }
-        LambdaEventBus.post(WaypointUpdateEvent(WaypointUpdateEvent.Type.GET, waypoint))
+        DefragEventBus.post(WaypointUpdateEvent(WaypointUpdateEvent.Type.GET, waypoint))
         return waypoint
     }
 
     fun get(pos: BlockPos, currentDimension: Boolean = false): Waypoint? {
         val waypoint = waypoints.firstOrNull { (if (currentDimension) it.currentPos() else it.pos) == pos }
-        LambdaEventBus.post(WaypointUpdateEvent(WaypointUpdateEvent.Type.GET, waypoint))
+        DefragEventBus.post(WaypointUpdateEvent(WaypointUpdateEvent.Type.GET, waypoint))
         return waypoint
     }
 
@@ -75,7 +75,7 @@ object WaypointManager : Manager {
         val pos = Wrapper.player?.positionVector?.toBlockPos()
         return if (pos != null) {
             val waypoint = add(pos, locationName)
-            LambdaEventBus.post(WaypointUpdateEvent(WaypointUpdateEvent.Type.ADD, waypoint))
+            DefragEventBus.post(WaypointUpdateEvent(WaypointUpdateEvent.Type.ADD, waypoint))
             waypoint
         } else {
             LambdaMod.LOG.error("Error during waypoint adding")
@@ -86,32 +86,32 @@ object WaypointManager : Manager {
     fun add(pos: BlockPos, locationName: String): Waypoint {
         val waypoint = dateFormatter(pos, locationName)
         waypoints.add(waypoint)
-        LambdaEventBus.post(WaypointUpdateEvent(WaypointUpdateEvent.Type.ADD, waypoint))
+        DefragEventBus.post(WaypointUpdateEvent(WaypointUpdateEvent.Type.ADD, waypoint))
         return waypoint
     }
 
     fun add(waypoint: Waypoint) {
         waypoints.add(waypoint)
-        LambdaEventBus.post(WaypointUpdateEvent(WaypointUpdateEvent.Type.ADD, waypoint))
+        DefragEventBus.post(WaypointUpdateEvent(WaypointUpdateEvent.Type.ADD, waypoint))
     }
 
     fun remove(pos: BlockPos, currentDimension: Boolean = false): Boolean {
         val waypoint = get(pos, currentDimension)
         val removed = waypoints.remove(waypoint)
-        LambdaEventBus.post(WaypointUpdateEvent(WaypointUpdateEvent.Type.REMOVE, waypoint))
+        DefragEventBus.post(WaypointUpdateEvent(WaypointUpdateEvent.Type.REMOVE, waypoint))
         return removed
     }
 
     fun remove(id: Int): Boolean {
         val waypoint = get(id) ?: return false
         val removed = waypoints.remove(waypoint)
-        LambdaEventBus.post(WaypointUpdateEvent(WaypointUpdateEvent.Type.REMOVE, waypoint))
+        DefragEventBus.post(WaypointUpdateEvent(WaypointUpdateEvent.Type.REMOVE, waypoint))
         return removed
     }
 
     fun clear() {
         waypoints.clear()
-        LambdaEventBus.post(WaypointUpdateEvent(WaypointUpdateEvent.Type.CLEAR, null))
+        DefragEventBus.post(WaypointUpdateEvent(WaypointUpdateEvent.Type.CLEAR, null))
     }
 
     fun genServer(): String? {

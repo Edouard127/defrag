@@ -35,12 +35,12 @@ internal object ForgeEventProcessor {
             mc.profiler.startSection("kbTickPost")
         }
 
-        LambdaEventBus.postProfiler(event)
+        DefragEventBus.postProfiler(event)
 
         if (event.phase == TickEvent.Phase.END && (prevWidth != mc.displayWidth || prevHeight != mc.displayHeight)) {
             prevWidth = mc.displayWidth
             prevHeight = mc.displayHeight
-            LambdaEventBus.post(ResolutionUpdateEvent(mc.displayWidth, mc.displayHeight))
+            DefragEventBus.post(ResolutionUpdateEvent(mc.displayWidth, mc.displayHeight))
         }
 
         mc.profiler.endSection()
@@ -51,18 +51,18 @@ internal object ForgeEventProcessor {
     fun onWorldRender(event: RenderWorldLastEvent) {
         ProjectionUtils.updateMatrix()
         LambdaTessellator.prepareGL()
-        LambdaEventBus.post(RenderWorldEvent())
+        DefragEventBus.post(RenderWorldEvent())
         LambdaTessellator.releaseGL()
     }
 
     @SubscribeEvent
     fun onRenderPre(event: RenderGameOverlayEvent.Pre) {
-        LambdaEventBus.post(event)
+        DefragEventBus.post(event)
     }
 
     @SubscribeEvent
     fun onRender(event: RenderGameOverlayEvent.Post) {
-        LambdaEventBus.post(event)
+        DefragEventBus.post(event)
     }
 
     @SubscribeEvent(priority = EventPriority.NORMAL, receiveCanceled = true)
@@ -77,14 +77,14 @@ internal object ForgeEventProcessor {
             }
         }
 
-        LambdaEventBus.post(event)
+        DefragEventBus.post(event)
         ModuleManager.onBind(Keyboard.getEventKey())
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun onChatSent(event: ClientChatEvent) {
         MessageDetection.Command.BARITONE.removedOrNull(event.message)?.let {
-            LambdaEventBus.post(BaritoneCommandEvent(it.toString().substringBefore(' ').lowercase()))
+            DefragEventBus.post(BaritoneCommandEvent(it.toString().substringBefore(' ').lowercase()))
         }
 
         if (MessageDetection.Command.LAMBDA detect event.message) {
@@ -95,59 +95,59 @@ internal object ForgeEventProcessor {
 
     @SubscribeEvent
     fun onEventMouse(event: InputEvent.MouseInputEvent) {
-        LambdaEventBus.post(event)
+        DefragEventBus.post(event)
     }
 
     @SubscribeEvent
     fun onChunkLoaded(event: ChunkEvent.Unload) {
-        LambdaEventBus.post(event)
+        DefragEventBus.post(event)
     }
 
     @SubscribeEvent
     fun onInputUpdate(event: InputUpdateEvent) {
-        LambdaEventBus.post(event)
+        DefragEventBus.post(event)
     }
 
     @SubscribeEvent
     fun onLivingEntityUseItemEventTick(event: LivingEntityUseItemEvent.Tick) {
-        LambdaEventBus.post(event)
+        DefragEventBus.post(event)
     }
 
     @SubscribeEvent
     fun onLeftClickBlock(event: PlayerInteractEvent.LeftClickBlock) {
-        LambdaEventBus.post(event)
+        DefragEventBus.post(event)
     }
 
     @SubscribeEvent
     fun onRenderBlockOverlay(event: RenderBlockOverlayEvent) {
-        LambdaEventBus.post(event)
+        DefragEventBus.post(event)
     }
 
     @SubscribeEvent
     fun onClientChat(event: ClientChatReceivedEvent) {
-        LambdaEventBus.post(event)
+        DefragEventBus.post(event)
     }
 
     @SubscribeEvent
     @Suppress("UNUSED_PARAMETER")
     fun onServerDisconnect(event: FMLNetworkEvent.ServerDisconnectionFromClientEvent) {
-        LambdaEventBus.post(ConnectionEvent.Disconnect())
+        DefragEventBus.post(ConnectionEvent.Disconnect())
     }
 
     @SubscribeEvent
     @Suppress("UNUSED_PARAMETER")
     fun onClientDisconnect(event: FMLNetworkEvent.ClientDisconnectionFromServerEvent) {
-        LambdaEventBus.post(ConnectionEvent.Disconnect())
+        DefragEventBus.post(ConnectionEvent.Disconnect())
     }
 
     @SubscribeEvent
     @Suppress("UNUSED_PARAMETER")
     fun onClientConnect(event: FMLNetworkEvent.ClientConnectedToServerEvent) {
-        LambdaEventBus.post(ConnectionEvent.Connect())
+        DefragEventBus.post(ConnectionEvent.Connect())
     }
 
     @SubscribeEvent
     fun onRenderFogColors(event: EntityViewRenderEvent.FogColors) {
-        LambdaEventBus.post(event)
+        DefragEventBus.post(event)
     }
 }

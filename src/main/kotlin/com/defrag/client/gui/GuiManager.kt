@@ -1,7 +1,7 @@
 package com.defrag.client.gui
 
 import com.defrag.client.LambdaMod
-import com.defrag.client.event.LambdaEventBus
+import com.defrag.client.event.DefragEventBus
 import com.defrag.client.gui.clickgui.LambdaClickGui
 import com.defrag.client.gui.hudgui.AbstractHudElement
 import com.defrag.client.gui.hudgui.LambdaHudGui
@@ -48,8 +48,8 @@ internal object GuiManager : com.defrag.client.AsyncLoader<List<Class<out Abstra
         LambdaClickGui.onGuiClosed()
         LambdaHudGui.onGuiClosed()
 
-        LambdaEventBus.subscribe(LambdaClickGui)
-        LambdaEventBus.subscribe(LambdaHudGui)
+        DefragEventBus.subscribe(LambdaClickGui)
+        DefragEventBus.subscribe(LambdaHudGui)
     }
 
     internal fun register(hudElement: AbstractHudElement) {

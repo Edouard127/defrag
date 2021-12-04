@@ -1,6 +1,6 @@
 package com.defrag.client.mixin.client.render;
 
-import com.defrag.client.event.LambdaEventBus;
+import com.defrag.client.event.DefragEventBus;
 import com.defrag.client.event.events.RenderOverlayEvent;
 import com.defrag.client.module.modules.movement.ElytraFlight;
 import com.defrag.client.module.modules.player.BlockInteraction;
@@ -24,7 +24,7 @@ public class MixinEntityRenderer {
 
     @Inject(method = "updateCameraAndRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiIngame;renderGameOverlay(F)V", shift = At.Shift.AFTER))
     public void updateCameraAndRender(float partialTicks, long nanoTime, CallbackInfo ci) {
-        LambdaEventBus.INSTANCE.post(new RenderOverlayEvent());
+        DefragEventBus.INSTANCE.post(new RenderOverlayEvent());
     }
 
     @ModifyVariable(method = "orientCamera", at = @At(value = "STORE", ordinal = 0), ordinal = 0)

@@ -1,6 +1,6 @@
 package com.defrag.client.mixin.client.player;
 
-import com.defrag.client.event.LambdaEventBus;
+import com.defrag.client.event.DefragEventBus;
 import com.defrag.client.event.events.PlayerAttackEvent;
 import com.defrag.client.module.modules.player.TpsSync;
 import com.defrag.client.util.TpsCalculator;
@@ -28,7 +28,7 @@ public class MixinPlayerControllerMP {
     public void attackEntity(EntityPlayer playerIn, Entity targetEntity, CallbackInfo ci) {
         if (targetEntity == null) return;
         PlayerAttackEvent event = new PlayerAttackEvent(targetEntity);
-        LambdaEventBus.INSTANCE.post(event);
+        DefragEventBus.INSTANCE.post(event);
         if (event.getCancelled()) {
             ci.cancel();
         }

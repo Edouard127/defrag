@@ -1,6 +1,6 @@
 package com.defrag.client.module
 
-import com.defrag.client.event.LambdaEventBus
+import com.defrag.client.event.DefragEventBus
 import com.defrag.client.event.events.ModuleToggleEvent
 import com.defrag.client.gui.clickgui.LambdaClickGui
 import com.defrag.client.module.modules.client.ClickGUI
@@ -51,7 +51,7 @@ abstract class AbstractModule(
 
     internal fun postInit() {
         enabled.value = enabledByDefault || alwaysEnabled
-        if (alwaysListening) LambdaEventBus.subscribe(this)
+        if (alwaysListening) DefragEventBus.subscribe(this)
     }
 
     fun toggle() {
@@ -103,13 +103,13 @@ abstract class AbstractModule(
             val enabled = alwaysEnabled || input
 
             if (prev != input && !alwaysEnabled) {
-                LambdaEventBus.post(ModuleToggleEvent(this))
+                DefragEventBus.post(ModuleToggleEvent(this))
             }
 
             if (enabled || alwaysListening) {
-                LambdaEventBus.subscribe(this)
+                DefragEventBus.subscribe(this)
             } else {
-                LambdaEventBus.unsubscribe(this)
+                DefragEventBus.unsubscribe(this)
             }
 
             enabled

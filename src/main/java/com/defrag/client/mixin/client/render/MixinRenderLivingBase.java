@@ -1,6 +1,6 @@
 package com.defrag.client.mixin.client.render;
 
-import com.defrag.client.event.LambdaEventBus;
+import com.defrag.client.event.DefragEventBus;
 import com.defrag.client.event.Phase;
 import com.defrag.client.event.events.RenderEntityEvent;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
@@ -17,7 +17,7 @@ public class MixinRenderLivingBase<T extends EntityLivingBase> {
         if (entity == null || !RenderEntityEvent.getRenderingEntities()) return;
 
         RenderEntityEvent eventModel = new RenderEntityEvent.Model(entity, Phase.PRE);
-        LambdaEventBus.INSTANCE.post(eventModel);
+        DefragEventBus.INSTANCE.post(eventModel);
     }
 
     @Inject(method = "renderModel", at = @At("RETURN"), cancellable = true)
@@ -25,6 +25,6 @@ public class MixinRenderLivingBase<T extends EntityLivingBase> {
         if (entity == null || !RenderEntityEvent.getRenderingEntities()) return;
 
         RenderEntityEvent eventModel = new RenderEntityEvent.Model(entity, Phase.POST);
-        LambdaEventBus.INSTANCE.post(eventModel);
+        DefragEventBus.INSTANCE.post(eventModel);
     }
 }

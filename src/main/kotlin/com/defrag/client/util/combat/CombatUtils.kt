@@ -1,6 +1,6 @@
 package com.defrag.client.util.combat
 
-import com.defrag.client.event.LambdaEventBus
+import com.defrag.client.event.DefragEventBus
 import com.defrag.client.event.SafeClientEvent
 import com.defrag.client.event.events.ConnectionEvent
 import com.defrag.client.util.items.attackDamage
@@ -121,7 +121,7 @@ object CombatUtils {
             cachedArmorValues.clear()
         }
 
-        LambdaEventBus.subscribe(this)
+        DefragEventBus.subscribe(this)
     }
 
     enum class PreferWeapon {

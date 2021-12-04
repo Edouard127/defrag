@@ -2,7 +2,7 @@
   "required": true,
   "compatibilityLevel": "JAVA_8",
   "package": "com.defrag.client.mixin.client",
-  "refmap": "mixins.lambda.refmap.json",
+  "refmap": "mixins.defrag.refmap.json",
   "client": [
     "MixinElytraSound",
     "MixinKeyBinding",

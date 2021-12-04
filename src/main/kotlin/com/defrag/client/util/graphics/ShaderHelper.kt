@@ -1,7 +1,7 @@
 package com.defrag.client.util.graphics
 
 import com.defrag.client.LambdaMod
-import com.defrag.client.event.LambdaEventBus
+import com.defrag.client.event.DefragEventBus
 import com.defrag.client.event.events.ResolutionUpdateEvent
 import com.defrag.client.util.Wrapper
 import com.defrag.event.listener.listener
@@ -66,7 +66,7 @@ class ShaderHelper(shaderIn: ResourceLocation, vararg frameBufferNames: String) 
             shader?.createBindFramebuffers(it.width, it.height) // this will not run if on Intel GPU or unsupported Shaders
         }
 
-        LambdaEventBus.subscribe(this)
+        DefragEventBus.subscribe(this)
     }
 
     fun getFrameBuffer(name: String) = frameBufferMap[name]

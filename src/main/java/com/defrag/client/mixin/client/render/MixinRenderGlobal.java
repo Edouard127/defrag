@@ -1,6 +1,6 @@
 package com.defrag.client.mixin.client.render;
 
-import com.defrag.client.event.LambdaEventBus;
+import com.defrag.client.event.DefragEventBus;
 import com.defrag.client.event.events.BlockBreakEvent;
 import com.defrag.client.event.events.RenderEntityEvent;
 import com.defrag.client.module.modules.player.Freecam;
@@ -29,7 +29,7 @@ public abstract class MixinRenderGlobal {
     @Inject(method = "sendBlockBreakProgress", at = @At("HEAD"))
     public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress, CallbackInfo ci) {
         BlockBreakEvent event = new BlockBreakEvent(breakerId, pos, progress);
-        LambdaEventBus.INSTANCE.post(event);
+        DefragEventBus.INSTANCE.post(event);
     }
 
     @Inject(method = "renderEntities", at = @At("HEAD"))

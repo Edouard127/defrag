@@ -2,7 +2,7 @@ package com.defrag.client.command
 
 import com.defrag.client.LambdaMod
 import com.defrag.client.event.ClientExecuteEvent
-import com.defrag.client.event.LambdaEventBus
+import com.defrag.client.event.DefragEventBus
 import com.defrag.client.module.modules.client.CommandConfig
 import com.defrag.client.util.StopTimer
 import com.defrag.client.util.text.MessageSendHelper
@@ -49,14 +49,14 @@ object CommandManager : AbstractCommandManager<ClientExecuteEvent>(),
 
     override fun register(builder: CommandBuilder<ClientExecuteEvent>): Command<ClientExecuteEvent> {
         synchronized(lockObject) {
-            LambdaEventBus.subscribe(builder)
+            DefragEventBus.subscribe(builder)
             return super.register(builder)
         }
     }
 
     override fun unregister(builder: CommandBuilder<ClientExecuteEvent>): Command<ClientExecuteEvent>? {
         synchronized(lockObject) {
-            LambdaEventBus.unsubscribe(builder)
+            DefragEventBus.unsubscribe(builder)
             return super.unregister(builder)
         }
     }

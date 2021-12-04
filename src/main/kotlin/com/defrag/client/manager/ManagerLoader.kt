@@ -1,7 +1,7 @@
 package com.defrag.client.manager
 
 import com.defrag.client.LambdaMod
-import com.defrag.client.event.LambdaEventBus
+import com.defrag.client.event.DefragEventBus
 import com.defrag.client.util.StopTimer
 import com.defrag.commons.utils.ClassUtils
 import com.defrag.commons.utils.ClassUtils.instance
@@ -25,7 +25,7 @@ internal object ManagerLoader : com.defrag.client.AsyncLoader<List<Class<out Man
         val stopTimer = StopTimer()
 
         for (clazz in input) {
-            LambdaEventBus.subscribe(clazz.instance)
+            DefragEventBus.subscribe(clazz.instance)
         }
 
         val time = stopTimer.stop()

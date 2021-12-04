@@ -1,6 +1,6 @@
 package com.defrag.client.gui.hudgui
 
-import com.defrag.client.event.LambdaEventBus
+import com.defrag.client.event.DefragEventBus
 import com.defrag.client.gui.rgui.windows.BasicWindow
 import com.defrag.client.module.modules.client.GuiColors
 import com.defrag.client.module.modules.client.Hud
@@ -58,12 +58,12 @@ abstract class AbstractHudElement(
 
     override fun onGuiInit() {
         super.onGuiInit()
-        if (alwaysListening || visible) LambdaEventBus.subscribe(this)
+        if (alwaysListening || visible) DefragEventBus.subscribe(this)
     }
 
     override fun onClosed() {
         super.onClosed()
-        if (alwaysListening || visible) LambdaEventBus.subscribe(this)
+        if (alwaysListening || visible) DefragEventBus.subscribe(this)
     }
 
     final override fun onTick() {
@@ -86,10 +86,10 @@ abstract class AbstractHudElement(
     init {
         visibleSetting.valueListeners.add { _, it ->
             if (it) {
-                LambdaEventBus.subscribe(this)
+                DefragEventBus.subscribe(this)
                 lastActiveTime = System.currentTimeMillis()
             } else if (!alwaysListening) {
-                LambdaEventBus.unsubscribe(this)
+                DefragEventBus.unsubscribe(this)
             }
         }
 

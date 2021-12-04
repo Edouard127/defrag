@@ -2,7 +2,7 @@ package com.defrag.client.plugin.api
 
 import com.defrag.client.command.ClientCommand
 import com.defrag.client.command.CommandManager
-import com.defrag.client.event.LambdaEventBus
+import com.defrag.client.event.DefragEventBus
 import com.defrag.client.gui.GuiManager
 import com.defrag.client.manager.Manager
 import com.defrag.client.module.ModuleManager
@@ -87,7 +87,7 @@ open class Plugin : Nameable {
 
         ConfigManager.register(config)
 
-        managers.forEach(LambdaEventBus::subscribe)
+        managers.forEach(DefragEventBus::subscribe)
         commands.forEach(CommandManager::register)
         modules.forEach(ModuleManager::register)
         hudElements.forEach(GuiManager::register)
@@ -105,7 +105,7 @@ open class Plugin : Nameable {
         ConfigManager.unregister(config)
 
         managers.forEach {
-            LambdaEventBus.unsubscribe(it)
+            DefragEventBus.unsubscribe(it)
             ListenerManager.unregister(it)
         }
         commands.forEach {

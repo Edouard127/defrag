@@ -1,6 +1,6 @@
 package com.defrag.client.util
 
-import com.defrag.client.event.LambdaEventBus
+import com.defrag.client.event.DefragEventBus
 import com.defrag.client.event.events.ConnectionEvent
 import com.defrag.client.event.events.PacketEvent
 import com.defrag.client.util.CircularArray.Companion.average
@@ -45,6 +45,6 @@ object TpsCalculator {
     }
 
     init {
-        LambdaEventBus.subscribe(this)
+        DefragEventBus.subscribe(this)
     }
 }

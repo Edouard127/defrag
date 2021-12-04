@@ -9,23 +9,23 @@ import org.spongepowered.asm.mixin.Mixins;
 
 import java.util.Map;
 
-@IFMLLoadingPlugin.Name("LambdaMixinLoader")
+@IFMLLoadingPlugin.Name("DefragMixinLoader")
 @IFMLLoadingPlugin.MCVersion("1.12.2")
 public class MixinLoaderForge implements IFMLLoadingPlugin {
 
     /* This is NOT using LambdaMod, as importing it causes the issue described here: https://github.com/SpongePowered/Mixin/issues/388 */
-    public static final Logger log = LogManager.getLogger("Lambda");
+    public static final Logger log = LogManager.getLogger("Defrag");
     private static boolean isObfuscatedEnvironment = false;
 
     public MixinLoaderForge() {
-        log.info("Lambda and Baritone mixins initializing...");
+        log.info("Defrag and Baritone mixins initializing...");
 
         MixinBootstrap.init();
 
-        Mixins.addConfigurations("mixins.lambda.json", "mixins.baritone.json");
+        Mixins.addConfigurations("mixins.defrag.json", "mixins.baritone.json");
         MixinEnvironment.getDefaultEnvironment().setObfuscationContext("searge");
 
-        log.info("Lambda and Baritone mixins initialised.");
+        log.info("Defrag and Baritone mixins initialised.");
 
         log.info(MixinEnvironment.getDefaultEnvironment().getObfuscationContext());
     }

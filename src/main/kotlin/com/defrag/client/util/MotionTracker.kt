@@ -1,6 +1,6 @@
 package com.defrag.client.util
 
-import com.defrag.client.event.LambdaEventBus
+import com.defrag.client.event.DefragEventBus
 import com.defrag.client.util.graphics.LambdaTessellator
 import com.defrag.client.util.threads.safeListener
 import net.minecraft.entity.Entity
@@ -136,6 +136,6 @@ class MotionTracker(targetIn: Entity?, private val trackLength: Int = 20) {
     }
 
     init {
-        LambdaEventBus.subscribe(this)
+        DefragEventBus.subscribe(this)
     }
 }

@@ -2,7 +2,7 @@ package com.defrag.client.module
 
 import com.defrag.client.AsyncLoader
 import com.defrag.client.LambdaMod
-import com.defrag.client.event.LambdaEventBus
+import com.defrag.client.event.DefragEventBus
 import com.defrag.client.util.AsyncCachedValue
 import com.defrag.client.util.StopTimer
 import com.defrag.client.util.TimeUnit
@@ -50,14 +50,14 @@ object ModuleManager : AsyncLoader<List<Class<out AbstractModule>>> {
     internal fun register(module: AbstractModule) {
         moduleSet.add(module)
         if (module.enabledByDefault || module.alwaysEnabled) module.enable()
-        if (module.alwaysListening) LambdaEventBus.subscribe(module)
+        if (module.alwaysListening) DefragEventBus.subscribe(module)
 
         modulesDelegate.update()
     }
 
     internal fun unregister(module: AbstractModule) {
         moduleSet.remove(module)
-        LambdaEventBus.unsubscribe(module)
+        DefragEventBus.unsubscribe(module)
 
         modulesDelegate.update()
     }

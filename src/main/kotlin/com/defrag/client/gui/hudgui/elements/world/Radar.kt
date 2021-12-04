@@ -1,6 +1,6 @@
 package com.defrag.client.gui.hudgui.elements.world
 
-import com.defrag.client.event.LambdaEventBus.post
+import com.defrag.client.event.DefragEventBus.post
 import com.defrag.client.event.SafeClientEvent
 import com.defrag.client.event.events.RenderRadarEvent
 import com.defrag.client.gui.hudgui.HudElement

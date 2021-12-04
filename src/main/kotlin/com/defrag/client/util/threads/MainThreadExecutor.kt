@@ -1,6 +1,6 @@
 package com.defrag.client.util.threads
 
-import com.defrag.client.event.LambdaEventBus
+import com.defrag.client.event.DefragEventBus
 import com.defrag.client.event.events.RunGameLoopEvent
 import com.defrag.client.util.Wrapper
 import com.defrag.event.listener.listener
@@ -19,7 +19,7 @@ object MainThreadExecutor {
             runJobs()
         }
 
-        LambdaEventBus.subscribe(this)
+        DefragEventBus.subscribe(this)
     }
 
     private fun runJobs() {

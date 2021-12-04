@@ -1,6 +1,6 @@
 package com.defrag.client.mixin.client.render;
 
-import com.defrag.client.event.LambdaEventBus;
+import com.defrag.client.event.DefragEventBus;
 import com.defrag.client.event.Phase;
 import com.defrag.client.event.events.RenderEntityEvent;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -18,12 +18,12 @@ public class MixinRenderManager {
         if (entity == null || !RenderEntityEvent.getRenderingEntities()) return;
 
         RenderEntityEvent eventAll = new RenderEntityEvent.All(entity, Phase.PRE);
-        LambdaEventBus.INSTANCE.post(eventAll);
+        DefragEventBus.INSTANCE.post(eventAll);
         if (eventAll.getCancelled()) ci.cancel();
 
         if (!(entity instanceof EntityLivingBase)) {
             RenderEntityEvent eventModel = new RenderEntityEvent.Model(entity, Phase.PRE);
-            LambdaEventBus.INSTANCE.post(eventModel);
+            DefragEventBus.INSTANCE.post(eventModel);
         }
     }
 
@@ -32,11 +32,11 @@ public class MixinRenderManager {
         if (entity == null || !RenderEntityEvent.getRenderingEntities()) return;
 
         RenderEntityEvent event = new RenderEntityEvent.All(entity, Phase.PERI);
-        LambdaEventBus.INSTANCE.post(event);
+        DefragEventBus.INSTANCE.post(event);
 
         if (!(entity instanceof EntityLivingBase)) {
             RenderEntityEvent eventModel = new RenderEntityEvent.Model(entity, Phase.POST);
-            LambdaEventBus.INSTANCE.post(eventModel);
+            DefragEventBus.INSTANCE.post(eventModel);
         }
     }
 
@@ -45,6 +45,6 @@ public class MixinRenderManager {
         if (entity == null || !RenderEntityEvent.getRenderingEntities()) return;
 
         RenderEntityEvent event = new RenderEntityEvent.All(entity, Phase.POST);
-        LambdaEventBus.INSTANCE.post(event);
+        DefragEventBus.INSTANCE.post(event);
     }
 }
