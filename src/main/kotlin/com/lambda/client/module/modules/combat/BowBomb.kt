@@ -54,10 +54,13 @@ object FastUse : Module(
     @SubscribeEvent
     fun onPacketSend(event: PacketEvent.Send) {
         if (event.getPacket() is CPacketPlayerDigging) {
+            MessageSendHelper.sendChatMessage("Debug 1")
             val packet = event.getPacket() as CPacketPlayerDigging
             if (packet.action == CPacketPlayerDigging.Action.RELEASE_USE_ITEM) {
+                MessageSendHelper.sendChatMessage("Debug 2")
                 val handStack = Helper.mc.player.getHeldItem(EnumHand.MAIN_HAND)
                 if (!handStack.isEmpty && handStack.item is ItemBow && Bows.getValue() as Boolean) {
+                    MessageSendHelper.sendChatMessage("Debug 3")
                     doSpoofs()
                     if (debug.getValue() as Boolean) MessageSendHelper.sendChatMessage("trying to spoof")
                 }
@@ -80,7 +83,7 @@ object FastUse : Module(
     }
 
 
-    fun doSpoofs() {
+    private fun doSpoofs() {
         if (System.currentTimeMillis() - lastShootTime >= Timeout.getValue()) {
             shooting = true
             lastShootTime = System.currentTimeMillis()
