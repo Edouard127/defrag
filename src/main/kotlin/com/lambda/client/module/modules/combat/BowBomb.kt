@@ -56,44 +56,50 @@ object FastUse : Module(
     init {
         safeListener<TickEvent.ClientTickEvent>
         {
-            if (mc.player.inventory.getCurrentItem().item == BOW && mc.player.itemInUseMaxCount >= 20) {
+            var stage = 0
+            val packet: Packet<*>? = null
+            val event = packet?.let { it1 -> PacketEvent.Send(stage, it1) }
+            if (mc.player.inventory.getCurrentItem().item == BOW /*&& mc.player.itemInUseMaxCount >= 20*/) {
+                if (event != null) {
+                    if (event.getPacket() is CPacketPlayerDigging) {
+                        MessageSendHelper.sendChatMessage("Debug 1")
+                        val packet = event.getPacket() as CPacketPlayerDigging
+                        if (packet.action == CPacketPlayerDigging.Action.RELEASE_USE_ITEM) {
+                            MessageSendHelper.sendChatMessage("Debug 2")
+                            val handStack = Helper.mc.player.getHeldItem(EnumHand.MAIN_HAND)
+                            if (!handStack.isEmpty && handStack.item is ItemBow && Bows) {
+                                MessageSendHelper.sendChatMessage("Debug 3")
+                                doSpoofs()
+                                if (debug) MessageSendHelper.sendChatMessage("trying to spoof")
+                            }
+                        }
+                    } else if (event.getPacket() is CPacketPlayerTryUseItem) {
+                        MessageSendHelper.sendChatMessage("Debug 4")
+                        val packet2 = event.getPacket() as CPacketPlayerTryUseItem
+                        if (packet2.hand == EnumHand.MAIN_HAND) {
+                            val handStack = Helper.mc.player.getHeldItem(EnumHand.MAIN_HAND)
+                            if (!handStack.isEmpty) {
+                                if (handStack.item is ItemEgg && eggs) {
+                                    doSpoofs()
+                                } else if (handStack.item is ItemEnderPearl && pearls) {
+                                    doSpoofs()
+                                } else if (handStack.item is ItemSnowball && snowballs) {
+                                    doSpoofs()
+                                }
+                            }
+                        }
+                    }
+                }
                 doSpoofs()
             }
         }
     }
 
 
-    @SubscribeEvent
-    fun onPacketSend(event: PacketEvent.Send) {
-        if (event.getPacket() is CPacketPlayerDigging) {
-            MessageSendHelper.sendChatMessage("Debug 1")
-            val packet = event.getPacket() as CPacketPlayerDigging
-            if (packet.action == CPacketPlayerDigging.Action.RELEASE_USE_ITEM) {
-                MessageSendHelper.sendChatMessage("Debug 2")
-                val handStack = Helper.mc.player.getHeldItem(EnumHand.MAIN_HAND)
-                if (!handStack.isEmpty && handStack.item is ItemBow && Bows) {
-                    MessageSendHelper.sendChatMessage("Debug 3")
-                    doSpoofs()
-                    if (debug) MessageSendHelper.sendChatMessage("trying to spoof")
-                }
-            }
-        } else if (event.getPacket() is CPacketPlayerTryUseItem) {
-            MessageSendHelper.sendChatMessage("Debug 4")
-            val packet2 = event.getPacket() as CPacketPlayerTryUseItem
-            if (packet2.hand == EnumHand.MAIN_HAND) {
-                val handStack = Helper.mc.player.getHeldItem(EnumHand.MAIN_HAND)
-                if (!handStack.isEmpty) {
-                    if (handStack.item is ItemEgg && eggs) {
-                        doSpoofs()
-                    } else if (handStack.item is ItemEnderPearl && pearls) {
-                        doSpoofs()
-                    } else if (handStack.item is ItemSnowball && snowballs) {
-                        doSpoofs()
-                    }
-                }
-            }
-        }
-    }
+
+
+
+
 
 
     private fun doSpoofs() {
@@ -103,11 +109,11 @@ object FastUse : Module(
             Helper.mc.player.connection.sendPacket(CPacketEntityAction(Helper.mc.player, CPacketEntityAction.Action.START_SPRINTING))
             for (index in 0 until spoofs) {
                 if (bypass) {
-                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY + 999, Helper.mc.player.posZ, false))
-                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY - 999, Helper.mc.player.posZ, true))
+                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY + 1e10, Helper.mc.player.posZ, false))
+                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY - 1e10, Helper.mc.player.posZ, true))
                 } else {
-                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY - 999, Helper.mc.player.posZ, true))
-                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY + 999, Helper.mc.player.posZ, false))
+                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY - 1e10, Helper.mc.player.posZ, true))
+                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY + 1e10, Helper.mc.player.posZ, false))
                 }
             }
             if (debug) MessageSendHelper.sendChatMessage("Spoofed")
