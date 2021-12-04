@@ -109,11 +109,11 @@ object FastUse : Module(
             Helper.mc.player.connection.sendPacket(CPacketEntityAction(Helper.mc.player, CPacketEntityAction.Action.START_SPRINTING))
             for (index in 0 until spoofs) {
                 if (bypass) {
-                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY + 1e10, Helper.mc.player.posZ, false))
-                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY - 1e10, Helper.mc.player.posZ, true))
+                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY + 1e-10, Helper.mc.player.posZ, false))
+                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY - 1e-10, Helper.mc.player.posZ, true))
                 } else {
-                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY - 1e10, Helper.mc.player.posZ, true))
-                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY + 1e10, Helper.mc.player.posZ, false))
+                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY - 1e-10, Helper.mc.player.posZ, true))
+                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY + 1e-10, Helper.mc.player.posZ, false))
                 }
             }
             if (debug) MessageSendHelper.sendChatMessage("Spoofed")
