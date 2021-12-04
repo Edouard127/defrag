@@ -7,7 +7,7 @@ open class EventStage : Event {
         return this.stage
     }
 
-    var stage = 0
+    open var stage = 0
 
     constructor() {}
     constructor(stage: Int) {

@@ -1,6 +1,5 @@
 package com.lambda.client.module.modules.combat
 
-import com.lambda.client.module.modules.PacketEvent
 import com.lambda.client.module.modules.combat.AntiCrystal.breakDelay
 import com.lambda.client.module.modules.combat.AntiCrystal.checkDelay
 import com.lambda.client.module.modules.combat.AntiCrystal.minDmg
@@ -19,6 +18,7 @@ import com.lambda.client.util.DamageUtil
 import com.lambda.client.util.MathUtil.square
 import com.lambda.client.util.BlockUtil.placeCrystalOnBlock
 import com.lambda.client.util.MathUtil.calcAngle
+import com.lambda.client.util.PacketEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
