@@ -325,7 +325,7 @@ private operator fun Any.iterator(): Iterator<BlockPos> {
 @SubscribeEvent
 fun <packet> onPacketSend(event: PacketEvent.Send) {
     if (event.stage == 0 && rotate.value.toBoolean() && rotating) {
-        if (event.getPacket<Packet<*>>() is CPacketPlayer) {
+        if (event.getPacket() is CPacketPlayer) {
         }
         ++rotationPacketsSpoofed
         if (rotationPacketsSpoofed >= rotations.value) {
