@@ -1,0 +1,38 @@
+package com.defrag.client.gui.rgui.windows
+
+import com.defrag.client.module.modules.client.ClickGUI
+import com.defrag.client.module.modules.client.GuiColors
+import com.defrag.client.setting.GuiConfig
+import com.defrag.client.setting.configs.AbstractConfig
+import com.defrag.client.util.graphics.RenderUtils2D
+import com.defrag.client.util.graphics.VertexHelper
+import com.defrag.client.util.math.Vec2d
+import com.defrag.client.util.math.Vec2f
+import com.defrag.commons.interfaces.Nameable
+
+/**
+ * Window with rectangle rendering
+ */
+open class BasicWindow(
+    name: String,
+    posX: Float,
+    posY: Float,
+    width: Float,
+    height: Float,
+    settingGroup: SettingGroup,
+    config: AbstractConfig<out Nameable> = GuiConfig
+) : CleanWindow(name, posX, posY, width, height, settingGroup, config) {
+
+    override fun onRender(vertexHelper: VertexHelper, absolutePos: Vec2f) {
+        super.onRender(vertexHelper, absolutePos)
+        RenderUtils2D.drawRoundedRectFilled(
+            vertexHelper,
+            Vec2d(0.0, 0.0),
+            Vec2f(renderWidth, renderHeight).toVec2d(),
+            ClickGUI.radius,
+            color = GuiColors.backGround
+        )
+
+    }
+
+}
