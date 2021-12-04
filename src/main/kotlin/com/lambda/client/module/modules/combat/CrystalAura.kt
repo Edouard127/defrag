@@ -64,7 +64,9 @@ import net.minecraft.util.math.Vec3d
 import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.fml.common.gameevent.InputEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
+import org.apache.commons.compress.archivers.zip.UnsupportedZipFeatureException
 import org.lwjgl.input.Keyboard
+import java.util.function.Predicate
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -674,8 +676,7 @@ private fun PlayerInteractEvent.getPlayer(): Player {
 
 }
 
-fun Any.getValue(): Any {
-    return getValue()
 
-}
+
+
 

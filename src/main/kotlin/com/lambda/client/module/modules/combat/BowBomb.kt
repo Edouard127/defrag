@@ -23,7 +23,9 @@ import net.minecraft.util.math.BlockPos
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.InputEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
+import org.apache.commons.compress.archivers.zip.UnsupportedZipFeatureException
 import java.lang.Thread.sleep
+import java.util.function.Predicate
 
 
 private var shooting = false
@@ -35,13 +37,13 @@ object FastUse : Module(
 ) {
     private val force by setting("Force", 150, 150..999, 0)
     private val debug by setting("Debug", false)
-    private val snowballs by setting("Debug", true)
+    private val snowballs by setting("Snowballs", true)
     private val bypass by setting("Bypass", false)
     private val spoofs by setting("Spoofs", 10, 1..300, 0)
     private val Timeout by setting("Timeout", 5000, 100..10000, 0)
     private val Bows by setting("Bow", true)
-    private val eggs by setting("Bow", false)
-    private val pearls by setting("Bow", false)
+    private val eggs by setting("Eggs", false)
+    private val pearls by setting("Ender pearls", false)
     private var ticks: Int = 0
 
     /*if(mc.player.inventory.getCurrentItem().item == BOW && mc.player.itemInUseMaxCount >= 20){
@@ -50,7 +52,17 @@ object FastUse : Module(
                     mc.player.connection.sendPacket(PositionRotation(mc.player.posX, mc.player.posY - force, mc.player.posZ, mc.player.rotationYaw, mc.player.rotationPitch, true) as Packet<*>)
                     mc.player.connection.sendPacket(CPacketPlayerDigging(CPacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, mc.player.horizontalFacing) as Packet<*>)
                     mc.player.connection.sendPacket(CPacketPlayerTryUseItem(EnumHand.OFF_HAND) as Packet<*>)
-                    mc.player.stopActiveHand()*/
+                  mc.player.stopActiveHand()*/
+    init {
+        safeListener<TickEvent.ClientTickEvent>
+        {
+            if (mc.player.inventory.getCurrentItem().item == BOW && mc.player.itemInUseMaxCount >= 20) {
+                doSpoofs()
+            }
+        }
+    }
+
+
     @SubscribeEvent
     fun onPacketSend(event: PacketEvent.Send) {
         if (event.getPacket() is CPacketPlayerDigging) {
@@ -59,22 +71,23 @@ object FastUse : Module(
             if (packet.action == CPacketPlayerDigging.Action.RELEASE_USE_ITEM) {
                 MessageSendHelper.sendChatMessage("Debug 2")
                 val handStack = Helper.mc.player.getHeldItem(EnumHand.MAIN_HAND)
-                if (!handStack.isEmpty && handStack.item is ItemBow && Bows.getValue() as Boolean) {
+                if (!handStack.isEmpty && handStack.item is ItemBow && Bows) {
                     MessageSendHelper.sendChatMessage("Debug 3")
                     doSpoofs()
-                    if (debug.getValue() as Boolean) MessageSendHelper.sendChatMessage("trying to spoof")
+                    if (debug) MessageSendHelper.sendChatMessage("trying to spoof")
                 }
             }
         } else if (event.getPacket() is CPacketPlayerTryUseItem) {
+            MessageSendHelper.sendChatMessage("Debug 4")
             val packet2 = event.getPacket() as CPacketPlayerTryUseItem
             if (packet2.hand == EnumHand.MAIN_HAND) {
                 val handStack = Helper.mc.player.getHeldItem(EnumHand.MAIN_HAND)
                 if (!handStack.isEmpty) {
-                    if (handStack.item is ItemEgg && eggs.getValue() as Boolean) {
+                    if (handStack.item is ItemEgg && eggs) {
                         doSpoofs()
-                    } else if (handStack.item is ItemEnderPearl && pearls.getValue() as Boolean) {
+                    } else if (handStack.item is ItemEnderPearl && pearls) {
                         doSpoofs()
-                    } else if (handStack.item is ItemSnowball && snowballs.getValue() as Boolean) {
+                    } else if (handStack.item is ItemSnowball && snowballs) {
                         doSpoofs()
                     }
                 }
@@ -84,24 +97,27 @@ object FastUse : Module(
 
 
     private fun doSpoofs() {
-        if (System.currentTimeMillis() - lastShootTime >= Timeout.getValue()) {
+        if (System.currentTimeMillis() - lastShootTime >= Timeout) {
             shooting = true
             lastShootTime = System.currentTimeMillis()
             Helper.mc.player.connection.sendPacket(CPacketEntityAction(Helper.mc.player, CPacketEntityAction.Action.START_SPRINTING))
-            for (index in 0 until spoofs.getValue() as Int) {
-                if (bypass.getValue() as Boolean) {
-                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY + 1e-10, Helper.mc.player.posZ, false))
-                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY - 1e-10, Helper.mc.player.posZ, true))
+            for (index in 0 until spoofs) {
+                if (bypass) {
+                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY + 999, Helper.mc.player.posZ, false))
+                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY - 999, Helper.mc.player.posZ, true))
                 } else {
-                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY - 1e-10, Helper.mc.player.posZ, true))
-                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY + 1e-10, Helper.mc.player.posZ, false))
+                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY - 999, Helper.mc.player.posZ, true))
+                    Helper.mc.player.connection.sendPacket(CPacketPlayer.Position(Helper.mc.player.posX, Helper.mc.player.posY + 999, Helper.mc.player.posZ, false))
                 }
             }
-            if (debug.getValue() as Boolean) MessageSendHelper.sendChatMessage("Spoofed")
+            if (debug) MessageSendHelper.sendChatMessage("Spoofed")
             shooting = false
         }
     }
 }
+
+
+
 
 
 
