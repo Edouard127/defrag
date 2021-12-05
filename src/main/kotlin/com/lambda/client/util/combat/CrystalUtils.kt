@@ -48,7 +48,7 @@ object CrystalUtils {
     /** Checks if the block is valid for placing crystal */
     fun SafeClientEvent.canPlaceOn(pos: BlockPos): Boolean {
         val block = mc.world?.getBlockState(pos)?.block
-        return if(block != Blocks.ANVIL || block != Blocks.CRAFTING_TABLE || block != Blocks.ENCHANTING_TABLE || block != Blocks.ENDER_CHEST) {
+        return if(block != Blocks.ANVIL || block != Blocks.CRAFTING_TABLE || block != Blocks.ENCHANTING_TABLE || block != Blocks.ENDER_CHEST || block != Blocks.BLACK_SHULKER_BOX || block != Blocks.BLUE_SHULKER_BOX || block != Blocks.BROWN_SHULKER_BOX || block != Blocks.GREEN_SHULKER_BOX || block != Blocks.PINK_SHULKER_BOX || block != Blocks.CYAN_SHULKER_BOX || block != Blocks.CYAN_SHULKER_BOX || block != Blocks.GRAY_SHULKER_BOX || block != Blocks.GRAY_SHULKER_BOX || block != Blocks.LIGHT_BLUE_SHULKER_BOX || block != Blocks.LIME_SHULKER_BOX || block != Blocks.ORANGE_SHULKER_BOX || block != Blocks.PURPLE_SHULKER_BOX || block != Blocks.RED_SHULKER_BOX || block != Blocks.SILVER_SHULKER_BOX || block != Blocks.WHITE_SHULKER_BOX || block != Blocks.YELLOW_SHULKER_BOX) {
             block == Blocks.BEDROCK || block == Blocks.OBSIDIAN
         } else false
     }
