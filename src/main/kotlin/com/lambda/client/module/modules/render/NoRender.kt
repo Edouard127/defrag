@@ -166,7 +166,7 @@ object NoRender : Module(
         if (!enchantingTableSnow || tileEntity !is TileEntityEnchantmentTable) return false
 
         runSafe {
-            val blockState = Blocks.SNOW_LAYER.defaultState.withProperty(BlockSnow.LAYERS, 7)
+            val blockState = Blocks.BOOKSHELF.defaultState
             world.setBlockState(tileEntity.pos, blockState)
             world.markTileEntityForRemoval(tileEntity)
         }
