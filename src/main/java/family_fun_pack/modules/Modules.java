@@ -13,7 +13,7 @@ import java.util.ArrayList;
 @SideOnly(Side.CLIENT)
 public class Modules {
 
-  private List<Module> modules;
+  private List<family_fun_pack.modules.Module> modules;
 
   private Configuration configuration;
 
@@ -21,7 +21,7 @@ public class Modules {
 
     this.configuration = new Configuration(configuration_file);
 
-    this.modules = new ArrayList<Module>();
+    this.modules = new ArrayList<family_fun_pack.modules.Module>();
     this.modules.add(new BookFormatModule());
     this.modules.add(new CommandsModule());
     this.modules.add(new IgnoreModule());

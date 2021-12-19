@@ -16,7 +16,7 @@ import family_fun_pack.commands.Commands;
 @SideOnly(Side.CLIENT)
 public class CommandsModule extends Module {
 
-  private static String ESCAPE_CHARACTER = ";";
+  private static String ESCAPE_CHARACTER = ".";
 
   private Commands commands;
 

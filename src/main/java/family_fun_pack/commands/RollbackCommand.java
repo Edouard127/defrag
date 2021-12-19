@@ -1,6 +1,5 @@
 package family_fun_pack.commands;
 
-import com.lambda.client.module.modules.player.RollBackDupeXYZ;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.EnumPacketDirection;
@@ -114,10 +113,8 @@ public class RollbackCommand extends Command implements PacketListener {
       }
 
       if(mode != Mode.TMP) this.onDisconnect();
-      if(RollBackDupeXYZ.INSTANCE.getXyz()) {
-          return String.format("Rollback to (%.2f, %.2f, %.2f)", this.position.x, this.position.y, this.position.z);
-      }
-      else return String.format("Rollback to (69, 69, 69");
+
+      return String.format("Rollback to (%.2f, %.2f, %.2f)", this.position.x, this.position.y, this.position.z);
     }
 
     return "Rollback initialized";

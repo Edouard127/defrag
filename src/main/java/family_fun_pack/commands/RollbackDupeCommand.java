@@ -1,6 +1,5 @@
 package family_fun_pack.commands;
 
-import family_fun_pack.modules.CommandsModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.AbstractChestHorse;
@@ -12,7 +11,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import java.util.List;
 
 import family_fun_pack.FamilyFunPack;
-//import family_fun_pack.modules.CommandsModule;
+import family_fun_pack.modules.CommandsModule;
 import family_fun_pack.modules.PacketInterceptionModule;
 
 // rollback dupe automation
@@ -24,7 +23,7 @@ public class RollbackDupeCommand extends Command {
   private boolean on;
 
   public RollbackDupeCommand() {
-    super("d");
+    super("rdupe");
   }
 
   public String usage() {
@@ -71,7 +70,7 @@ public class RollbackDupeCommand extends Command {
           }
         }
 
-        if(ddonkey == null) return "where's donkey ?";
+        //if(ddonkey == null) return "where's donkey ?";
 
         cmd.handleCommand(String.format("use sneak %d", ddonkey.getEntityId()));
 

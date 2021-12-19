@@ -50,7 +50,7 @@ sourceSets.main.java {
     srcDirs += 'src/main/command'
     srcDirs += 'src/main/commons'
     srcDirs += 'src/main/event'
-    srcDirs += 'src/main/kotlin/family_fun_pack'
+    srcDirs += 'src/main/java/family_fun_pack'
 
 }
 configurations {

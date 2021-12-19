@@ -60,7 +60,9 @@ public class SpecialTagCompound extends NBTTagCompound {
     return copy;
   }
 
-
+  public boolean hasNoTags() { // do not clear me
+    return false;
+  }
 
   public void setTag(String key, NBTBase value) {
     this.empty = false;
