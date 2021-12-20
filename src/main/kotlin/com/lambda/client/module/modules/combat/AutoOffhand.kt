@@ -15,6 +15,7 @@ import com.lambda.client.util.items.*
 import com.lambda.client.util.text.MessageSendHelper
 import com.lambda.client.util.threads.safeListener
 import com.lambda.commons.extension.next
+import javafx.scene.input.MouseButton
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.entity.item.EntityEnderCrystal
 import net.minecraft.entity.monster.EntityMob
@@ -30,6 +31,7 @@ import net.minecraft.potion.PotionUtils
 import net.minecraftforge.fml.common.gameevent.InputEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import org.lwjgl.input.Keyboard
+import org.lwjgl.input.Mouse
 import java.lang.Float.max
 import kotlin.math.ceil
 
@@ -55,6 +57,7 @@ object AutoOffhand : Module(
     private val checkAuraG by setting("Check Aura G", true, { type == Type.GAPPLE && offhandGapple })
     private val checkWeaponG by setting("Check Weapon G", false, { type == Type.GAPPLE && offhandGapple })
     private val checkCAGapple by setting("Check CrystalAura G", true, { type == Type.GAPPLE && offhandGapple && !offhandCrystal })
+    private val forceGapple by setting("Keep gapple when eating", Bind(), { type == Type.GAPPLE && offhandGapple })
 
     // Strength
     private val offhandStrength by setting("Offhand Strength", false, { type == Type.STRENGTH })
@@ -91,6 +94,8 @@ object AutoOffhand : Module(
     val confirmTimer = TickTimer(TimeUnit.TICKS)
     val movingTimer = TickTimer(TimeUnit.TICKS)
     private var maxDamage = 0f
+    var isRightClickingEmpty: Boolean = false
+
 
     init {
         safeListener<InputEvent.KeyInputEvent> {
@@ -100,8 +105,10 @@ object AutoOffhand : Module(
                 bindGapple.isDown(key) -> switchToType(Type.GAPPLE)
                 bindStrength.isDown(key) -> switchToType(Type.STRENGTH)
                 bindCrystal.isDown(key) -> switchToType(Type.CRYSTAL)
+
             }
         }
+
 
         safeListener<PacketEvent.Receive> {
             if (it.packet !is SPacketConfirmTransaction || it.packet.windowId != 0 || !transactionLog.containsKey(it.packet.actionNumber)) return@safeListener
@@ -113,12 +120,14 @@ object AutoOffhand : Module(
         }
 
         safeListener<TickEvent.ClientTickEvent>(1100) {
+
             if (player.isDead || player.health <= 0.0f) return@safeListener
 
             if (!confirmTimer.tick(confirmTimeout.toLong(), false)) return@safeListener
             if (!movingTimer.tick(delay.toLong(), false)) return@safeListener // Delays `delay` ticks
 
             updateDamage()
+
 
             if (!player.inventory.itemStack.isEmpty) { // If player is holding an in inventory
                 if (mc.currentScreen is GuiContainer) { // If inventory is open (playing moving item)
@@ -128,8 +137,14 @@ object AutoOffhand : Module(
                 }
                 return@safeListener
             }
+            if(Mouse.getEventButtonState()){
+                MessageSendHelper.sendChatMessage("njrhyfgvuyggyiufehgrtguiy")
+            }
+            /*while(Mouse.next()){
+                MessageSendHelper.sendChatMessage("hergbrihy")
+            }*/ //Event when mouse is moved
 
-            switchToType(getType(), true)
+                switchToType(getType(), true)
         }
     }
 

@@ -1,4 +1,4 @@
-package com.lambda.client.module.modules.combat
+    package com.lambda.client.module.modules.combat
 
 import com.lambda.client.event.Phase
 import com.lambda.client.event.SafeClientEvent
@@ -16,8 +16,6 @@ import com.lambda.client.mixin.extension.id
 import com.lambda.client.mixin.extension.packetAction
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
-import com.lambda.client.module.modules.combat.AutoOffhand.checkOffhandItem
-import com.lambda.client.module.modules.combat.AutoOffhand.getItemSlot
 import com.lambda.client.module.modules.combat.CombatSetting.checkEating
 import com.lambda.client.util.*
 import com.lambda.client.util.combat.CombatUtils.equipBestWeapon
@@ -64,9 +62,7 @@ import net.minecraft.util.math.Vec3d
 import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.fml.common.gameevent.InputEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
-import org.apache.commons.compress.archivers.zip.UnsupportedZipFeatureException
 import org.lwjgl.input.Keyboard
-import java.util.function.Predicate
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
