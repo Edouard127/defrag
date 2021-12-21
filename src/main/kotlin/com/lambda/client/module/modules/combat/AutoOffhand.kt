@@ -59,7 +59,8 @@ object AutoOffhand : Module(
     private val checkAuraG by setting("Check Aura G", true, { type == Type.GAPPLE && offhandGapple })
     private val checkWeaponG by setting("Check Weapon G", false, { type == Type.GAPPLE && offhandGapple })
     private val checkCAGapple by setting("Check CrystalAura G", true, { type == Type.GAPPLE && offhandGapple && !offhandCrystal })
-    private var forceGapple by setting("Force keeping gapple", false)
+    public var forceGapple by setting("Force keeping gapple", false)
+    public var forceGappleValue: Boolean = false
 
     // Strength
     private val offhandStrength by setting("Offhand Strength", false, { type == Type.STRENGTH })
@@ -138,16 +139,19 @@ object AutoOffhand : Module(
                 }
                 return@safeListener
             }
+            if(forceGapple){
+                var forceGappleValue: Boolean = false
+            }
             if(Mouse.getEventButtonState()){
-                forceGapple = true
+                forceGappleValue = true
             } //Event when any fucking button on the mouse is pressed
             if(!Mouse.getEventButtonState()){
-                forceGapple = false
+                forceGappleValue = false
             }
             /*while(Mouse.next()){
                 MessageSendHelper.sendChatMessage("hergbrihy")
             }*/ //Event when mouse is moved
-            if(!forceGapple) {
+            if(!forceGappleValue) {
                 switchToType(getType(), true)
             }
             if(player.health <= 2){
