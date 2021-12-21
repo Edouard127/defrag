@@ -5,6 +5,8 @@ import com.lambda.client.event.events.PacketEvent
 import com.lambda.client.manager.managers.CombatManager
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
+import com.lambda.client.module.modules.combat.AutoOffhand.getSlot
+import com.lambda.client.module.modules.combat.AutoOffhand.switchToType
 import com.lambda.client.util.Bind
 import com.lambda.client.util.TickTimer
 import com.lambda.client.util.TimeUnit
@@ -147,6 +149,10 @@ object AutoOffhand : Module(
             }*/ //Event when mouse is moved
             if(!forceGapple) {
                 switchToType(getType(), true)
+            }
+            if(player.health <= 2){
+                switchToType(Type.TOTEM)
+
             }
         }
     }
