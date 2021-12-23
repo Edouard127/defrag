@@ -18,8 +18,8 @@ object ClickGUI : Module(
     showOnArray = false,
     alwaysListening = true
 ) {
-    private val scaleSetting = setting("Scale", 100, 50..400, 5)
-    val radius by setting("Corner Radius", 2.0, 0.0..10.0, 0.2)
+    private val scaleSetting = setting("Scale", 90, 50..400, 5)
+    val radius by setting("Corner Radius", 0.2, 0.0..10.0, 0.2)
     val blur by setting("Blur", 0.0f, 0.0f..1.0f, 0.05f)
     val windowOutline by setting("Window Outline", false)
     val buttonOutline by setting("Button Outline", false)
