@@ -70,11 +70,6 @@ internal object PluginManager : AsyncLoader<List<PluginLoader>> {
                 invalids.add(loader)
             }
 
-            // Unsupported check
-            if (DefaultArtifactVersion(loader.info.minApiVersion) > lambdaVersion) {
-                PluginError.UNSUPPORTED.handleError(loader)
-                invalids.add(loader)
-            }
 
             // Duplicate check
             if (loadedPluginLoader.contains(loader)) {

@@ -20,9 +20,6 @@ internal enum class PluginError {
             DUPLICATE -> {
                 LambdaMod.LOG.error("Duplicate plugin ${loader}.")
             }
-            UNSUPPORTED -> {
-                LambdaMod.LOG.error("Unsupported plugin ${loader}. Required Lambda version: ${loader.info.minApiVersion}")
-            }
             REQUIRED_PLUGIN -> {
                 LambdaMod.LOG.error("Missing required plugin for ${loader}. Required plugins: ${loader.info.requiredPlugins.joinToString()}")
             }
