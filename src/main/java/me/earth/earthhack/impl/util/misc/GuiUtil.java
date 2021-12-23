@@ -136,7 +136,7 @@ public class GuiUtil {
     }
 
     public static double getDistance(SnapPoint point, HudElement element) {
-        me.earth.earthhack.impl.gui.hud.rewrite.SnapPoint.Orientation orientation = point.getOrientation();
+        SnapPoint.Orientation orientation = point.getOrientation();
         switch (orientation) {
             case TOP:
                 return Math.min(Math.abs(point.getLocation() - element.getY()), Math.abs(point.getLocation() - (element.getY() + element.getHeight())));
@@ -155,7 +155,7 @@ public class GuiUtil {
     }
 
     public static void updatePosition(SnapPoint point, HudElement element, boolean inverted) {
-        me.earth.earthhack.impl.gui.hud.rewrite.SnapPoint.Orientation orientation = point.getOrientation();
+        SnapPoint.Orientation orientation = point.getOrientation();
         switch (orientation) {
             case TOP:
                 element.setY(inverted ? (point.getLocation() - element.getHeight()) : point.getLocation());

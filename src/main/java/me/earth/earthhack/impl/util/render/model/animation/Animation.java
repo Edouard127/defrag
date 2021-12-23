@@ -1,9 +1,9 @@
 package me.earth.earthhack.impl.util.render.model.animation;
 
-import com.jassimp.AiAnimation;
-import com.jassimp.AiNode;
-import com.jassimp.AiNodeAnim;
-import com.jassimp.AiScene;
+import jassimp.AiAnimation;
+import jassimp.AiNode;
+import jassimp.AiNodeAnim;
+import jassimp.AiScene;
 import me.earth.earthhack.api.util.interfaces.Nameable;
 import me.earth.earthhack.impl.util.render.model.AssimpJomlProvider;
 import org.joml.Matrix4f;

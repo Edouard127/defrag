@@ -59,7 +59,6 @@ object AntiCrystal : com.lambda.client.module.Module(
     public val packet by setting("Packet", true)
     public val rotations by setting("Spoofs", 1, 1..20, 20)
 }
-
 fun fullNullCheck(): Boolean {
     return mc.player == null || mc.world == null
 }

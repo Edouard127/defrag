@@ -70,7 +70,6 @@ public class Flight extends Module {
         return mode.getValue().toString();
     }
 
-
     @Override
     protected void onEnable() {
         constantiamStage = 0;

@@ -1,6 +1,6 @@
 package me.earth.earthhack.impl.util.render.model;
 
-import com.jassimp.AiWrapperProvider;
+import jassimp.AiWrapperProvider;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.util.Color;
 import org.lwjgl.util.vector.Matrix4f;

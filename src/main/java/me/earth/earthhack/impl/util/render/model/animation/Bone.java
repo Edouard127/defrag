@@ -1,6 +1,6 @@
 package me.earth.earthhack.impl.util.render.model.animation;
 
-import com.jassimp.AiNodeAnim;
+import jassimp.AiNodeAnim;
 import me.earth.earthhack.impl.util.math.GlMathUtil;
 import me.earth.earthhack.impl.util.math.MathUtil;
 import me.earth.earthhack.impl.util.render.model.AssimpJomlProvider;

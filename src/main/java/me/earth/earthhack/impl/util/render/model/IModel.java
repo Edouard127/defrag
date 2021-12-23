@@ -1,6 +1,6 @@
 package me.earth.earthhack.impl.util.render.model;
 
-import com.jassimp.AiScene;
+import jassimp.AiScene;
 import me.earth.earthhack.api.util.interfaces.Nameable;
 
 public interface IModel extends Nameable

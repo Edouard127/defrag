@@ -1,6 +1,6 @@
 package me.earth.earthhack.impl.util.render.model;
 
-import com.jassimp.AiTextureType;
+import jassimp.AiTextureType;
 import me.earth.earthhack.impl.util.render.image.EfficientTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 

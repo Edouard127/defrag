@@ -123,12 +123,12 @@ public class HudElementFrame extends Frame {
 
     private void updatePositions() {
         float offsetY = getHeight() + 1;
-        for (me.earth.earthhack.impl.gui.click.component.Component component : getComponents()) {
+        for (Component component : getComponents()) {
             component.setOffsetY(offsetY);
             component.moved(getPosX(), getPosY() + getScrollY());
             if (component instanceof HudElementComponent) {
                 if (component.isExtended()) {
-                    for (me.earth.earthhack.impl.gui.click.component.Component component1 : ((HudElementComponent) component).getComponents()) {
+                    for (Component component1 : ((HudElementComponent) component).getComponents()) {
                         if (component1 instanceof BooleanComponent) {
                             if (Visibilities.VISIBILITY_MANAGER.isVisible(((BooleanComponent) component1).getBooleanSetting())) {
                                 offsetY += component1.getHeight();
@@ -176,7 +176,7 @@ public class HudElementFrame extends Frame {
 
     private float getCurrentHeight() {
         float cHeight = 1;
-        for (me.earth.earthhack.impl.gui.click.component.Component component : getComponents()) {
+        for (Component component : getComponents()) {
             if (component instanceof HudElementComponent) {
                 if (component.isExtended()) {
                     for (Component component1 : ((HudElementComponent) component).getComponents()) {

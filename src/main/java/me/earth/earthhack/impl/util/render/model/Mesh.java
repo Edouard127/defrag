@@ -16,6 +16,7 @@ import java.util.List;
 public class Mesh
 {
 
+    private final VertexBuffer meshBuffer;
     private FloatBuffer vertexBuffer;
     private ByteBuffer indexBuffer;
     private List<Vertex> vertices;
@@ -31,6 +32,7 @@ public class Mesh
         this.vertices = vertices;
         this.indices = indices;
         this.textures = textures;
+        this.meshBuffer = new VertexBuffer(ModelUtil.POS_NORMAL_TEX);
         // setupMesh();
     }
 
@@ -39,6 +41,7 @@ public class Mesh
         this.vertices = vertices;
         this.indices = indices;
         this.textures = textures;
+        this.meshBuffer = new VertexBuffer(format);
         // setupMesh();
     }
 
@@ -82,6 +85,10 @@ public class Mesh
         meshBuffer.unbindBuffer();
     }*/
 
+    public VertexBuffer getBuffer()
+    {
+        return meshBuffer;
+    }
 
     public int getVAO()
     {

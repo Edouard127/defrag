@@ -1,6 +1,6 @@
 package me.earth.earthhack.impl.util.render.model.animation;
 
-import com.jassimp.AiMesh;
+import jassimp.AiMesh;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;

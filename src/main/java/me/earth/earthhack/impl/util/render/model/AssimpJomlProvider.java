@@ -1,6 +1,6 @@
 package me.earth.earthhack.impl.util.render.model;
 
-import com.jassimp.AiWrapperProvider;
+import jassimp.AiWrapperProvider;
 import me.earth.earthhack.impl.util.render.model.animation.SourceNode;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;

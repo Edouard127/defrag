@@ -1,9 +1,9 @@
 package me.earth.earthhack.impl.util.render.model.animation;
 
-import com.jassimp.AiBone;
-import com.jassimp.AiBoneWeight;
-import com.jassimp.AiMesh;
-import com.jassimp.AiScene;
+import jassimp.AiBone;
+import jassimp.AiBoneWeight;
+import jassimp.AiMesh;
+import jassimp.AiScene;
 import me.earth.earthhack.impl.util.client.ModuleUtil;
 import me.earth.earthhack.impl.util.render.model.*;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -41,6 +41,10 @@ public class RiggedModel implements IModel
         this.setupMeshes();
         setMeshBones();
         this.animations = new Animation[scene.getNumAnimations()];
+        for (int i = 0; i < animations.length; i++)
+        {
+            animations[i] = new Animation(scene, this, i);
+        }
         animationWrappers = new AnimationWrapper[animations.length];
         for (int i = 0; i < animationWrappers.length; i++)
         {
@@ -97,6 +101,7 @@ public class RiggedModel implements IModel
     public void setupMesh(Mesh mesh)
     {
         BufferBuilder builder = Tessellator.getInstance().getBuffer();
+        builder.begin(GL11.GL_TRIANGLES, ModelUtil.POS_NORMAL_TEX);
         for (Vertex vertex : mesh.getVertices())
         {
             builder
@@ -111,11 +116,13 @@ public class RiggedModel implements IModel
         builder.reset();
         ByteBuffer modelBuffer = builder.getByteBuffer();
 
+        mesh.getBuffer().bufferData(modelBuffer);
 
 
         mesh.setVAO(GL30.glGenVertexArrays());
 
         // TODO: update with
+        mesh.getBuffer().bindBuffer();
         GL30.glBindVertexArray(mesh.getVAO());
         GL20.glEnableVertexAttribArray(0);
         GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 64, 0);
@@ -128,6 +135,7 @@ public class RiggedModel implements IModel
         GL20.glEnableVertexAttribArray(4);
         GL20.glVertexAttribPointer(4, 4, GL11.GL_FLOAT, false, 64, 48);
         GL30.glBindVertexArray(0);
+        mesh.getBuffer().unbindBuffer();
     }
 
     // TODO: maybe implement this?
@@ -157,9 +165,14 @@ public class RiggedModel implements IModel
         long delta = current - lastFrame;
         lastFrame = current;
 
+        ModelUtil.SHADER.bind();
         AnimationWrapper wrapper = animationWrappers[currentAnimation];
         wrapper.update(delta);
         Matrix4f[] matrices = wrapper.getMatrices();
+        for (int i = 0; i < matrices.length; i++)
+        {
+            ModelUtil.SHADER.set("finalBonesMatrices[" + i + "]", matrices[i]);
+        }
         GL11.glTranslated(x, y, z);
         for (Mesh mesh : meshes)
         {
@@ -172,6 +185,8 @@ public class RiggedModel implements IModel
                 break;
             }
 
+            ModelUtil.SHADER.set("sampler", 0);
+            mesh.getBuffer().bindBuffer();
             GL30.glBindVertexArray(mesh.getVAO());
             /*GL11.glVertexPointer(3, GL11.GL_FLOAT, 32, 0);
             GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
@@ -180,6 +195,8 @@ public class RiggedModel implements IModel
             GL11.glTexCoordPointer(2, GL11.GL_FLOAT, 32, 24);
             GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);*/
 
+            mesh.getBuffer().drawArrays(GL11.GL_TRIANGLES);
+            mesh.getBuffer().unbindBuffer();
 
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
             GL30.glBindVertexArray(0);
@@ -187,6 +204,7 @@ public class RiggedModel implements IModel
             GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
             GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);*/
         }
+        ModelUtil.SHADER.unbind();
         GL11.glTranslated(-x, -y, -z);
 
         GL11.glDisable(GL11.GL_TEXTURE_2D);

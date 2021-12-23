@@ -6,14 +6,22 @@ import me.earth.earthhack.api.setting.Setting;
 import me.earth.earthhack.api.setting.settings.BooleanSetting;
 import me.earth.earthhack.api.setting.settings.ListSetting;
 import me.earth.earthhack.api.setting.settings.NumberSetting;
+import me.earth.earthhack.api.setting.settings.StringSetting;
+import me.earth.earthhack.api.util.interfaces.Nameable;
 import me.earth.earthhack.impl.managers.Managers;
 import me.earth.earthhack.impl.util.render.model.IModel;
 import me.earth.earthhack.impl.util.render.model.Mesh;
+import me.earth.earthhack.impl.util.render.model.ModelUtil;
+import org.lwjgl.opengl.GL11;
+
+import java.io.IOException;
 
 public class ModelTotem extends Module
 {
 
-
+    protected final Setting<IModel> fileSettingTest =
+            register(new ListSetting<>("Model", Managers.FILES.getInitialModel(), Managers.FILES.getModels()));
+    
     protected final Setting<Boolean> debug =
             register(new BooleanSetting("Debug", false));
 

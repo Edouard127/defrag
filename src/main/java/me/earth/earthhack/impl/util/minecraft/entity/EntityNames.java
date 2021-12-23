@@ -37,7 +37,7 @@ public class EntityNames
 
     public static String getName(Entity entity)
     {
-        for (Map.Entry<Class<? extends Entity>, String> entry : entityNames)
+        for (Entry<Class<? extends Entity>, String> entry : entityNames)
         {
             if (entry.getKey().isInstance(entity))
             {

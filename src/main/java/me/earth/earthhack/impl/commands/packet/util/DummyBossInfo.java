@@ -11,7 +11,7 @@ public class DummyBossInfo extends BossInfo implements Dummy
     {
         super(UUID.randomUUID(),
                 new TextComponentString("Dummy-Boss"),
-                BossInfo.Color.RED,
+                Color.RED,
                 Overlay.NOTCHED_20);
     }
 

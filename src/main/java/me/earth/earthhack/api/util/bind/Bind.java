@@ -55,7 +55,7 @@ public class Bind
         return new Bind(key);
     }
 
-    /** Uses {@link Keyboard#getKeyIndex(java.lang.String)} to parse. */
+    /** Uses {@link Keyboard#getKeyIndex(String)} to parse. */
     public static Bind fromString(String string)
     {
         string = string.toUpperCase();

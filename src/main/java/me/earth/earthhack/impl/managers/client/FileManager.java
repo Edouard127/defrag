@@ -1,11 +1,14 @@
 package me.earth.earthhack.impl.managers.client;
 
+import jassimp.AiScene;
 import me.earth.earthhack.impl.Earthhack;
 import me.earth.earthhack.impl.util.render.image.GifConverter;
 import me.earth.earthhack.impl.util.render.image.GifImage;
 import me.earth.earthhack.impl.util.render.image.ImageUtil;
 import me.earth.earthhack.impl.util.render.image.NameableImage;
 import me.earth.earthhack.impl.util.render.model.IModel;
+import me.earth.earthhack.impl.util.render.model.Mesh;
+import me.earth.earthhack.impl.util.render.model.ModelUtil;
 import me.earth.earthhack.impl.util.render.shader.SettingShader;
 
 import java.awt.image.BufferedImage;
@@ -132,13 +135,25 @@ public class FileManager
             {
                 if (!file.isDirectory())
                 {
+                    try
+                    {
                         if (!models.containsKey(file.getName())
                                 && !(file.getName().endsWith("gif")
                                     || file.getName().endsWith("png")
                                     || file.getName().endsWith("jpg")
                                     || file.getName().endsWith("jpg")))
                         {
+                            IModel model = ModelUtil.loadModel(file.getAbsolutePath(), file.getParent(), true);
+                            model.setName(file.getName());
+                            modelList.add(model);
+                            models.put(file.getName(), model);
                         }
+                    }
+                    catch (IOException e)
+                    {
+                        Earthhack.getLogger().error("Failed to load model: " + file.getName() + "!");
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -202,7 +217,46 @@ public class FileManager
         return shaderList;
     }
 
+    public IModel getInitialModel()
+    {
+        if (!modelList.isEmpty())
+        {
+            return modelList.get(0);
+        }
+        else
+        {
+            return new IModel()
+            {
+                @Override
+                public void setupMesh(Mesh mesh) {
 
+                }
+
+                @Override
+                public Mesh[] genMeshes(AiScene scene) {
+                    return new Mesh[0];
+                }
+
+                @Override
+                public void render(double x, double y, double z, double partialTicks) {
+
+                }
+
+                @Override
+                public Mesh[] getMeshes() {
+                    return new Mesh[0];
+                }
+
+                @Override
+                public String getName() {
+                    return "None!";
+                }
+
+                @Override
+                public void setName(String name) {}
+            };
+        }
+    }
 
     public NameableImage getInitialImage()
     {

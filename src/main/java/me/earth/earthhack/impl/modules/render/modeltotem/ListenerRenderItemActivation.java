@@ -2,6 +2,7 @@ package me.earth.earthhack.impl.modules.render.modeltotem;
 
 import me.earth.earthhack.impl.event.events.render.RenderItemActivationEvent;
 import me.earth.earthhack.impl.event.listeners.ModuleListener;
+import me.earth.earthhack.impl.util.render.model.ModelUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Items;
 
@@ -26,6 +27,10 @@ public class ListenerRenderItemActivation
             GlStateManager.rotate(module.popRotateHorizontal.getValue(), 1, 0, 0);
             GlStateManager.rotate(module.popRotateVertical.getValue(), 0, 1, 0);
             GlStateManager.rotate(module.popRotateZ.getValue(), 0, 0, 1);
+            if (module.fileSettingTest.getValue().getMeshes().length != 0)
+            {
+                module.fileSettingTest.getValue().render(0, 0, 0, mc.getRenderPartialTicks());
+            }
             GlStateManager.rotate(-module.popRotateZ.getValue(), 0, 0, 1);
             GlStateManager.rotate(-module.popRotateVertical.getValue(), 0, 1, 0);
             GlStateManager.rotate(-module.popRotateHorizontal.getValue(), 1, 0, 0);
