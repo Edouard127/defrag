@@ -220,14 +220,11 @@ class Timer {
     }
 
 
-private val Int.value: Byte
+val Int.value: Byte
     get() {
         return value
     }
-val Boolean.value: Any
-    get() {
-        return value
-    }
+
 private val Float.value: Any
     get() {
         return this.value
@@ -323,7 +320,7 @@ private operator fun Any.iterator(): Iterator<BlockPos> {
 
 @SubscribeEvent
 fun <packet> onPacketSend(event: PacketEvent.Send) {
-    if (event.stage == 0 && rotate.value.toBoolean() && rotating) {
+    if (event.stage == 0 && rotate.toBoolean() && rotating) {
         if (event.getPacket() is CPacketPlayer) {
         }
         ++rotationPacketsSpoofed
@@ -384,10 +381,10 @@ private fun placeCrystal(deadlyCrystal: Entity) {
     offhand = mc.player.heldItemOffhand.item === Items.END_CRYSTAL
     val bl = offhand
     if (timer.passedMs(placeDelay.value.toInt()
-            .toLong()) && (switcher.value.toBoolean() || mc.player.heldItemMainhand.item === Items.END_CRYSTAL || offhand) && !targets.isEmpty() && getSafetyCrystals(
+            .toLong()) && (switcher.toBoolean() || mc.player.heldItemMainhand.item === Items.END_CRYSTAL || offhand) && !targets.isEmpty() && getSafetyCrystals(
             deadlyCrystal) <= wasteAmount.value
     ) {
-        if (switcher.value.toBoolean() && mc.player.heldItemMainhand.item !== Items.END_CRYSTAL && !offhand) {
+        if (switcher.toBoolean() && mc.player.heldItemMainhand.item !== Items.END_CRYSTAL && !offhand) {
             doSwitch()
         }
         rotateToPos(targets[targets.size - 1])
@@ -427,7 +424,7 @@ private fun breakCrystal() {
 }
 
 private fun rotateTo(entity: Entity?) {
-    if (rotate.value.toBoolean()) {
+    if (rotate.toBoolean()) {
         val angle = calcAngle(mc.player.getPositionEyes(mc.renderPartialTicks), entity!!.positionVector)
         yaw = angle[0]
         pitch = angle[1]
@@ -436,7 +433,7 @@ private fun rotateTo(entity: Entity?) {
 }
 
 private fun rotateToPos(pos: BlockPos) {
-    if (rotate.value.toBoolean()) {
+    if (rotate.toBoolean()) {
         val angle = calcAngle(mc.player.getPositionEyes(mc.renderPartialTicks),
             Vec3d((pos.x.toFloat() + 0.5f).toDouble(),
                 (pos.y.toFloat() - 0.5f).toDouble(),
