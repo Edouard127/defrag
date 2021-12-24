@@ -2,6 +2,8 @@ package com.lambda.client.util.combat
 
 import com.lambda.client.event.SafeClientEvent
 import com.lambda.client.util.Wrapper
+import com.lambda.client.util.math.RotationUtils
+import com.lambda.client.util.math.Vec2f
 import com.lambda.client.util.math.VectorUtils
 import com.lambda.client.util.math.VectorUtils.distanceTo
 import net.minecraft.block.material.Material
@@ -27,6 +29,7 @@ object CrystalUtils {
         return VectorUtils.getBlockPosInSphere(centerPos, radius).filter { canPlace(it, target) }
     }
 
+
     fun SafeClientEvent.getCrystalList(center: Vec3d, range: Float): List<EntityEnderCrystal> =
         world.loadedEntityList.toList()
             .filterIsInstance<EntityEnderCrystal>()
@@ -48,9 +51,8 @@ object CrystalUtils {
     /** Checks if the block is valid for placing crystal */
     fun SafeClientEvent.canPlaceOn(pos: BlockPos): Boolean {
         val block = mc.world?.getBlockState(pos)?.block
-        return if(block != Blocks.ANVIL || block != Blocks.CRAFTING_TABLE || block != Blocks.ENCHANTING_TABLE || block != Blocks.ENDER_CHEST || block != Blocks.BLACK_SHULKER_BOX || block != Blocks.BLUE_SHULKER_BOX || block != Blocks.BROWN_SHULKER_BOX || block != Blocks.GREEN_SHULKER_BOX || block != Blocks.PINK_SHULKER_BOX || block != Blocks.CYAN_SHULKER_BOX || block != Blocks.CYAN_SHULKER_BOX || block != Blocks.GRAY_SHULKER_BOX || block != Blocks.GRAY_SHULKER_BOX || block != Blocks.LIGHT_BLUE_SHULKER_BOX || block != Blocks.LIME_SHULKER_BOX || block != Blocks.ORANGE_SHULKER_BOX || block != Blocks.PURPLE_SHULKER_BOX || block != Blocks.RED_SHULKER_BOX || block != Blocks.SILVER_SHULKER_BOX || block != Blocks.WHITE_SHULKER_BOX || block != Blocks.YELLOW_SHULKER_BOX) {
-            block == Blocks.BEDROCK || block == Blocks.OBSIDIAN
-        } else false
+        return block == Blocks.BEDROCK || block == Blocks.OBSIDIAN
+
     }
 
     private fun isValidMaterial(material: Material) =

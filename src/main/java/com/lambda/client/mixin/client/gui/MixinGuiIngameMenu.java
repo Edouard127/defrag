@@ -24,7 +24,7 @@ public class MixinGuiIngameMenu extends GuiScreen {
             }
         }
         if (removeMe != null) {
-            buttonList.add(new GuiButton(11000, width / 2 - 100, height / 4 + 72 + -16, "Lambda"));
+            buttonList.add(new GuiButton(11000, width / 2 - 100, height / 4 + 72 + -16, "Defrag"));
             buttonList.remove(removeMe);
         }
     }

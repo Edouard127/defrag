@@ -9,8 +9,10 @@ import com.google.gson.JsonArray
 import com.google.common.collect.Lists
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import com.lambda.client.gui.clickgui.LambdaClickGui.mc
 import kotlin.Throws
 import net.minecraft.advancements.AdvancementManager
+import net.minecraft.client.entity.EntityPlayerSP
 import java.lang.Runnable
 import kotlin.jvm.Volatile
 import net.minecraft.entity.player.EntityPlayer
@@ -49,6 +51,11 @@ object PlayerUtil {
         } catch (e: Exception) {
             null
         }
+    }
+    fun getPlayerFootHeight(): Float {
+        val eyeInt = mc.player.eyeHeight.toInt()
+        var playerFoot = eyeInt - 1.0f
+        return playerFoot
     }
 
     fun requestIDs(data: String): String? {

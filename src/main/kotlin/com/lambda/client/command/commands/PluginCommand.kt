@@ -42,7 +42,6 @@ object PluginCommand : ClientCommand(
                     val stopTime = System.currentTimeMillis() - time
                     MessageSendHelper.sendChatMessage("Loaded plugin ${formatValue(name)}, took $stopTime ms!")
 
-                    PluginError.displayErrors()
                 }
             }
         }
@@ -71,7 +70,6 @@ object PluginCommand : ClientCommand(
                     val stopTime = System.currentTimeMillis() - time
                     MessageSendHelper.sendChatMessage("Reloaded plugin ${formatValue(name)}, took $stopTime ms!")
 
-                    PluginError.displayErrors()
                 }
             }
 
@@ -87,7 +85,6 @@ object PluginCommand : ClientCommand(
                 val stopTime = System.currentTimeMillis() - time
                 MessageSendHelper.sendChatMessage("Reloaded all plugins, took $stopTime ms!")
 
-                PluginError.displayErrors()
             }
         }
 
