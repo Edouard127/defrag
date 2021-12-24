@@ -26,7 +26,7 @@ public abstract class MixinGuiMainMenu extends GuiScreen {
     @Inject(method = "initGui", at = @At("RETURN"))
     public void initGui$Inject$RETURN(CallbackInfo ci) {
         buttonList.removeIf(button -> button.id == 14);
-        realmsButton = addButton(new GuiButton(9001, width / 2 + 2, height / 4 + 48 + 24 * 2, 98, 20, "Lambda"));
+        realmsButton = addButton(new GuiButton(9001, width / 2 + 2, height / 4 + 48 + 24 * 2, 98, 20, "Defrag"));
     }
 
     @Inject(method = "actionPerformed", at = @At("HEAD"), cancellable = true)
