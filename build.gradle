@@ -231,6 +231,8 @@ dependencies {
     compile group: 'com.badlogicgames.gdx', name: 'gdx-backend-lwjgl', version: '1.10.0'
     compile "com.badlogicgames.gdx:gdx-platform:1.10.0:natives-desktop"
     compile "com.badlogicgames.gdx:gdx-bullet-platform:1.10.0:natives-desktop"
+    compile 'com.github.zakgof:velvet-video:0.5.2'
+    compile 'com.github.zakgof:velvet-video-natives:0.2.8.full'
     //deobfCompile group: group, name: 'LunatriusCore', version: "${project.version_minecraft}-${project.version_lunatriuscore}", classifier: 'universal'
 
 

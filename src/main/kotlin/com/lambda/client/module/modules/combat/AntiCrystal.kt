@@ -3,7 +3,6 @@ package com.lambda.client.module.modules.combat
 import com.lambda.client.module.modules.combat.AntiCrystal.breakDelay
 import com.lambda.client.module.modules.combat.AntiCrystal.checkDelay
 import com.lambda.client.module.modules.combat.AntiCrystal.minDmg
-import com.lambda.client.module.modules.combat.AntiCrystal.packet
 import com.lambda.client.module.modules.combat.AntiCrystal.placeDelay
 import com.lambda.client.module.modules.combat.AntiCrystal.range
 import com.lambda.client.module.modules.combat.AntiCrystal.rotate
@@ -28,7 +27,6 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Items
 import net.minecraft.init.MobEffects
 import net.minecraft.item.*
-import net.minecraft.network.Packet
 import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraft.util.CombatRules
 import net.minecraft.util.EnumHand

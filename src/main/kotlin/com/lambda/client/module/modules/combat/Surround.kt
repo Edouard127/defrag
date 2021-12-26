@@ -4,7 +4,6 @@ import com.lambda.client.event.SafeClientEvent
 import com.lambda.client.manager.managers.CombatManager
 import com.lambda.client.manager.managers.HotbarManager.resetHotbar
 import com.lambda.client.manager.managers.HotbarManager.spoofHotbar
-import com.lambda.client.manager.managers.PlayerPacketManager.sendPlayerPacket
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.module.modules.movement.Speed

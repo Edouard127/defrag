@@ -35,7 +35,6 @@ import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.item.EntityEnderCrystal
 import net.minecraft.entity.passive.AbstractHorse
 import net.minecraft.entity.passive.EntityTameable
-import net.minecraft.init.Items.GOLDEN_APPLE
 import net.minecraft.item.ItemFood
 import net.minecraft.item.ItemPickaxe
 import net.minecraft.util.EnumHand

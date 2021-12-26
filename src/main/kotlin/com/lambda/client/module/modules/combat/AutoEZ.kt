@@ -37,10 +37,10 @@ object AutoEZ : Module(
     @Suppress("UNUSED")
     private enum class MessageMode(val text: String) {
         GG("gg, $NAME"),
-        ONTOP("Lambda on top! ez $NAME"),
+        ONTOP("Defrag on top! ez $NAME"),
         EZD("You just got ez'd $NAME"),
         EZ_HYPIXEL("$HYPIXEL_MESSAGE $NAME"),
-        NAENAE("You just got naenae'd by Lambda+, $NAME"),
+        NAENAE("You just got naenae'd by Defrag+, $NAME"),
         CUSTOM("");
     }
 
