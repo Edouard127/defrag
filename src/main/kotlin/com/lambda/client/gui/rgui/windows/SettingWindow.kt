@@ -1,7 +1,6 @@
 package com.lambda.client.gui.rgui.windows
 
 import com.lambda.client.gui.rgui.component.*
-import com.lambda.client.module.modules.client.CustomFont.lineSpace
 import com.lambda.client.setting.settings.AbstractSetting
 import com.lambda.client.setting.settings.impl.number.NumberSetting
 import com.lambda.client.setting.settings.impl.other.BindSetting

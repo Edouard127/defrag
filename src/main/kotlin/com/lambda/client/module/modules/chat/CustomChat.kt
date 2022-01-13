@@ -55,9 +55,9 @@ object CustomChat : Module(
     }
 
     private fun getText() = when (textMode) {
-        TextMode.NAME -> "ʟᴀᴍʙᴅᴀ"
-        TextMode.ON_TOP -> "ʟᴀᴍʙᴅᴀ ᴏɴ ᴛᴏᴘ"
-        TextMode.WEBSITE -> "ｌａｍｂｄａ－ｃｌｉｅｎｔ．ｃｏｍ"
+        TextMode.NAME -> "自杀"
+        TextMode.ON_TOP -> "\uD835\uDD3B\uD835\uDD56\uD835\uDD57\uD835\uDD63\uD835\uDD52\uD835\uDD58 \uD835\uDD60\uD835\uDD5F\uD835\uDD65\uD835\uDD60\uD835\uDD61"
+        TextMode.WEBSITE -> "\uD835\uDD56\uD835\uDFDE\uD835\uDFDA\uD835\uDFD9.\uD835\uDD5F\uD835\uDD56\uD835\uDD65"
         TextMode.CUSTOM -> customText
     }
 
