@@ -209,6 +209,7 @@ abstract class AbstractLambdaGui<S : SettingWindow<*>, E : Any> : GuiScreen() {
         updateWindowOrder()
     }
 
+
     override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
         val mousePos = getRealMousePos()
         hoveredWindow?.onRelease(mousePos, state)
