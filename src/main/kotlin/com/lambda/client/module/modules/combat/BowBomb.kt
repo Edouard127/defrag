@@ -27,7 +27,6 @@ object BowBomb : Module(
                 if(mc.player.inventory.getCurrentItem().item == BOW){
                     if(mc.player.itemInUseMaxCount >= 20){
                         if(!Mouse.getEventButtonState()) {
-                            MessageSendHelper.sendChatMessage("Test")
                             mc.player.connection.sendPacket(PositionRotation(mc.player.posX, mc.player.posY + 1e-7, mc.player.posZ, mc.player.rotationYaw, mc.player.rotationPitch, false) as Packet<*>)
                             mc.player.connection.sendPacket(PositionRotation(mc.player.posX, mc.player.posY - 1e-7, mc.player.posZ, mc.player.rotationYaw, mc.player.rotationPitch, true) as Packet<*>)
                             mc.player.connection.sendPacket(CPacketPlayerDigging(CPacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, mc.player.horizontalFacing) as Packet<*>)

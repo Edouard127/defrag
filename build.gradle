@@ -20,6 +20,19 @@ buildscript {
             name = 'gradle plugins'
             url "https://plugins.gradle.org/m2/"
         }
+        maven {
+            url = "https://maven.architectury.dev"
+            content {
+                includeGroup "dev.architectury"
+            }
+            maven {
+                // saps.dev Maven (KubeJS and Rhino)
+                url = "https://maven.saps.dev/minecraft"
+                content {
+                    includeGroup "dev.latvian.mods"
+                }
+            }
+        }
 
     }
 
@@ -189,6 +202,7 @@ minecraft {
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
+
         }
     }
 }

@@ -9,6 +9,7 @@ import com.lambda.client.util.threads.mainScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import org.slf4j.Logger;
 
 internal object LoaderWrapper {
     private val loaderList = ArrayList<AsyncLoader<*>>()
@@ -19,6 +20,7 @@ internal object LoaderWrapper {
         loaderList.add(ManagerLoader)
         loaderList.add(GuiManager)
         loaderList.add(PluginManager)
+
     }
 
     @JvmStatic

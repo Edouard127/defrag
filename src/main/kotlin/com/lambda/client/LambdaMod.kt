@@ -1,10 +1,12 @@
 package com.lambda.client
 
+import club.minnced.discord.rpc.*
+import club.minnced.discord.rpc.DiscordEventHandlers.*
 import com.lambda.client.event.ForgeEventProcessor
 import com.lambda.client.util.ConfigUtils
 import com.lambda.client.util.WebUtils
-import com.lambda.client.util.graphics.font.FontRenderAdapter
 import com.lambda.client.util.threads.BackgroundScope
+import net.minecraft.client.Minecraft
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
@@ -13,9 +15,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.io.File
-import club.minnced.discord.rpc.*
-import club.minnced.discord.rpc.DiscordEventHandlers.*
-import kotlin.concurrent.thread
+
 
 @Suppress("UNUSED_PARAMETER")
 @Mod(
@@ -64,6 +64,7 @@ class LambdaMod {
 
     @Mod.EventHandler
     fun init(event: FMLInitializationEvent) {
+
         LOG.info("Initializing $NAME $VERSION")
 
         LoaderWrapper.loadAll()
