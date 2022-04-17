@@ -35,6 +35,7 @@ object Tracers : Module(
     private val neutral by setting("Neutral Mobs", true, { page == Page.ENTITY_TYPE && mobs })
     private val hostile by setting("Hostile Mobs", true, { page == Page.ENTITY_TYPE && mobs })
     private val invisible by setting("Invisible", true, { page == Page.ENTITY_TYPE })
+    private val boat by setting("Boats", false, { page == Page.ENTITY_TYPE })
     private val range by setting("Range", 64, 8..512, 8, { page == Page.ENTITY_TYPE })
 
     /* Color settings */

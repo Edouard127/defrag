@@ -135,7 +135,7 @@ object HoleSnap : Module(
             for (posY in 0..5) {
                 val pos = posXZ.add(0, -posY, 0)
                 if (!world.isAirBlock(pos.up())) break
-                if (checkHole(pos) == SurroundUtils.HoleType.NONE) continue
+                if (checkHole(pos) == SurroundUtils.HoleType.BEDROCK || checkHole(pos) == SurroundUtils.HoleType.OBBY) continue
                 closestHole = dist to pos
             }
         }

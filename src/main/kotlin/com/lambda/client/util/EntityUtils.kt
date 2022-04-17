@@ -13,6 +13,7 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityAgeable
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.EnumCreatureType
+import net.minecraft.entity.item.EntityBoat
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.entity.monster.EntityEnderman
 import net.minecraft.entity.monster.EntityIronGolem
@@ -114,6 +115,7 @@ object EntityUtils {
         for (entity in clonedList) {
             /* Entity type check */
             if (entity !is EntityLivingBase) continue
+            if (entity is EntityBoat) continue
             if (ignoreSelf && entity.name == mc.player.name) continue
             if (entity == mc.renderViewEntity) continue
             if (entity is EntityPlayer) {
