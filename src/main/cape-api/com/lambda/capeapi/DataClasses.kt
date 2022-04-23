@@ -71,6 +71,7 @@ enum class CapeType(val realName: String, val imageKey: String, val color: CapeC
     DEV("Dev", "github", CapeColor("ff0000", "00ff00")),
     BREAD("Bread", "github", CapeColor("ff0000", "00ff00")),
     MATRIX("Matrix", "github", CapeColor("ff0000", "00ff00")),
-    CONTRIBUTOR("Contributor", "github", CapeColor("272727", "363636"))
+    CONTRIBUTOR("Contributor", "github", CapeColor("272727", "363636")),
+    POPBOB("Contributor", "github", CapeColor("272727", "363636"))
 }
 

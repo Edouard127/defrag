@@ -121,7 +121,7 @@ object Scaffold : Module(
         }
     }
 
-    private fun SafeClientEvent.calcNextPos(): BlockPos? {
+    fun SafeClientEvent.calcNextPos(): BlockPos? {
         val posVec = player.positionVector
         val blockPos = posVec.toBlockPos()
         return checkPos(blockPos)

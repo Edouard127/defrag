@@ -252,9 +252,9 @@ abstract class AbstractLambdaGui<S : SettingWindow<*>, E : Any> : GuiScreen() {
         if (settingWindow?.listeningChild != null) return
         when {
             keyCode == Keyboard.KEY_BACK || keyCode == Keyboard.KEY_DELETE -> {
-                typedString = ""
+                typedString = typedString.dropLast(1)
                 lastTypedTime = 0L
-                stringWidth = 0.0f
+                stringWidth = typedString.length.toFloat()
                 prevStringWidth = 0.0f
             }
             typedChar.isLetter() || typedChar == ' ' -> {

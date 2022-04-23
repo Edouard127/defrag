@@ -98,7 +98,7 @@ object DiscordRPC : Module(
     private fun updateRPC() {
         presence.details = getLine(line1Left) + getSeparator(0) + getLine(line1Right)
         presence.state = getLine(line2Left) + getSeparator(1) + getLine(line2Right)
-        presence.largeImageKey = "default"
+        presence.largeImageKey = "protogen"
         rpc.Discord_UpdatePresence(presence)
     }
 
@@ -109,9 +109,9 @@ object DiscordRPC : Module(
             }
             LineInfo.WORLD -> {
                 when {
-                    mc.isIntegratedServerRunning -> "Singleplayer"
+                    mc.isIntegratedServerRunning -> "No friends"
                     mc.currentServerData != null -> "Multiplayer"
-                    else -> "Main Menu"
+                    else -> "Jerking off"
                 }
             }
             LineInfo.DIMENSION -> {
@@ -141,7 +141,7 @@ object DiscordRPC : Module(
                 } ?: "No Speed"
             }
             LineInfo.HELD_ITEM -> {
-                "Holding ${mc.player?.heldItemMainhand?.displayName ?: "Air"}" // Holding air meme
+                "Holding ${mc.player?.heldItemMainhand?.displayName ?: "kami's balls owo"}" // Holding air meme
             }
             LineInfo.FPS -> {
                 "${Minecraft.getDebugFPS()} FPS"
@@ -169,11 +169,11 @@ object DiscordRPC : Module(
         presence.smallImageText = when (capeType) {
             CapeType.DEV -> "Developer"
             CapeType.MATRIX -> "Based"
-            else -> ""
+            else -> "faggot"
         }
     }
 
     init {
-        presence.largeImageText = "defrag"
+        presence.largeImageText = "protogen"
     }
 }

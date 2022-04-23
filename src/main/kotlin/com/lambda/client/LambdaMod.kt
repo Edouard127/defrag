@@ -35,7 +35,7 @@ class LambdaMod {
         const val VERSION_MAJOR = "Defrag 1.4.1"
         const val VERSION_SIMPLE = VERSION
 
-        const val APP_ID = "916140766240321589" //discordrpc
+        const val APP_ID = "953143990386065430" //discordrpc
         const val GITHUB_API = "https://api.github.com/"
         private const val MAIN_ORG = "lambda-client"
         const val PLUGIN_ORG = "lambda-plugins"

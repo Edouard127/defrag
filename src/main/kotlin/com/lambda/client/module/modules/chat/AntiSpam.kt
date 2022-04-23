@@ -86,9 +86,6 @@ object AntiSpam : Module(
             if (mc.player == null) return@listener
 
             messageHistory.values.removeIf { System.currentTimeMillis() - it > 600000 }
-            if(event.message == TextComponentString("ok")){
-                MessageSendHelper.sendChatMessage("ok")
-            }
 
             if (duplicates && checkDupes(event.message.unformattedText)) {
                 event.isCanceled = true

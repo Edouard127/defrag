@@ -3,10 +3,9 @@ package com.lambda.client.module.modules.render
 import com.lambda.client.event.events.RenderOverlayEvent
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
-import com.lambda.client.module.modules.client.ClickGUI
-import com.lambda.client.module.modules.client.CustomFont
-import com.lambda.client.module.modules.client.GuiColors
-import com.lambda.client.module.modules.client.Hud
+import com.lambda.client.module.modules.client.*
+import com.lambda.client.module.modules.client.popbob.poop
+import com.lambda.client.module.modules.client.popbob.popbobOwO
 import com.lambda.client.util.EnchantmentUtils
 import com.lambda.client.util.EntityUtils
 import com.lambda.client.util.color.ColorGradient
@@ -396,7 +395,8 @@ object Nametags : Module(
             null
         }
         ContentType.NAME -> {
-            val name = entity.displayName.unformattedText
+            var name = entity.displayName.unformattedText
+            if(poop == true) name = popbobOwO
             TextComponent.TextElement(name, GuiColors.text)
         }
         ContentType.TYPE -> {

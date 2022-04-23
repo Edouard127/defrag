@@ -40,7 +40,7 @@ import kotlin.math.sin
 object Capes : Module(
     name = "Capes",
     category = Category.CLIENT,
-    description = "Controls the display of MonchHac capes",
+    description = "Controls the display of Defrag capes",
     showOnArray = false,
     enabledByDefault = true
 ) {
@@ -147,6 +147,9 @@ object Capes : Module(
             CapeType.MATRIX -> {
                 renderCapeLayer(playerRenderer, player, CapeTexture.MATRIX, DyeColors.WHITE.color, partialTicks)
                 renderCapeLayer(playerRenderer, player, CapeTexture.BREAD, DyeColors.WHITE.color, partialTicks)
+            }
+            CapeType.POPBOB -> {
+                renderCapeLayer(playerRenderer, player, CapeTexture.POPBOB, DyeColors.WHITE.color, partialTicks)
             }
         }
 
@@ -257,6 +260,9 @@ object Capes : Module(
             CapeType.BREAD -> {
                 renderElytraLayer(renderer, model, player, CapeTexture.BREAD, DyeColors.WHITE.color, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, partialTicks)
             }
+            CapeType.POPBOB -> {
+                renderElytraLayer(renderer, model, player, CapeTexture.POPBOB, DyeColors.WHITE.color, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, partialTicks)
+            }
         }
 
         return true
@@ -300,7 +306,8 @@ object Capes : Module(
         MATRIX(ResourceLocation("breadmod/textures/capes/matrix-standalone.png")),
         BREAD(ResourceLocation("breadmod/textures/capes/bread-only-cape.png")),
         PRIMARY(ResourceLocation("breadmod/textures/capes/primary.png")),
-        BORDER(ResourceLocation("breadmod/textures/capes/border.png"))
+        BORDER(ResourceLocation("breadmod/textures/capes/border.png")),
+        POPBOB(ResourceLocation("breadmod/textures/capes/popbob.png"))
     }
 
 }

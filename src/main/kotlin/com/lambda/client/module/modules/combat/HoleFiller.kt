@@ -7,6 +7,8 @@ import com.lambda.client.module.Module
 import com.lambda.client.module.modules.combat.CrystalAura.atValue
 import com.lambda.client.module.modules.combat.CrystalAura.setting
 import com.lambda.client.module.modules.combat.HoleESP.setting
+import com.lambda.client.module.modules.player.Scaffold
+import com.lambda.client.module.modules.player.Scaffold.calcNextPos
 import com.lambda.client.util.TickTimer
 import com.lambda.client.util.color.ColorHolder
 import com.lambda.client.util.combat.SurroundUtils
@@ -16,9 +18,7 @@ import com.lambda.client.util.graphics.GeometryMasks
 import com.lambda.client.util.math.VectorUtils.toBlockPos
 import com.lambda.client.util.threads.defaultScope
 import com.lambda.client.util.threads.safeListener
-import com.lambda.client.util.world.getClosestVisibleSide
-import com.lambda.client.util.world.getHitVec
-import com.lambda.client.util.world.getVisibleSides
+import com.lambda.client.util.world.*
 import kotlinx.coroutines.launch
 import net.minecraft.init.Blocks.OBSIDIAN
 import net.minecraft.init.Blocks.WEB
@@ -97,13 +97,13 @@ object HoleFiller : Module(
                     if (holeType == SurroundUtils.HoleType.OBBY && shouldAddObsidian() || holeType == SurroundUtils.HoleType.BEDROCK && shouldAddBedrock()) {
                         if(mc.player.heldItemMainhand.item == OBSIDIAN && FillWith == Item.OBSIDIAN ){
                             val hitVec = Vec3d(pos).add(0.5, 0.0, 0.5).add(Vec3d(EnumFacing.UP.directionVec).scale(0.5))
-                            CPacketPlayerTryUseItemOnBlock(pos.down(), EnumFacing.UP, EnumHand.MAIN_HAND, hitVec.x.toFloat(), hitVec.y.toFloat(), hitVec.z.toFloat())
+                            CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, EnumHand.MAIN_HAND, hitVec.x.toFloat(), hitVec.y.toFloat(), hitVec.z.toFloat())
                         }
                     }
                     if (holeType == SurroundUtils.HoleType.OBBY && shouldAddObsidian() || holeType == SurroundUtils.HoleType.BEDROCK && shouldAddBedrock()) {
                         if(mc.player.heldItemMainhand.item == WEB && FillWith == Item.COBWEB ){
                             val hitVec = Vec3d(pos).add(0.5, 0.0, 0.5).add(Vec3d(EnumFacing.UP.directionVec).scale(0.5))
-                            CPacketPlayerTryUseItemOnBlock(pos.down(), EnumFacing.UP, EnumHand.MAIN_HAND, hitVec.x.toFloat(), hitVec.y.toFloat(), hitVec.z.toFloat())
+                            CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, EnumHand.MAIN_HAND, hitVec.x.toFloat(), hitVec.y.toFloat(), hitVec.z.toFloat())
                         }
                     }
                 }
