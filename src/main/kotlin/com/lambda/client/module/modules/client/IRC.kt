@@ -79,7 +79,7 @@ object IRC : Module(
                                 sendString(bwriter, line1!!.replace("PING", "PONG"))
                             }
                             if(Minecraft.getMinecraft().currentServerData != null){
-                                MessageSendHelper.sendRawChatMessage(line1!!)
+                                MessageSendHelper.sendRawChatMessage(line1!!.replace("[\u0002\u001f\u0016\u000f]", ""))
                             }
                             println(line1!!)
                             if (line1.get(0) == '/') {

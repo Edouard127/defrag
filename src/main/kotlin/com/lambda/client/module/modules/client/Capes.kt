@@ -151,6 +151,9 @@ object Capes : Module(
             CapeType.POPBOB -> {
                 renderCapeLayer(playerRenderer, player, CapeTexture.POPBOB, DyeColors.WHITE.color, partialTicks)
             }
+            CapeType.GAYASS -> {
+                renderCapeLayer(playerRenderer, player, CapeTexture.GAYASS, DyeColors.WHITE.color, partialTicks)
+            }
         }
 
         return true
@@ -263,6 +266,9 @@ object Capes : Module(
             CapeType.POPBOB -> {
                 renderElytraLayer(renderer, model, player, CapeTexture.POPBOB, DyeColors.WHITE.color, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, partialTicks)
             }
+            CapeType.GAYASS -> {
+                renderElytraLayer(renderer, model, player, CapeTexture.GAYASS, DyeColors.WHITE.color, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, partialTicks)
+            }
         }
 
         return true
@@ -307,7 +313,8 @@ object Capes : Module(
         BREAD(ResourceLocation("breadmod/textures/capes/bread-only-cape.png")),
         PRIMARY(ResourceLocation("breadmod/textures/capes/primary.png")),
         BORDER(ResourceLocation("breadmod/textures/capes/border.png")),
-        POPBOB(ResourceLocation("breadmod/textures/capes/popbob.png"))
+        POPBOB(ResourceLocation("breadmod/textures/capes/popbob.png")),
+        GAYASS(ResourceLocation("breadmod/textures/capes/gay_goofy_ass.png"))
     }
 
 }

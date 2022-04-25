@@ -48,25 +48,25 @@ class DefragLoadMusic : GuiScreen() {
     }
     override fun actionPerformed(button: GuiButton) {
         println(button.id)
-        if(button.id == 696969){
-            MP3Player().stop()
+        if(button.id == 696969 && MP3Player().isPlaying) {
+            MP3Player(file).stop()
             MessageSendHelper.sendChatMessage("Successfully stopped")
             return
         }
-        if(button.id in base..i && MP3Player().isStopped){
+        if(button.id in base..i && !MP3Player().isPlaying){
             this.file = File("$DIRECTORY/data/music/${button.displayString}")
             object : Thread(){
                 override fun run(){
                     MP3Player().volume = mc.gameSettings.getSoundLevel(SoundCategory.MUSIC).toInt()
                     MP3Player(file).play()
-                    MessageSendHelper.sendChatMessage("Playing ${button.displayString.split(".", "")[0]}")
+                    MessageSendHelper.sendChatMessage("Playing ${button.displayString}")
                     return
                 }
 
             }.run()
             return
         }
-        if(button.id == 42069){
+        if(button.id == 42069 && file != null && MP3Player().isPlaying){
             MP3Player(file).setRepeat(!MP3Player().isRepeat)
             MessageSendHelper.sendChatMessage("Successfully looped")
             return
