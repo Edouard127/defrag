@@ -1,5 +1,6 @@
 package com.lambda.client.mixin.client.gui;
 
+import com.lambda.client.gui.mc.DefragLoadMusic;
 import com.lambda.client.gui.mc.LambdaGuiAntiDisconnect;
 import com.lambda.client.gui.mc.LambdaGuiPluginManager;
 import com.lambda.client.module.modules.misc.AntiDisconnect;
@@ -11,6 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
 
 @Mixin(GuiIngameMenu.class)
 public class MixinGuiIngameMenu extends GuiScreen {
@@ -24,7 +26,8 @@ public class MixinGuiIngameMenu extends GuiScreen {
             }
         }
         if (removeMe != null) {
-            buttonList.add(new GuiButton(11000, width / 2 - 100, height / 4 + 72 + -16, "Defrag"));
+            buttonList.add(new GuiButton(11000, width / 2 - 100, height / 4 + 72 - 16, "Defrag"));
+            buttonList.add(new GuiButton(1044, width / 2 - 100, height / 4 + 200 - 16, "Music"));
             buttonList.remove(removeMe);
         }
     }
@@ -39,6 +42,9 @@ public class MixinGuiIngameMenu extends GuiScreen {
             }
         } else if (button.id == 11000) {
             mc.displayGuiScreen(new LambdaGuiPluginManager(this));
+        }
+        if(button.id == 1044){
+            mc.displayGuiScreen(new DefragLoadMusic());
         }
     }
 }

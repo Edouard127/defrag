@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiListExtended
 
-class LambdaPluginSelectionList(val owner: LambdaGuiPluginManager, mcIn: Minecraft, widthIn: Int, heightIn: Int, topIn: Int, bottomIn: Int, slotHeightIn: Int) : GuiListExtended(
+class LambdaPluginSelectionList(val owner: Any, mcIn: Minecraft, widthIn: Int, heightIn: Int, topIn: Int, bottomIn: Int, slotHeightIn: Int) : GuiListExtended(
     mcIn,
     widthIn,
     heightIn,
@@ -47,7 +47,7 @@ class LambdaPluginSelectionList(val owner: LambdaGuiPluginManager, mcIn: Minecra
             plugins.firstOrNull { it.pluginData.name == plugin.name }?.let { entry ->
                 plugins.remove(entry)
             }
-            plugins.add(LambdaPluginListEntry(owner, PluginData(plugin.name, PluginState.INSTALLED), plugin))
+            owner?.let { LambdaPluginListEntry(it as LambdaGuiPluginManager, PluginData(plugin.name, PluginState.INSTALLED), plugin) }?.let { plugins.add(it) }
         }
 
         getLoaders().forEach { loader ->
@@ -55,7 +55,7 @@ class LambdaPluginSelectionList(val owner: LambdaGuiPluginManager, mcIn: Minecra
                 plugins.firstOrNull { it.pluginData.name == loader.name }?.let { entry ->
                     plugins.remove(entry)
                 }
-                plugins.add(LambdaPluginListEntry(owner, PluginData(loader.name, PluginState.AVAILABLE), null, loader))
+                owner?.let { LambdaPluginListEntry(it as LambdaGuiPluginManager, PluginData(loader.name, PluginState.AVAILABLE), null, loader) }?.let { plugins.add(it) }
             }
         }
 
@@ -80,7 +80,7 @@ class LambdaPluginSelectionList(val owner: LambdaGuiPluginManager, mcIn: Minecra
                                 val name = jsonElement.asJsonObject.get("name").asString
                                 if (plugins.none { it.pluginData.name == name } &&
                                     loadedPlugins.none { it.name == name }) {
-                                    plugins.add(LambdaPluginListEntry(owner, PluginData(name, PluginState.REMOTE, jsonElement.asJsonObject.get("description").asString)))
+                                    owner?.let { LambdaPluginListEntry(it as LambdaGuiPluginManager, PluginData(name, PluginState.REMOTE, jsonElement.asJsonObject.get("description").asString)) }?.let { plugins.add(it) }
                                 }
                             }
                         }

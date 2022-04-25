@@ -218,6 +218,7 @@ configurations {
 }
 
 dependencies {
+    implementation "org.kitteh.irc:client-lib:8.0.0"
     implementation "com.viaversion:viabackwards:4.0.2-SNAPSHOT"
     implementation "com.viaversion:viaversion:4.0.2-SNAPSHOT"
     implementation 'space.vectrix.flare:flare-fastutil:1.0.0'

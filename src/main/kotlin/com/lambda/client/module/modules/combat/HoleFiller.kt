@@ -4,17 +4,11 @@ import com.lambda.client.event.SafeClientEvent
 import com.lambda.client.event.events.RenderWorldEvent
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
-import com.lambda.client.module.modules.combat.CrystalAura.atValue
-import com.lambda.client.module.modules.combat.CrystalAura.setting
-import com.lambda.client.module.modules.combat.HoleESP.setting
-import com.lambda.client.module.modules.player.Scaffold
-import com.lambda.client.module.modules.player.Scaffold.calcNextPos
 import com.lambda.client.util.TickTimer
 import com.lambda.client.util.color.ColorHolder
 import com.lambda.client.util.combat.SurroundUtils
 import com.lambda.client.util.combat.SurroundUtils.checkHole
 import com.lambda.client.util.graphics.ESPRenderer
-import com.lambda.client.util.graphics.GeometryMasks
 import com.lambda.client.util.math.VectorUtils.toBlockPos
 import com.lambda.client.util.threads.defaultScope
 import com.lambda.client.util.threads.safeListener
@@ -83,6 +77,7 @@ object HoleFiller : Module(
                 for (x in -range..range) for (y in -range..range) for (z in -range..range) {
                     if (hideOwn && x == 0 && y == 0 && z == 0) continue
                     val pos = playerPos.add(x, y, z)
+                    val placeInfo = getNeighbour(pos, 1, 6.5f)
 
                     val holeType = checkHole(pos)
                     if (holeType == SurroundUtils.HoleType.NONE) continue
@@ -97,13 +92,17 @@ object HoleFiller : Module(
                     if (holeType == SurroundUtils.HoleType.OBBY && shouldAddObsidian() || holeType == SurroundUtils.HoleType.BEDROCK && shouldAddBedrock()) {
                         if(mc.player.heldItemMainhand.item == OBSIDIAN && FillWith == Item.OBSIDIAN ){
                             val hitVec = Vec3d(pos).add(0.5, 0.0, 0.5).add(Vec3d(EnumFacing.UP.directionVec).scale(0.5))
-                            CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, EnumHand.MAIN_HAND, hitVec.x.toFloat(), hitVec.y.toFloat(), hitVec.z.toFloat())
+                            if (placeInfo != null) {
+                                placeBlock(placeInfo)
+                            }
                         }
                     }
                     if (holeType == SurroundUtils.HoleType.OBBY && shouldAddObsidian() || holeType == SurroundUtils.HoleType.BEDROCK && shouldAddBedrock()) {
                         if(mc.player.heldItemMainhand.item == WEB && FillWith == Item.COBWEB ){
                             val hitVec = Vec3d(pos).add(0.5, 0.0, 0.5).add(Vec3d(EnumFacing.UP.directionVec).scale(0.5))
-                            CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, EnumHand.MAIN_HAND, hitVec.x.toFloat(), hitVec.y.toFloat(), hitVec.z.toFloat())
+                            if (placeInfo != null) {
+                                placeBlock(placeInfo)
+                            }
                         }
                     }
                 }

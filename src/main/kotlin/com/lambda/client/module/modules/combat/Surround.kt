@@ -22,6 +22,7 @@ import com.lambda.client.util.text.MessageSendHelper
 import com.lambda.client.util.threads.defaultScope
 import com.lambda.client.util.threads.isActiveOrFalse
 import com.lambda.client.util.threads.safeListener
+import com.lambda.client.util.world.PlaceInfo
 import com.lambda.client.util.world.buildStructure
 import com.lambda.client.util.world.isPlaceable
 import kotlinx.coroutines.Job
@@ -167,7 +168,6 @@ object Surround : Module(
 
     private fun SafeClientEvent.runSurround() = defaultScope.launch {
         spoofObby()
-
         buildStructure(
             player.flooredPosition,
             SurroundUtils.surroundOffset,

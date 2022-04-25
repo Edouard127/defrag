@@ -6,6 +6,7 @@ import com.lambda.client.module.modules.chat.AntiSpam
 import com.lambda.client.util.text.MessageDetection
 import com.lambda.client.util.text.MessageSendHelper.sendRawChatMessage
 import com.lambda.event.listener.listener
+import com.mojang.realmsclient.dto.PlayerInfo
 import net.minecraft.client.Minecraft
 import net.minecraft.client.entity.EntityPlayerSP
 import net.minecraft.client.renderer.ImageBufferDownload
@@ -71,9 +72,9 @@ object popbob : Module(
         }
     }
     private fun popbob(username: String): String {
-        return username.replace("<[^>]*> ".toRegex(), "popbob")
+        return username.replace("<[^>]+> ".toRegex(), "popbob")
     }
     private fun removeUsername(username: String): String {
-        return username.replace("<[^>]*> ".toRegex(), "")
+        return username.replace("<[^>]+> ".toRegex(), "")
     }
 }
