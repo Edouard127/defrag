@@ -9,7 +9,13 @@ import com.lambda.client.util.graphics.font.FontRenderAdapter
 import com.lambda.client.util.math.Vec2d
 import com.lambda.client.util.math.Vec2f
 import org.lwjgl.input.Keyboard
+import java.awt.Toolkit
+import java.awt.datatransfer.Clipboard
+import java.awt.datatransfer.DataFlavor
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 import kotlin.math.max
+
 
 class StringButton(val setting: StringSetting) : BooleanSlider(setting.name, 1.0, setting.description, setting.visibility) {
 
@@ -63,6 +69,15 @@ class StringButton(val setting: StringSetting) : BooleanSlider(setting.name, 1.0
         val typedChar = Keyboard.getEventCharacter()
         if (keyState) {
             when (keyCode) {
+                Keyboard.KEY_INSERT -> {
+                    val toolkit = Toolkit.getDefaultToolkit()
+                    val clipboard: Clipboard = toolkit.systemClipboard
+                    val result = clipboard.getData(DataFlavor.stringFlavor).toString().toCharArray()
+                    result.forEach {
+                        componentName += it
+                    }
+
+                }
                 Keyboard.KEY_RETURN -> {
                     onStopListening(true)
                 }

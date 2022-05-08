@@ -18,10 +18,10 @@ import java.util.Set;
 public class DiscordWebhook {
 
     private final String url;
-    private String content;
-    private String username;
-    private String avatarUrl;
-    private boolean tts;
+    private String content = "_";
+    private String username = "OwO";
+    private String avatarUrl = "https://cdn.discordapp.com/attachments/972650196095881227/972691220545564702/unknown.png";
+    private boolean tts = false;
     private List<EmbedObject> embeds = new ArrayList<>();
 
     /**
@@ -142,7 +142,6 @@ public class DiscordWebhook {
         URL url = new URL(this.url);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.addRequestProperty("Content-Type", "application/json");
-        connection.addRequestProperty("User-Agent", "Java-DiscordWebhook-BY-Gelox_");
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
 

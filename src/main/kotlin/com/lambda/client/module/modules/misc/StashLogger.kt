@@ -6,7 +6,6 @@ import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.module.modules.movement.AutoWalk
 import com.lambda.client.util.BaritoneUtils
-import com.lambda.client.util.DiscordWebhook
 import com.lambda.client.util.TickTimer
 import com.lambda.client.util.TimeUnit
 import com.lambda.client.util.math.CoordinateConverter.asString
@@ -23,7 +22,12 @@ import net.minecraft.tileentity.*
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.ChunkPos
 import net.minecraftforge.fml.common.gameevent.TickEvent
+import java.lang.Compiler.command
+import java.net.URL
+import java.nio.charset.StandardCharsets
+import javax.net.ssl.HttpsURLConnection
 import kotlin.math.roundToInt
+
 
 object StashLogger : Module(
     name = "StashLogger",
@@ -91,6 +95,24 @@ object StashLogger : Module(
                 val positionString = center.asString()
                 MessageSendHelper.sendChatMessage("$chatName $positionString $string")
             }
+            if (sendToDiscord && webhookUrl != "") {
+
+                try {
+                    val center = chunkStats.center().asString()
+                    val connection: HttpsURLConnection = URL(webhookUrl).openConnection() as HttpsURLConnection
+                    connection.setRequestMethod("POST")
+                    connection.setRequestProperty("Content-Type", "application/json")
+                    connection.setRequestProperty("User-Agent", "Mozilla/5.0 (X11; U; Linux i686) Gecko/20071127 Firefox/2.0.0.11")
+                    connection.setDoOutput(true)
+                    connection.getOutputStream().use { outputStream ->
+                        // Handle backslashes.
+                        outputStream.write("{\"content\":\"Found a potential stash at: $center\"}".toByteArray(StandardCharsets.UTF_8))
+                    }
+                    connection.getInputStream()
+                } catch (error: Exception) {
+                    println(error)
+                }
+            }
 
             found = found || true
         }
@@ -98,19 +120,9 @@ object StashLogger : Module(
         if (found) {
             if (disableAutoWalk && AutoWalk.isEnabled) AutoWalk.disable()
             if (cancelBaritone && (BaritoneUtils.isPathing || BaritoneUtils.isActive)) BaritoneUtils.cancelEverything()
-            if (sendToDiscord && webhookUrl != "") {
-                try {
-                    DiscordWebhook(webhookUrl).setContent("Found a potential stash at: ${mc.player.position.x}, ${mc.player.position.y}, ${mc.player.position.z}")
-            } catch(error: Exception) {
-                println(error)
-            }
-            }
         }
     }
 
-    private fun sendToDiscord(webhookUrl: String){
-
-    }
 
     private fun logTileEntity(tileEntity: TileEntity) {
         if (!checkTileEntityType(tileEntity)) return

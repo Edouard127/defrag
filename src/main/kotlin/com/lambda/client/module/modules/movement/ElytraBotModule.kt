@@ -150,18 +150,19 @@ object ElytraBotModule : Module(
                 renderer.aOutline = 125
                 renderer.thickness = 2F
                 path.forEach {
-                    println(mc.player.getDistanceSq(it))
+                    //println(mc.player.getDistanceSq(it))
                     renderer.add(it, ColorHolder(Color.RED))
                 }
                 renderer.render(true)
-            if(path.size > 0){
-                rotateUpdate(path[0])
-            }
         }
 
 
 
         safeListener<TickEvent.ClientTickEvent> {
+            if(path.size > 0){
+                //println("First: ${path[0]}, Last: ${path[path.size-1]}")
+                rotateUpdate(path[path.size-1])
+            }
             if (goal == null) {
                 disable()
                 sendChatMessage("You need a goal position")
