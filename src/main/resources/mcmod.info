@@ -1,18 +1,12 @@
 [
   {
-    "modid": "lambda",
-    "name": "Lambda",
-    "description": "ඞ \nA Minecraft utility mod for anarchy servers \nWritten by Kamigen, based on code from Lambda, 086 and the KAMI Blue team\n",
-    "version": "1.5.0-12",
+    "modid": "defrag",
+    "name": "Defrag",
+    "description": "ඞ \nA Minecraft utility mod for anarchy servers \nWritten by Kamigen, based on code from Lambda\n",
+    "version": "idfk man",
     "mcversion": "1.12.2",
-    "url": "https://github.com/lambda-client/lambda",
+    "url": "https://github.com/Edouard127/defrag",
     "updateUrl": "",
-    "authorList": [
-      "086",
-      "l1ving",
-      "Constructor"
-    ],
-    "credits": "Thanks to 086 for the original KAMI\nThanks to the team of KAMI Blue\nSpecial thanks to all active contributors",
     "logoFile": "lambda.png",
     "dependencies": []
   }

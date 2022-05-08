@@ -7,6 +7,7 @@ import com.lambda.client.util.ConfigUtils
 import com.lambda.client.util.WebUtils
 import com.lambda.client.util.threads.BackgroundScope
 import net.minecraft.client.Minecraft
+import net.minecraft.util.SoundEvent
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
@@ -57,6 +58,8 @@ class LambdaMod {
     fun preInit(event: FMLPreInitializationEvent) {
         val directory = File(DIRECTORY)
         if (!directory.exists()) directory.mkdir()
+        val data = File("$DIRECTORY/data/sounds")
+        if(!data.exists()) data.mkdir()
 
         WebUtils.updateCheck()
         LoaderWrapper.preLoadAll()

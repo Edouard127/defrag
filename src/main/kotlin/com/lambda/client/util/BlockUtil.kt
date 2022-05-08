@@ -2,7 +2,6 @@ package com.lambda.client.util
 
 import com.google.common.util.concurrent.AtomicDouble
 import com.lambda.client.util.graphics.RenderUtils2D.mc
-import com.lambda.command.Command
 import net.minecraft.block.*
 import net.minecraft.block.material.Material
 import net.minecraft.block.state.IBlockState
@@ -18,15 +17,14 @@ import net.minecraft.network.play.client.CPacketEntityAction
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.EnumHand
-import net.minecraft.util.NonNullList
 import net.minecraft.util.math.*
 import net.minecraft.world.IBlockAccess
 import net.minecraft.world.World
-import java.lang.Exception
+import org.json.XMLTokener.entity
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.function.Predicate
-import java.util.stream.Collectors
+import kotlin.math.abs
+
 
 object BlockUtil {
     val blackList = Arrays.asList<Block>(
@@ -485,8 +483,8 @@ object BlockUtil {
         return getBlock(pos).canCollideCheck(getState(pos), false)
     }
 
-    private fun getBlock(pos: BlockPos): Block {
-        return getState(pos).getBlock()
+    fun getBlock(pos: BlockPos): Block {
+        return getState(pos).block
     }
 
     private fun getState(pos: BlockPos): IBlockState {
@@ -698,6 +696,22 @@ object BlockUtil {
     fun possiblePlacePositions(any: Any): Any {
         return arrayOf<Any>()
 
+    }
+    fun distance(first: BlockPos, second: BlockPos): Double {
+        val deltaX: Double = (first.x - second.x).toDouble()
+        val deltaY: Double = (first.y - second.y).toDouble()
+        val deltaZ: Double = (first.z - second.z).toDouble()
+        return Math.sqrt((deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ));
+    }
+    fun isInRenderDistance(pos: BlockPos?): Boolean {
+        return mc.world.getChunk(pos!!).isLoaded
+    }
+    fun isSolid(pos: BlockPos?): Boolean {
+        return try {
+            mc.world.getBlockState(pos).getMaterial().isSolid()
+        } catch (e: NullPointerException) {
+            false
+        }
     }
 }
 

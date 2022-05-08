@@ -1,6 +1,11 @@
 package com.lambda.client.module.modules.movement
 
+import AStar
+import baritone.api.BaritoneAPI
+import baritone.api.pathing.goals.GoalXZ
+import baritone.api.process.ICustomGoalProcess
 import com.lambda.client.event.SafeClientEvent
+import com.lambda.client.event.events.RenderWorldEvent
 import com.lambda.client.manager.managers.HotbarManager
 import com.lambda.client.manager.managers.HotbarManager.serverSideItem
 import com.lambda.client.manager.managers.HotbarManager.spoofHotbar
@@ -9,11 +14,15 @@ import com.lambda.client.mixin.extension.tickLength
 import com.lambda.client.mixin.extension.timer
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
-import com.lambda.client.plugin.api.PluginModule
 import com.lambda.client.util.MovementUtils.speed
 import com.lambda.client.util.TickTimer
 import com.lambda.client.util.TimeUnit
-import com.lambda.client.util.items.*
+import com.lambda.client.util.Wrapper.player
+import com.lambda.client.util.color.ColorHolder
+import com.lambda.client.util.graphics.ESPRenderer
+import com.lambda.client.util.items.firstItem
+import com.lambda.client.util.items.hotbarSlots
+import com.lambda.client.util.items.swapToSlot
 import com.lambda.client.util.math.Direction
 import com.lambda.client.util.math.Vec2f
 import com.lambda.client.util.math.VectorUtils
@@ -21,36 +30,39 @@ import com.lambda.client.util.math.VectorUtils.distanceTo
 import com.lambda.client.util.math.VectorUtils.multiply
 import com.lambda.client.util.math.VectorUtils.toVec3d
 import com.lambda.client.util.text.MessageSendHelper.sendChatMessage
-import com.lambda.client.util.threads.defaultScope
 import com.lambda.client.util.threads.runSafe
 import com.lambda.client.util.threads.runSafeR
 import com.lambda.client.util.threads.safeListener
 import com.lambda.client.util.world.getGroundPos
-import kotlinx.coroutines.launch
+import jaco.mp3.player.MP3Player
 import net.minecraft.init.Items
-import net.minecraft.init.SoundEvents
 import net.minecraft.item.ItemStack
 import net.minecraft.network.play.client.CPacketEntityAction
+import net.minecraft.network.play.client.CPacketPlayerAbilities
 import net.minecraft.network.play.client.CPacketPlayerTryUseItem
+import net.minecraft.util.EnumFacing
 import net.minecraft.util.EnumHand
-import net.minecraft.util.SoundCategory
+import net.minecraft.util.ResourceLocation
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
 import net.minecraftforge.fml.common.gameevent.TickEvent
+import java.awt.Color
+import java.io.File
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.sqrt
 
 
-internal object ElytraBotModule : Module(
+object ElytraBotModule : Module(
     name = "ElytraBot",
     category = Category.MOVEMENT,
-    description = "Baritone like Elytra bot module",
+    description = "Baritone like Elytra bot module, credit CookieClient"
 ) {
 
 
-    private var path = mutableListOf<BlockPos>()
+    private var path = ArrayList<BlockPos>()
+    private var renderedPath = ArrayList<BlockPos>()
     var goal: BlockPos? = null
     private var previous: BlockPos? = null
     private var lastSecondPos: BlockPos? = null
@@ -66,6 +78,9 @@ internal object ElytraBotModule : Module(
     private val packetTimer = TickTimer(TimeUnit.MILLISECONDS)
     private val fireworkTimer = TickTimer(TimeUnit.MILLISECONDS)
     private val takeoffTimer = TickTimer(TimeUnit.MILLISECONDS)
+    private val renderer = ESPRenderer()
+    private val timer = TickTimer()
+    private val removePositions = ArrayList<BlockPos>()
 
     enum class ElytraBotMode {
         Highway, Overworld
@@ -76,12 +91,12 @@ internal object ElytraBotModule : Module(
     }
 
     enum class ElytraBotFlyMode {
-        Firework
+        Creative
     }
 
     var travelMode by setting("Travel Mode", ElytraBotMode.Overworld)
     private var takeoffMode by setting("Takeoff Mode", ElytraBotTakeOffMode.Jump)
-    private var elytraMode by setting("Flight Mode", ElytraBotFlyMode.Firework)
+    private var elytraMode by setting("Flight Mode", ElytraBotFlyMode.Creative)
     private val highPingOptimize by setting("High Ping Optimize", false)
     private val minTakeoffHeight by setting("Min Takeoff Height", 0.5f, 0.0f..1.5f, 0.1f, { !highPingOptimize })
     private val spoofHotbar by setting("Spoof Hotbar", true)
@@ -91,7 +106,7 @@ internal object ElytraBotModule : Module(
     private val interacting by setting("Rotation Mode", RotationMode.VIEW_LOCK)
     //    private val elytraFlySpeed by setting("Elytra Speed", 1f, 0.1f..20.0f, 0.25f, { ElytraMode != ElytraBotFlyMode.Firework })
     private val elytraFlyManeuverSpeed by setting("Maneuver Speed", 1f, 0.0f..10.0f, 0.25f)
-    private val fireworkDelay by setting("Firework Delay", 1f, 0.0f..10.0f, 0.25f, { elytraMode == ElytraBotFlyMode.Firework })
+    private val fireworkDelay by setting("Firework Delay", 1f, 0.0f..10.0f, 0.25f, { elytraMode == ElytraBotFlyMode.Creative })
     //    var pathfinding by setting("Pathfinding", true)
     var avoidLava by setting("AvoidLava", true)
     private var directional by setting("Directional", false)
@@ -120,7 +135,7 @@ internal object ElytraBotModule : Module(
 
         onDisable {
             runSafe {
-                path = mutableListOf()
+                path = ArrayList<BlockPos>()
                 useBaritoneCounter = 0
                 lagback = false
                 lagbackCounter = 0
@@ -130,6 +145,21 @@ internal object ElytraBotModule : Module(
                 jumpY = -1.0
             }
         }
+
+        safeListener<RenderWorldEvent>(69420){
+                renderer.aOutline = 125
+                renderer.thickness = 2F
+                path.forEach {
+                    println(mc.player.getDistanceSq(it))
+                    renderer.add(it, ColorHolder(Color.RED))
+                }
+                renderer.render(true)
+            if(path.size > 0){
+                rotateUpdate(path[0])
+            }
+        }
+
+
 
         safeListener<TickEvent.ClientTickEvent> {
             if (goal == null) {
@@ -141,7 +171,9 @@ internal object ElytraBotModule : Module(
             //Check if the goal is reached and then stop
             goal?.let {
                 if (player.positionVector.distanceTo(it.toVec3d()) < 15) {
-                    world.playSound(player.position, SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.AMBIENT, 100.0f, 18.0f, true)
+                    val file = File(ResourceLocation("lambda/sounds/sound.mp3").toString())
+                    MP3Player(file).play()
+                    //world.playSound(player.position, SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.AMBIENT, 100.0f, 18.0f, true)
                     sendChatMessage("$chatName Goal reached!.")
                     disable()
                     return@safeListener
@@ -156,13 +188,6 @@ internal object ElytraBotModule : Module(
                 return@safeListener
             }
 
-            //Toggle off if no fireworks while using firework mode
-            if (elytraMode == ElytraBotFlyMode.Firework &&
-                player.inventorySlots.countItem(Items.FIREWORKS) <= 0) {
-                sendChatMessage("You need fireworks as your using firework mode")
-                disable()
-                return@safeListener
-            }
 
             //Wait still if in unloaded chunk
             if (!world.getChunk(player.position).isLoaded) {
@@ -195,30 +220,6 @@ internal object ElytraBotModule : Module(
                 // If we arent moving anywhere then activate use baritone
                 val speed = player.speed
 
-                if (elytraMode == ElytraBotFlyMode.Firework) {
-                    // Prevent lagback on 2b2t by not clicking on fireworks. I hope hause would fix hes plugins tho
-                    if (speed > 3) {
-                        lagback = true
-                    }
-
-                    //Remove lagback thing after it stops and click on fireworks again.
-                    if (lagback) {
-                        if (speed < 1) {
-                            lagbackCounter++
-                            if (lagbackCounter > 3) {
-                                lagback = false
-                                lagbackCounter = 0
-                            }
-                        } else {
-                            lagbackCounter = 0
-                        }
-                    }
-
-                    //Click on fireworks
-                    if (player.speed < minElytraVelocity && !lagback && fireworkTimer.tick((fireworkDelay * 1000).toInt())) {
-                        activateFirework()
-                    }
-                }
             }
 
             //Generate more path
@@ -233,20 +234,8 @@ internal object ElytraBotModule : Module(
                 distance = 2
             }
 
-            //Remove passed positions from path
-            val removePositions = ArrayList<BlockPos>()
-            path.forEach { pos ->
-                if (player.position.distanceSq(pos) <= distance) {
-                    removePositions.add(pos)
-                }
-            }
-            removePositions.forEach { pos ->
-                path.remove(pos)
-                previous = pos
-            }
-            if (path.isNotEmpty() && elytraMode == ElytraBotFlyMode.Firework) {
-                path.lastOrNull()?.let { pathPos ->
-                    val pos = Vec3d(pathPos).add(0.5, 0.5, 0.5)
+            if (path.isNotEmpty() && elytraMode == ElytraBotFlyMode.Creative) {
+                    val pos = Vec3d(path[path.size-1]).add(0.5, 0.5, 0.5)
 
                     val eyesPos = Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ)
                     val diffX = pos.x - eyesPos.x
@@ -271,7 +260,36 @@ internal object ElytraBotModule : Module(
                         else -> {
                             // RotationMode.OFF
                         }
+                }
+            }
+        }
+    }
+    private fun rotateUpdate(blockPos: BlockPos){
+        if (path.isNotEmpty() && elytraMode == ElytraBotFlyMode.Creative) {
+            val pos = Vec3d(blockPos).add(0.5, 0.5, 0.5)
+
+            val eyesPos = Vec3d(player?.posX!!, player?.posY?.plus(player!!.getEyeHeight())!!, player?.posZ!!)
+            val diffX = pos.x - eyesPos.x
+            val diffY = pos.y - eyesPos.y
+            val diffZ = pos.z - eyesPos.z
+            val diffXZ = sqrt(diffX * diffX + diffZ * diffZ)
+            val yaw = Math.toDegrees(atan2(diffZ, diffX)).toFloat() - 90f
+            val pitch = (-Math.toDegrees(atan2(diffY, diffXZ))).toFloat()
+
+            val rotation = Vec2f(player?.rotationYaw!!.plus(MathHelper.wrapDegrees(yaw - player?.rotationYaw!!)), player?.rotationPitch!!.plus(MathHelper.wrapDegrees(pitch - player?.rotationPitch!!)) )
+
+            when (interacting) {
+                RotationMode.SPOOF -> {
+                    sendPlayerPacket {
+                        rotate(rotation)
                     }
+                }
+                RotationMode.VIEW_LOCK -> {
+                    player?.rotationYaw = rotation.x
+                    player?.rotationPitch = rotation.y
+                }
+                else -> {
+                    // RotationMode.OFF
                 }
             }
         }
@@ -284,6 +302,10 @@ internal object ElytraBotModule : Module(
             itemStack.maxDamage - itemStack.itemDamage <= 3
         }
     }
+
+private fun updateRenderer() {
+
+}
 
     //Generate path
     private fun SafeClientEvent.generatePath() {

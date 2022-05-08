@@ -1,17 +1,15 @@
 package com.lambda.client.util
 
 import com.lambda.client.util.MathUtil.calcAngle
-import com.lambda.client.util.MathUtil.calcAngleNoY
-import net.minecraft.util.math.Vec3d
-import net.minecraft.entity.player.EntityPlayer
-import com.lambda.client.util.RotationUtil
 import com.lambda.client.util.graphics.RenderUtils2D.mc
 import net.minecraft.entity.Entity
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.Packet
-import net.minecraft.util.math.MathHelper
-import net.minecraft.util.EnumFacing
 import net.minecraft.network.play.client.CPacketPlayer
+import net.minecraft.util.EnumFacing
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.MathHelper
+import net.minecraft.util.math.Vec3d
 import net.minecraft.util.math.Vec3i
 import kotlin.math.atan2
 import kotlin.math.sqrt
@@ -148,6 +146,12 @@ object RotationUtil {
             return if (d > 180.0) 360.0 - d else d
         }
         return 0.0
+    }
+    fun rotate(vec: Vec3d, sendPacket: Boolean) {
+        val rotations: FloatArray = getLegitRotations(vec)
+        if (sendPacket) mc.player.connection.sendPacket(CPacketPlayer.Rotation(rotations[0], rotations[1], mc.player.onGround))
+        mc.player.rotationYaw = rotations[0]
+        mc.player.rotationPitch = rotations[1]
     }
 
 

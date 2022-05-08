@@ -15,7 +15,7 @@ import java.util.regex.Pattern
 import baritone.api.utils.Helper as BaritoneHelper
 
 object MessageSendHelper {
-    private val mc = Wrapper.minecraft
+    val mc = Wrapper.minecraft
 
     fun sendChatMessage(message: ITextComponent) {
         val component = TextComponentString("")

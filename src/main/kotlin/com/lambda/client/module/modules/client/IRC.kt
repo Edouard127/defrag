@@ -68,9 +68,6 @@ object IRC : Module(
                                     sendString(bwriter, line!!.replace("PING", "PONG"))
                                 }
                                 line = breader.readLine()
-                                if(Minecraft.getMinecraft().currentServerData != null){
-                                    MessageSendHelper.sendChatMessage(line!!)
-                                }
                             }
                         }
                     }
@@ -83,9 +80,7 @@ object IRC : Module(
                         if (line1?.startsWith("PING") == true) {
                             sendString(bwriter, line1!!.replace("PING", "PONG"))
                         }
-                        if(Minecraft.getMinecraft().currentServerData != null){
-                            MessageSendHelper.sendRawChatMessage(line1!!.replace("[\u0002\u001f\u0016\u000f]", ""))
-                        }
+                            sendRawChatMessage(line1!!.replace("[\u0002\u001f\u0016\u000f]", ""))
                         if (line1.get(0) == '/') {
                             bwriter.write(line1.substring(1) + "\r\n")
                             bwriter.flush()
@@ -117,10 +112,18 @@ object IRC : Module(
         }
     }
     fun sendChatMessage(str: String) {
-        if(Minecraft.getMinecraft().currentServerData != null){
+        if(Minecraft.getMinecraft().currentServerData != null && !str.startsWith("PING")){
+
             return MessageSendHelper.sendRawChatMessage("<IRC>: $str")
         }
-        return println("<IRC>: $str")
+        return println("IRC: $str")
+    }
+    fun sendRawChatMessage(message: String?) {
+        if (message == null) return
+        if (message.startsWith("PING")) return
+        if (Minecraft.getMinecraft().currentServerData != null) return
+
+        mc.player?.sendMessage(MessageSendHelper.ChatMessage("<IRC> $message"))
     }
 }
 

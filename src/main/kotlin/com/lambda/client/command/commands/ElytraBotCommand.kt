@@ -1,3 +1,5 @@
+package com.lambda.client.command.commands
+
 import com.lambda.client.command.ClientCommand
 import com.lambda.client.module.modules.movement.ElytraBotModule
 import com.lambda.client.util.text.MessageSendHelper
@@ -17,7 +19,7 @@ object ElytraBotCommand : ClientCommand(
 
                 int("y/z") { yArg ->
                     executeSafe("Set goal to X Z.") {
-                        ElytraBotModule.goal = BlockPos(xArg.value, 0, yArg.value)
+                        ElytraBotModule.goal = BlockPos(xArg.value, 70, yArg.value)
                         ElytraBotModule.enable()
 
                     }
@@ -29,7 +31,6 @@ object ElytraBotCommand : ClientCommand(
         literal("goal", "coordinates") {
             literal("clear") {
                 executeSafe("Clear the current goal.") {
-                    ElytraBotModule.goal = null
                 }
             }
 
@@ -50,7 +51,6 @@ object ElytraBotCommand : ClientCommand(
         literal("path") {
             literal("clear") {
                 executeSafe("clears current path") {
-                    ElytraBotModule.goal = null
                     ElytraBotModule.disable()
                 }
             }

@@ -1,6 +1,7 @@
 package com.lambda.client.util.math
 
 import com.lambda.commons.interfaces.DisplayEnum
+import net.minecraft.client.Minecraft
 import net.minecraft.entity.Entity
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.math.Vec3i
@@ -30,6 +31,39 @@ enum class Direction(
     fun counterClockwise(n: Int = 1) = values()[Math.floorMod((ordinal - n), 8)]
 
     companion object {
+        fun getDirection(): Direction? {
+            val facing = Minecraft.getMinecraft().player.horizontalFacing
+            return if (facing == EnumFacing.NORTH) NORTH else if (facing == EnumFacing.WEST) WEST else if (facing == EnumFacing.SOUTH) SOUTH else EAST
+        }
+
+        /**
+         * Gets the closest diagonal direction player is looking at
+         */
+        fun getDiagonalDirection(): Direction {
+            val facing = Minecraft.getMinecraft().player.horizontalFacing
+            return if (facing == EnumFacing.NORTH) {
+                val closest = getClosest(135.0, -135.0)
+                if (closest == -135.0) NORTH_EAST else NORTH_WEST
+            } else if (facing == EnumFacing.WEST) {
+                val closest = getClosest(135.0, 45.0)
+                if (closest == 135.0) NORTH_WEST else SOUTH_WEST
+            } else if (facing == EnumFacing.EAST) {
+                val closest = getClosest(-45.0, -135.0)
+                if (closest == -135.0) NORTH_EAST else SOUTH_EAST
+            } else {
+                val closest = getClosest(45.0, -45.0)
+                if (closest == 45.0) SOUTH_WEST else SOUTH_EAST
+            }
+        }
+        private fun getClosest(a: Double, b: Double): Double {
+            var yaw = Minecraft.getMinecraft().player.rotationYaw.toDouble()
+            yaw = if (yaw < -180) 360.let { yaw += it; yaw } else if (yaw > 180) 360.let { yaw -= it; yaw } else yaw
+            return if (Math.abs(yaw - a) < Math.abs(yaw - b)) {
+                a
+            } else {
+                b
+            }
+        }
 
         fun fromEntity(entity: Entity?) = entity?.let {
             fromYaw(it.rotationYaw)

@@ -433,7 +433,7 @@ object ElytraFlight : Module(
     /* End of Control Mode */
 
     /* Creative Mode */
-    private fun SafeClientEvent.creativeMode() {
+    public fun SafeClientEvent.creativeMode() {
         if (player.onGround) {
             reset(true)
             return
@@ -470,7 +470,7 @@ object ElytraFlight : Module(
         return isEnabled && isFlying && !autoLanding && (mode.value == ElytraFlightMode.CONTROL || mode.value == ElytraFlightMode.PACKET)
     }
 
-    private fun SafeClientEvent.spoofRotation() {
+    fun SafeClientEvent.spoofRotation() {
         if (player.isSpectator || !elytraIsEquipped || elytraDurability <= 1 || !isFlying) return
 
         var cancelRotation = false

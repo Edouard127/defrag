@@ -149,7 +149,7 @@ object InventoryUtil {
     }
 
     val inventoryAndHotbarSlots: Map<Int, ItemStack>
-        get() = if (mc!!.currentScreen is GuiCrafting) {
+        get() = if (mc!!.currentScreen?.let { it is GuiCrafting }!!) {
             fuckYou3arthqu4kev2(10, 45)
         } else getInventorySlots(9, 44)
 

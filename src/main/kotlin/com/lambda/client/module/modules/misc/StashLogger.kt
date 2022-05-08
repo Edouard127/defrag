@@ -1,10 +1,12 @@
 package com.lambda.client.module.modules.misc
 
+
 import com.lambda.client.manager.managers.WaypointManager
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.module.modules.movement.AutoWalk
 import com.lambda.client.util.BaritoneUtils
+import com.lambda.client.util.DiscordWebhook
 import com.lambda.client.util.TickTimer
 import com.lambda.client.util.TimeUnit
 import com.lambda.client.util.math.CoordinateConverter.asString
@@ -29,6 +31,8 @@ object StashLogger : Module(
     description = "Logs storage units in render distance."
 ) {
     private val saveToWaypoints by setting("Save To Waypoints", true)
+    private val sendToDiscord by setting("Send to discord", false)
+    private val webhookUrl by setting("Webhook url", "", { sendToDiscord })
     private val logToChat by setting("Log To Chat", true)
     private val playSound by setting("Play Sound", true)
     private val logChests by setting("Chests", true)
@@ -94,7 +98,18 @@ object StashLogger : Module(
         if (found) {
             if (disableAutoWalk && AutoWalk.isEnabled) AutoWalk.disable()
             if (cancelBaritone && (BaritoneUtils.isPathing || BaritoneUtils.isActive)) BaritoneUtils.cancelEverything()
+            if (sendToDiscord && webhookUrl != "") {
+                try {
+                    DiscordWebhook(webhookUrl).setContent("Found a potential stash at: ${mc.player.position.x}, ${mc.player.position.y}, ${mc.player.position.z}")
+            } catch(error: Exception) {
+                println(error)
+            }
+            }
         }
+    }
+
+    private fun sendToDiscord(webhookUrl: String){
+
     }
 
     private fun logTileEntity(tileEntity: TileEntity) {
