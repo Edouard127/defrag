@@ -24,6 +24,8 @@ import com.lambda.client.util.items.firstItem
 import com.lambda.client.util.items.hotbarSlots
 import com.lambda.client.util.items.swapToSlot
 import com.lambda.client.util.math.Direction
+import com.lambda.client.util.math.RotationUtils.getRotationFromVec
+import com.lambda.client.util.math.RotationUtils.getRotationTo
 import com.lambda.client.util.math.Vec2f
 import com.lambda.client.util.math.VectorUtils
 import com.lambda.client.util.math.VectorUtils.distanceTo
@@ -34,6 +36,7 @@ import com.lambda.client.util.threads.runSafe
 import com.lambda.client.util.threads.runSafeR
 import com.lambda.client.util.threads.safeListener
 import com.lambda.client.util.world.getGroundPos
+import com.lambda.event.listener.listener
 import jaco.mp3.player.MP3Player
 import net.minecraft.init.Items
 import net.minecraft.item.ItemStack
@@ -46,6 +49,8 @@ import net.minecraft.util.ResourceLocation
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
+import net.minecraftforge.client.event.InputUpdateEvent
+import net.minecraftforge.client.event.RenderWorldLastEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import java.awt.Color
 import java.io.File
@@ -80,6 +85,7 @@ object ElytraBotModule : Module(
     private val takeoffTimer = TickTimer(TimeUnit.MILLISECONDS)
     private val renderer = ESPRenderer()
     private val timer = TickTimer()
+    private val timer_jump = TickTimer()
     private val removePositions = ArrayList<BlockPos>()
 
     enum class ElytraBotMode {
@@ -94,6 +100,10 @@ object ElytraBotModule : Module(
         Creative
     }
 
+    enum class RotationMode {
+        OFF, SPOOF, VIEW_LOCK
+    }
+
     var travelMode by setting("Travel Mode", ElytraBotMode.Overworld)
     private var takeoffMode by setting("Takeoff Mode", ElytraBotTakeOffMode.Jump)
     private var elytraMode by setting("Flight Mode", ElytraBotFlyMode.Creative)
@@ -104,19 +114,14 @@ object ElytraBotModule : Module(
     private val minElytraVelocity by setting("MinElytraVelocity", 1.0, 0.1..5.0, 0.1)
     private val aStarLoops by setting("aStarLoops", 500, 1..1000, 1)
     private val interacting by setting("Rotation Mode", RotationMode.VIEW_LOCK)
-    //    private val elytraFlySpeed by setting("Elytra Speed", 1f, 0.1f..20.0f, 0.25f, { ElytraMode != ElytraBotFlyMode.Firework })
+    //private val elytraFlySpeed by setting("Elytra Speed", 1f, 0.1f..20.0f, 0.25f, { ElytraMode != ElytraBotFlyMode.Firework })
     private val elytraFlyManeuverSpeed by setting("Maneuver Speed", 1f, 0.0f..10.0f, 0.25f)
     private val fireworkDelay by setting("Firework Delay", 1f, 0.0f..10.0f, 0.25f, { elytraMode == ElytraBotFlyMode.Creative })
-    //    var pathfinding by setting("Pathfinding", true)
+    var renderingPath by setting("Render path", true)
     var avoidLava by setting("AvoidLava", true)
     private var directional by setting("Directional", false)
-//    private var toggleOnPop by setting("ToggleOnPop", false)
-//    private val maxY by setting("Max Y", 1f, 0.0f..300.0f, 0.25f)
+    private var toggleOnPop by setting("ToggleOnPop", false)
 
-    @Suppress("UNUSED")
-    private enum class RotationMode {
-        OFF, SPOOF, VIEW_LOCK
-    }
 
     init {
         onEnable {
@@ -147,22 +152,33 @@ object ElytraBotModule : Module(
         }
 
         safeListener<RenderWorldEvent>(69420){
-                renderer.aOutline = 125
+            if(renderingPath){
+                renderer.aOutline = 50
                 renderer.thickness = 2F
                 path.forEach {
+                    val _it = BlockPos(it.x.toDouble(), (it.y - 1.5), it.z.toDouble())
                     //println(mc.player.getDistanceSq(it))
-                    renderer.add(it, ColorHolder(Color.RED))
+                    renderer.add(_it, ColorHolder(Color.RED))
                 }
                 renderer.render(true)
+            }
+        }
+        listener<InputUpdateEvent>(6969) {
+            if(path.isNotEmpty()){
+
+
+            if(mc.player.position.y < path.first().y) {
+                    it.movementInput.jump
+            }
+
+
+            it.movementInput.moveForward = 1.0f
+            }
         }
 
 
 
         safeListener<TickEvent.ClientTickEvent> {
-            if(path.size > 0){
-                //println("First: ${path[0]}, Last: ${path[path.size-1]}")
-                rotateUpdate(path[path.size-1])
-            }
             if (goal == null) {
                 disable()
                 sendChatMessage("You need a goal position")
@@ -224,7 +240,7 @@ object ElytraBotModule : Module(
             }
 
             //Generate more path
-            if (path.size <= 20 || isNextPathTooFar()) {
+            if (path.size <= 10 || isNextPathTooFar()) {
                 generatePath()
             }
 
@@ -235,65 +251,42 @@ object ElytraBotModule : Module(
                 distance = 2
             }
 
-            if (path.isNotEmpty() && elytraMode == ElytraBotFlyMode.Creative) {
-                    val pos = Vec3d(path[path.size-1]).add(0.5, 0.5, 0.5)
-
-                    val eyesPos = Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ)
-                    val diffX = pos.x - eyesPos.x
-                    val diffY = pos.y - eyesPos.y
-                    val diffZ = pos.z - eyesPos.z
-                    val diffXZ = sqrt(diffX * diffX + diffZ * diffZ)
-                    val yaw = Math.toDegrees(atan2(diffZ, diffX)).toFloat() - 90f
-                    val pitch = (-Math.toDegrees(atan2(diffY, diffXZ))).toFloat()
-
-                    val rotation = Vec2f(player.rotationYaw + MathHelper.wrapDegrees(yaw - player.rotationYaw), player.rotationPitch + MathHelper.wrapDegrees(pitch - player.rotationPitch))
-
-                    when (interacting) {
-                        RotationMode.SPOOF -> {
-                            sendPlayerPacket {
-                                rotate(rotation)
-                            }
-                        }
-                        RotationMode.VIEW_LOCK -> {
-                            player.rotationYaw = rotation.x
-                            player.rotationPitch = rotation.y
-                        }
-                        else -> {
-                            // RotationMode.OFF
-                        }
+            //Remove passed positions from path
+            val removePositions = ArrayList<BlockPos>()
+            path.forEach { pos ->
+                if (player.position.distanceSq(pos) <= distance) {
+                    removePositions.add(pos)
                 }
+            }
+            removePositions.forEach { pos ->
+                path.remove(pos)
+                previous = pos
+            }
+
+            if (path.isNotEmpty() && elytraMode == ElytraBotFlyMode.Creative) {
+                //println("First: ${path.first()}, Last: ${path.last()}")
+                rotateUpdate(path.first())
             }
         }
     }
     private fun rotateUpdate(blockPos: BlockPos){
         if (path.isNotEmpty() && elytraMode == ElytraBotFlyMode.Creative) {
-            val pos = Vec3d(blockPos).add(0.5, 0.5, 0.5)
-
-            val eyesPos = Vec3d(player?.posX!!, player?.posY?.plus(player!!.getEyeHeight())!!, player?.posZ!!)
-            val diffX = pos.x - eyesPos.x
-            val diffY = pos.y - eyesPos.y
-            val diffZ = pos.z - eyesPos.z
-            val diffXZ = sqrt(diffX * diffX + diffZ * diffZ)
-            val yaw = Math.toDegrees(atan2(diffZ, diffX)).toFloat() - 90f
-            val pitch = (-Math.toDegrees(atan2(diffY, diffXZ))).toFloat()
-
-            val rotation = Vec2f(player?.rotationYaw!!.plus(MathHelper.wrapDegrees(yaw - player?.rotationYaw!!)), player?.rotationPitch!!.plus(MathHelper.wrapDegrees(pitch - player?.rotationPitch!!)) )
-
             when (interacting) {
                 RotationMode.SPOOF -> {
                     sendPlayerPacket {
-                        rotate(rotation)
+                        rotate(getRotationTo(mc.player.position.toVec3d(), blockPos.toVec3d()))
                     }
                 }
                 RotationMode.VIEW_LOCK -> {
-                    player?.rotationYaw = rotation.x
-                    player?.rotationPitch = rotation.y
+                    player?.rotationYaw = getRotationTo(mc.player.position.toVec3d(), blockPos.toVec3d()).x
+                    player?.rotationPitch = getRotationTo(mc.player.position.toVec3d(), blockPos.toVec3d()).y
                 }
                 else -> {
                     // RotationMode.OFF
                 }
             }
         }
+
     }
 
     private fun isItemBroken(itemStack: ItemStack): Boolean { // (100 * damage / max damage) >= (100 - 70)
@@ -392,7 +385,7 @@ private fun updateRenderer() {
 
     private fun SafeClientEvent.isNextPathTooFar(): Boolean {
         return path.lastOrNull()?.let {
-            player.position.distanceTo(it) > 15
+            player.position.distanceTo(it) >= 10
         } ?: run {
             false
         }

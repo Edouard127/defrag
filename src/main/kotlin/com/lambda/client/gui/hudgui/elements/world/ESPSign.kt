@@ -35,51 +35,13 @@ import net.minecraft.util.text.ITextComponent
 import org.lwjgl.opengl.GL11
 import java.util.*
 
-internal object ESPFagGou : LabelHud(
-    name = "GouDaddy",
+internal object ESPSign : LabelHud(
+    name = "ESP Sign",
     category = Category.WORLD,
-    description = "List of Signs because gou daddy asked for"
+    description = "List of Signs because gou asked for"
 ) {
 
-    private val textScale by setting("TextScale", 1f, 0.1f..10f, 0.1f)
-
-    private val tracers by setting("Tracers", false)
-
-    private val wordTracers by setting("WordTracers", true, { tracers })
-    private val maxEntries by setting("Max Entries", 8, 4..96, 1)
-    private var remainingEntries = 0
     val map = TreeMap<String, Int>()
-    var sex: String = ""
-    private val cacheMap by AsyncCachedValue(50L) {
-        fun render(texts: Array<ITextComponent>) {
-
-
-
-            val rowsToDraw = ArrayList<String>()
-
-            try {
-                for (text in texts) {
-                    rowsToDraw.add(text.unformattedText)
-                }
-            } catch (e: NullPointerException) { // todo: figure out why this sometimes throws a npe even though it shouldn't
-                // commented cuz of log spam kek
-                // e.printStackTrace()
-            }
-
-            rowsToDraw.forEachIndexed { _, text ->
-                displayText.addLine(text)
-            }
-        }
-
-        safeListener<RenderOverlayEvent> {
-            for (tile in mc.world.loadedTileEntityList) {
-                if (tile is TileEntitySign) {
-                    render(tile.signText)
-                }
-            }
-        }
-
-    }
     fun render(texts: Array<ITextComponent>) {
 
 

@@ -76,6 +76,12 @@ object RotationUtils {
         val pitch = normalizeAngle(Math.toDegrees(-atan2(vec.y, xz)))
         return Vec2f(yaw, pitch)
     }
+    fun getRotationFromVecWithoutNormalization(vec: Vec3d): Vec2f {
+        val xz = hypot(vec.x, vec.z)
+        val yaw = Math.toDegrees(atan2(vec.z, vec.x)) - 90.0
+        val pitch = Math.toDegrees(-atan2(vec.y, xz))
+        return Vec2f(yaw, pitch)
+    }
 
     private fun normalizeAngle(angleIn: Double): Double {
         var angle = angleIn
