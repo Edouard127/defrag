@@ -7,7 +7,7 @@ import com.lambda.client.util.IRCUtils
 import com.lambda.client.util.text.MessageSendHelper
 
 object IRCCommand : ClientCommand(
-    name = "irc",
+    name = "irca",
     description = "Talk on the IRC channel"
 ) {
     init {
@@ -15,7 +15,7 @@ object IRCCommand : ClientCommand(
                 executeSafe {
                     if(IRC.isEnabled){
                         sendString(IRC.bwriter, "PRIVMSG ${IRC.channel} :${messageArg.value}")
-                        MessageSendHelper.sendRawChatMessage("IRC: <${IRC.nickname}>: ${messageArg.value}")
+                        MessageSendHelper.sendChatMessage("IRC <${IRC.nickname}>: $messageArg.value")
                     }
                     else MessageSendHelper.sendChatMessage("IRC Module is not enabled")
 

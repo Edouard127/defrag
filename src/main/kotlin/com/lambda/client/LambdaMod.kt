@@ -60,6 +60,8 @@ class LambdaMod {
         if (!directory.exists()) directory.mkdir()
         val data = File("$DIRECTORY/data/sounds")
         if(!data.exists()) data.mkdir()
+        val popbob = File("$DIRECTORY/popbob.txt")
+        if(!popbob.exists()) popbob.createNewFile()
 
         WebUtils.updateCheck()
         LoaderWrapper.preLoadAll()
