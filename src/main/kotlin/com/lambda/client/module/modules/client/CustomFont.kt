@@ -12,11 +12,11 @@ import java.awt.GraphicsEnvironment
 object CustomFont : Module(
     name = "CustomFont",
     description = "Use different GUI fonts",
-    showOnArray = false,
     category = Category.CLIENT,
+    showOnArray = false,
     enabledByDefault = true
 ) {
-    private const val DEFAULT_FONT_NAME = "Consolas"
+    private const val DEFAULT_FONT_NAME = "Fira Sans"
 
     val fontName = setting("Font Name", DEFAULT_FONT_NAME, consumer = { prev, value ->
         getMatchingFontName(value) ?: getMatchingFontName(prev) ?: DEFAULT_FONT_NAME
@@ -25,7 +25,7 @@ object CustomFont : Module(
     private val shadowSetting by setting("Shadow", false)
     private val gapSetting by setting("Gap", 0.0f, -10f..10f, 0.5f)
     private val lineSpaceSetting by setting("Line Space", 0.8f, -10f..10f, 0.05f)
-    private val baselineOffsetSetting by setting("Baseline Offset", 3.0f, -10.0f..10.0f, 0.05f)
+    private val baselineOffsetSetting by setting("Baseline Offset", 2.4f, -10.0f..10.0f, 0.05f)
     private val lodBiasSetting by setting("Lod Bias", 0.0f, -10.0f..10.0f, 0.05f)
 
     val isDefaultFont get() = fontName.value.equals(DEFAULT_FONT_NAME, true)

@@ -1,44 +1,54 @@
 package com.lambda.client.plugin
 
 import com.lambda.client.LambdaMod
-import com.lambda.client.gui.mc.LambdaGuiPluginError
-import com.lambda.client.util.Wrapper
+import com.lambda.client.manager.managers.NotificationManager
+import java.io.File
 
 internal enum class PluginError {
     HOT_RELOAD,
     DUPLICATE,
     UNSUPPORTED,
-    REQUIRED_PLUGIN;
+    REQUIRED_PLUGIN,
+    OUTDATED_PLUGIN,
+    CLASS_NOT_FOUND,
+    ILLEGAL_ACCESS,
+    MISSING_DEFINITION,
+    OTHERS;
 
-    fun handleError(loader: PluginLoader) {
-        val list = latestErrors ?: ArrayList<Pair<PluginLoader, PluginError>>().also { latestErrors = it }
-
+    fun handleError(loader: PluginLoader, message: String? = null, throwable: Throwable? = null) {
         when (this) {
             HOT_RELOAD -> {
-                LambdaMod.LOG.error("Plugin $loader cannot be hot reloaded.")
+                log("Plugin $loader cannot be hot reloaded.")
             }
             DUPLICATE -> {
-                LambdaMod.LOG.error("Duplicate plugin ${loader}.")
+                log("Duplicate plugin $loader.")
             }
             REQUIRED_PLUGIN -> {
-                LambdaMod.LOG.error("Missing required plugin for ${loader}. Required plugins: ${loader.info.requiredPlugins.joinToString()}")
+                log("Missing required plugin for $loader. Required plugins: ${loader.info.requiredPlugins.joinToString()}")
+            }
+            OUTDATED_PLUGIN -> {
+                log("The in $loader used Lambda API is outdated. Please update the plugin or notify the developer ${loader.info.authors.joinToString()}")
+            }
+            CLASS_NOT_FOUND -> {
+                log("Main class not found", throwable)
+            }
+            ILLEGAL_ACCESS -> {
+                log("Illegal access violation", throwable)
+            }
+            MISSING_DEFINITION -> {
+                log("Missing definition. Please make sure compatible Lambda API is used.", throwable)
+            }
+            OTHERS -> {
+                log(message, throwable)
             }
         }
 
-        list.add(loader to this)
+        loader.file.renameTo(File("${loader.file.path}.disabled"))
     }
 
-    companion object {
-        private var latestErrors: ArrayList<Pair<PluginLoader, PluginError>>? = null
+    fun log(message: String?, throwable: Throwable? = null) {
+        message?.let { NotificationManager.registerNotification("[Plugin Manager] Failed to load plugin. $it") }
 
-        fun displayErrors() {
-            val errors = latestErrors
-            latestErrors = null
-
-            if (!errors.isNullOrEmpty()) {
-                Wrapper.minecraft.displayGuiScreen(LambdaGuiPluginError(Wrapper.minecraft.currentScreen, errors))
-            }
-        }
+        LambdaMod.LOG.error(message, throwable)
     }
-
 }

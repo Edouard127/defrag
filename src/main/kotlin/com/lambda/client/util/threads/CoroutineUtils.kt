@@ -4,12 +4,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.DelicateCoroutinesApi
 
 /**
  * Single thread scope to use in Lambda
  */
-@Suppress("EXPERIMENTAL_API_USAGE")
-val mainScope = CoroutineScope(newSingleThreadContext("Defrag Main"))
+@OptIn(DelicateCoroutinesApi::class)
+val mainScope = CoroutineScope(newSingleThreadContext("Lambda Main"))
 
 /**
  * Common scope with [Dispatchers.Default]

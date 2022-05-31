@@ -37,47 +37,4 @@ enum class TimeUnit(val multiplier: Long) {
     TICKS(50L),
     SECONDS(1000L),
     MINUTES(60000L);
-
-    class Timer {
-        private var time = -1L
-        fun passedS(s: Double): Boolean {
-            return passedMs(s.toLong() * 1000L)
-        }
-
-        fun passedDms(dms: Double): Boolean {
-            return passedMs(dms.toLong() * 10L)
-        }
-
-        fun passedDs(ds: Double): Boolean {
-            return passedMs(ds.toLong() * 100L)
-        }
-
-        fun passedMs(ms: Long): Boolean {
-            return passedNS(convertToNS(ms))
-        }
-
-        fun setMs(ms: Long) {
-            time = System.nanoTime() - convertToNS(ms)
-        }
-
-        fun passedNS(ns: Long): Boolean {
-            return System.nanoTime() - time >= ns
-        }
-
-        val passedTimeMs: Long
-            get() = getMs(System.nanoTime() - time)
-
-        fun reset(): Timer {
-            time = System.nanoTime()
-            return this
-        }
-
-        fun getMs(time: Long): Long {
-            return time / 1000000L
-        }
-
-        fun convertToNS(time: Long): Long {
-            return time * 1000000L
-        }
-    }
 }

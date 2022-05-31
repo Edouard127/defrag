@@ -2,10 +2,12 @@ package com.lambda.client.module.modules.client
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.lambda.capeapi.Cape
-import com.lambda.capeapi.CapeType
-import com.lambda.capeapi.CapeUser
 import com.lambda.client.LambdaMod
+import com.lambda.client.capeapi.Cape
+import com.lambda.client.capeapi.CapeType
+import com.lambda.client.capeapi.CapeUser
+import com.lambda.client.commons.extension.synchronized
+import com.lambda.client.commons.utils.ConnectionUtils
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.util.EntityUtils
@@ -16,8 +18,6 @@ import com.lambda.client.util.color.HueCycler
 import com.lambda.client.util.threads.BackgroundScope
 import com.lambda.client.util.threads.defaultScope
 import com.lambda.client.util.threads.safeListener
-import com.lambda.commons.extension.synchronized
-import com.lambda.commons.utils.ConnectionUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

@@ -2,6 +2,7 @@ package com.lambda.client.module.modules.movement
 
 import com.lambda.client.event.events.PlayerMoveEvent
 import com.lambda.client.event.events.RenderWorldEvent
+import com.lambda.client.event.listener.listener
 import com.lambda.client.manager.managers.CombatManager
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
@@ -12,7 +13,6 @@ import com.lambda.client.util.graphics.GlStateUtils
 import com.lambda.client.util.graphics.LambdaTessellator
 import com.lambda.client.util.math.RotationUtils.getRotationToEntity
 import com.lambda.client.util.threads.safeListener
-import com.lambda.event.listener.listener
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import net.minecraft.init.MobEffects
 import net.minecraft.util.math.Vec3d

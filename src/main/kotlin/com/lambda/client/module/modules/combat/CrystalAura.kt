@@ -1,10 +1,13 @@
-    package com.lambda.client.module.modules.combat
+package com.lambda.client.module.modules.combat
 
+import com.lambda.client.commons.extension.synchronized
+import com.lambda.client.commons.interfaces.DisplayEnum
 import com.lambda.client.event.Phase
 import com.lambda.client.event.SafeClientEvent
 import com.lambda.client.event.events.OnUpdateWalkingPlayerEvent
 import com.lambda.client.event.events.PacketEvent
 import com.lambda.client.event.events.RunGameLoopEvent
+import com.lambda.client.event.listener.listener
 import com.lambda.client.manager.managers.CombatManager
 import com.lambda.client.manager.managers.HotbarManager
 import com.lambda.client.manager.managers.HotbarManager.resetHotbar
@@ -12,12 +15,14 @@ import com.lambda.client.manager.managers.HotbarManager.serverSideItem
 import com.lambda.client.manager.managers.HotbarManager.spoofHotbar
 import com.lambda.client.manager.managers.PlayerPacketManager
 import com.lambda.client.manager.managers.PlayerPacketManager.sendPlayerPacket
-import com.lambda.client.mixin.extension.id
-import com.lambda.client.mixin.extension.packetAction
+import com.lambda.client.mixin.extension.useEntityAction
+import com.lambda.client.mixin.extension.useEntityId
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
-import com.lambda.client.module.modules.combat.CombatSetting.checkEating
-import com.lambda.client.util.*
+import com.lambda.client.util.Bind
+import com.lambda.client.util.EntityUtils
+import com.lambda.client.util.InfoCalculator
+import com.lambda.client.util.TickTimer
 import com.lambda.client.util.combat.CombatUtils.equipBestWeapon
 import com.lambda.client.util.combat.CombatUtils.scaledHealth
 import com.lambda.client.util.combat.CrystalUtils
@@ -35,22 +40,19 @@ import com.lambda.client.util.text.MessageSendHelper
 import com.lambda.client.util.threads.runSafeR
 import com.lambda.client.util.threads.safeListener
 import com.lambda.client.util.world.getClosestVisibleSide
-import com.lambda.commons.extension.synchronized
-import com.lambda.commons.interfaces.DisplayEnum
-import com.lambda.event.listener.listener
-import ibxm.Player
 import it.unimi.dsi.fastutil.ints.Int2LongMaps
 import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap
 import net.minecraft.client.entity.EntityPlayerSP
 import net.minecraft.entity.item.EntityEnderCrystal
 import net.minecraft.init.Items
-import net.minecraft.init.Items.GOLDEN_APPLE
 import net.minecraft.init.MobEffects
 import net.minecraft.init.SoundEvents
 import net.minecraft.item.ItemSword
 import net.minecraft.item.ItemTool
 import net.minecraft.network.Packet
-import net.minecraft.network.play.client.*
+import net.minecraft.network.play.client.CPacketAnimation
+import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock
+import net.minecraft.network.play.client.CPacketUseEntity
 import net.minecraft.network.play.server.SPacketSoundEffect
 import net.minecraft.network.play.server.SPacketSpawnObject
 import net.minecraft.util.EnumFacing
@@ -59,7 +61,6 @@ import net.minecraft.util.SoundCategory
 import net.minecraft.util.math.AxisAlignedBB
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
-import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.fml.common.gameevent.InputEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import org.lwjgl.input.Keyboard
@@ -67,14 +68,13 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-
 @CombatManager.CombatModule
 object CrystalAura : Module(
     name = "CrystalAura",
-    alias = arrayOf("CA", "AC", "AutoCrystal"),
     description = "Places End Crystals to kill enemies",
     category = Category.COMBAT,
-    modulePriority = 100
+    alias = arrayOf("CA", "AC", "AutoCrystal"),
+    modulePriority = 80
 ) {
     /* Settings */
     private val page = setting("Page", Page.GENERAL)
@@ -125,15 +125,10 @@ object CrystalAura : Module(
     private val retryTimeout by setting("Retry Timeout", 1000, 0..5000, 50, page.atValue(Page.EXPLODE_TWO) { hitAttempts > 0 })
     private val explodeRange by setting("Explode Range", 4.25f, 0.0f..5.0f, 0.25f, page.atValue(Page.EXPLODE_TWO))
     private val wallExplodeRange by setting("Wall Explode Range", 3.5f, 0.0f..5.0f, 0.25f, page.atValue(Page.EXPLODE_TWO))
-    /*GAPPLE PAGE*/
-    private val yes by setting("Enable OffHandGapple", false, page.atValue(Page.AUTO_GAPPLE))
-    private val minHealthTriggerGappleOffHand by setting("Min Health Trigger", 10.1f, 7f..20f, 0.25f, page.atValue(Page.AUTO_GAPPLE))
-    private val autoEatOffHand by setting("Auto Eat OffHand Healh Trigger", 7f, 5f..15f, 0.25f, page.atValue(Page.AUTO_GAPPLE))
-    private val offhandAutoOffHandValue by setting("Switch back OffHand", 5f, 3f..10f, 0.25f, page.atValue(Page.AUTO_GAPPLE))
     /* End of settings */
 
     private enum class Page {
-        GENERAL, FORCE_PLACE, PLACE_ONE, PLACE_TWO, EXPLODE_ONE, EXPLODE_TWO, AUTO_GAPPLE
+        GENERAL, FORCE_PLACE, PLACE_ONE, PLACE_TWO, EXPLODE_ONE, EXPLODE_TWO
     }
 
     @Suppress("UNUSED")
@@ -164,7 +159,7 @@ object CrystalAura : Module(
     private var hitCount = 0
     private var yawDiffIndex = 0
 
-    var inactiveTicks = 1; private set
+    var inactiveTicks = 20; private set
     val minDamage get() = max(minDamageP, minDamageE)
     val maxSelfDamage get() = min(maxSelfDamageP, maxSelfDamageE)
 
@@ -337,7 +332,6 @@ object CrystalAura : Module(
     }
 
     private fun SafeClientEvent.swapToCrystal() {
-
         if (autoSwap && player.heldItemOffhand.item != Items.END_CRYSTAL) {
             if (spoofHotbar) {
                 val slot = if (player.serverSideItem.item == Items.END_CRYSTAL) HotbarManager.serverSideHotbar
@@ -374,8 +368,8 @@ object CrystalAura : Module(
         if (calculation.distance > explodeRange) return
 
         val attackPacket = CPacketUseEntity().apply {
-            id = entityID
-            packetAction = CPacketUseEntity.Action.ATTACK
+            useEntityId = entityID
+            useEntityAction = CPacketUseEntity.Action.ATTACK
         }
 
         synchronized(packetList) {
@@ -449,17 +443,6 @@ object CrystalAura : Module(
     /* End of main functions */
 
     /* Placing */
-    /*private fun SafeClientEvent.getGapple(): Int {
-        var n = 0
-        MessageSendHelper.sendChatMessage("debug")
-        if (player.heldItemMainhand.item == GOLDEN_APPLE) {
-            MessageSendHelper.sendChatMessage("debug")
-            n+= 1
-            return n
-        }
-        else return 0
-    }*/
-
     private fun SafeClientEvent.canPlace() =
         doPlace
             && checkTimer()
@@ -472,48 +455,11 @@ object CrystalAura : Module(
 
     @Suppress("UnconditionalJumpStatementInLoop") // The linter is wrong here, it will continue until it's supposed to return
     private fun SafeClientEvent.getPlacingPos(): BlockPos? {
-
         if (placeMap.isEmpty()) return null
 
         val eyePos = player.getPositionEyes(1f)
-        //val oldPlaceTimer = placeTimerTicks
 
         for ((pos, crystalDamage) in placeMap) {
-           /*  if(player.heldItemMainhand.item == GOLDEN_APPLE) {
-                 placeTimerTicks = -1
-            }
-            if(player.heldItemMainhand.item !== GOLDEN_APPLE){
-                placeTimerTicks = oldPlaceTimer
-                    try {
-                        while (player.heldItemMainhand.item == GOLDEN_APPLE) {
-                            Thread.sleep(5000L)
-                        }
-                    } finally {
-
-*/
-            if(yes){
-                var ImEatingDumbass: Boolean = false
-            if (player.serverSideItem.item == GOLDEN_APPLE && player.health > minHealthTriggerGappleOffHand){
-                AutoOffhand.type = AutoOffhand.Type.GAPPLE
-                if(player.health < autoEatOffHand){
-                    if(player.heldItemOffhand.item == GOLDEN_APPLE) {
-                        ImEatingDumbass = true
-                        CPacketPlayerTryUseItem(EnumHand.OFF_HAND)
-                    }
-                }
-                if(player.health < offhandAutoOffHandValue){
-                    if(!ImEatingDumbass) {
-                        MessageSendHelper.sendChatMessage("Health lower than $offhandAutoOffHandValue")
-                        AutoOffhand.type = AutoOffhand.Type.TOTEM
-                    }
-                }
-                }
-            }
-
-
-
-
-            checkEating()
             // Damage check
             if (!noSuicideCheck(crystalDamage.selfDamage)) continue
             if (!checkDamagePlace(crystalDamage)) continue
@@ -551,7 +497,7 @@ object CrystalAura : Module(
     private fun SafeClientEvent.canPlaceCollide(pos: BlockPos): Boolean {
         val placingBB = CrystalUtils.getCrystalPlacingBB(pos.up())
         return world.getEntitiesWithinAABBExcludingEntity(null, placingBB).all {
-            !it.isEntityAlive || lastCrystalID == it.entityId && pos == BlockPos(it.posX, it.posY - 1.0, it.posZ)
+            !it.isEntityAlive || it is EntityEnderCrystal
         }
     }
 
@@ -600,6 +546,7 @@ object CrystalAura : Module(
             else -> null
         }
     }
+
     private fun SafeClientEvent.noSuicideCheck(selfDamage: Float) = player.scaledHealth - selfDamage > noSuicideThreshold
 
     private fun SafeClientEvent.isHoldingTool(): Boolean {
@@ -666,13 +613,3 @@ object CrystalAura : Module(
     }
     /* End of rotation */
 }
-
-private fun PlayerInteractEvent.getPlayer(): Player {
-    return getPlayer()
-
-}
-
-
-
-
-

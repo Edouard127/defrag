@@ -4,7 +4,7 @@ import com.lambda.client.event.SafeClientEvent
 import com.lambda.client.event.events.PacketEvent
 import com.lambda.client.event.events.PlayerTravelEvent
 import com.lambda.client.manager.managers.PlayerPacketManager.sendPlayerPacket
-import com.lambda.client.mixin.extension.rotationPitch
+import com.lambda.client.mixin.extension.playerPosLookPitch
 import com.lambda.client.mixin.extension.tickLength
 import com.lambda.client.mixin.extension.timer
 import com.lambda.client.module.Category
@@ -18,7 +18,7 @@ import com.lambda.client.util.threads.runSafe
 import com.lambda.client.util.threads.safeListener
 import com.lambda.client.util.world.getGroundPos
 import com.lambda.client.util.world.isLiquidBelow
-import com.lambda.commons.extension.toRadian
+import com.lambda.client.commons.extension.toRadian
 import net.minecraft.client.audio.PositionedSoundRecord
 import net.minecraft.init.Items
 import net.minecraft.init.SoundEvents
@@ -123,7 +123,7 @@ object ElytraFlight : Module(
             if (player.isSpectator || !elytraIsEquipped || elytraDurability <= 1 || !isFlying || mode.value == ElytraFlightMode.BOOST) return@safeListener
             if (it.packet is SPacketPlayerPosLook && mode.value != ElytraFlightMode.PACKET) {
                 val packet = it.packet
-                packet.rotationPitch = player.rotationPitch
+                packet.playerPosLookPitch = player.rotationPitch
             }
 
             /* Cancels the elytra opening animation */
@@ -384,7 +384,7 @@ object ElytraFlight : Module(
         if (!isStandingStillH || moveUp) {
             if ((moveUp || hoverState) && (currentSpeed >= 0.8 || player.motionY > 1.0)) {
                 upwardFlight(currentSpeed, getYaw())
-            } else if (!isStandingStillH || moveUp) { /* Runs when pressing wasd */
+            } else { /* Runs when pressing wasd */
                 packetPitch = forwardPitch.toFloat()
                 player.motionY = -fallSpeedControl.toDouble()
                 setSpeed(getYaw(), moveUp)
@@ -433,7 +433,7 @@ object ElytraFlight : Module(
     /* End of Control Mode */
 
     /* Creative Mode */
-    public fun SafeClientEvent.creativeMode() {
+    private fun SafeClientEvent.creativeMode() {
         if (player.onGround) {
             reset(true)
             return
@@ -470,7 +470,7 @@ object ElytraFlight : Module(
         return isEnabled && isFlying && !autoLanding && (mode.value == ElytraFlightMode.CONTROL || mode.value == ElytraFlightMode.PACKET)
     }
 
-    fun SafeClientEvent.spoofRotation() {
+    private fun SafeClientEvent.spoofRotation() {
         if (player.isSpectator || !elytraIsEquipped || elytraDurability <= 1 || !isFlying) return
 
         var cancelRotation = false

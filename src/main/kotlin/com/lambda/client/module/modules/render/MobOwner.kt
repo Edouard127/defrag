@@ -5,7 +5,7 @@ import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.util.threads.runSafe
 import com.lambda.client.util.threads.safeListener
-import com.lambda.commons.utils.MathUtils.round
+import com.lambda.client.commons.utils.MathUtils.round
 import net.minecraft.entity.passive.AbstractHorse
 import net.minecraft.entity.passive.EntityTameable
 import net.minecraftforge.fml.common.gameevent.TickEvent
@@ -27,11 +27,12 @@ object MobOwner : Module(
             for (entity in world.loadedEntityList) {
                 /* Non Horse types, such as wolves */
                 if (entity is EntityTameable) {
-                    val owner = entity.owner
-                    if (!entity.isTamed || owner == null) continue
+                    val ownerUUID = entity.ownerId
+                    if (!entity.isTamed || ownerUUID == null) continue
 
+                    val ownerName = UUIDManager.getByUUID(ownerUUID)?.name ?: invalidText
                     entity.alwaysRenderNameTag = true
-                    entity.customNameTag = "Owner: " + owner.displayName.formattedText + getHealth(entity)
+                    entity.customNameTag = "Owner: " + ownerName + getHealth(entity)
                 }
 
                 if (entity is AbstractHorse) {

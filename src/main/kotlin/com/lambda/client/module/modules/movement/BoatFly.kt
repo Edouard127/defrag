@@ -2,8 +2,8 @@ package com.lambda.client.module.modules.movement
 
 import com.lambda.client.event.events.PacketEvent
 import com.lambda.client.event.events.PlayerTravelEvent
-import com.lambda.client.mixin.extension.rotationPitch
-import com.lambda.client.mixin.extension.rotationYaw
+import com.lambda.client.mixin.extension.playerPosLookPitch
+import com.lambda.client.mixin.extension.playerPosLookYaw
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.util.EntityUtils.steerEntity
@@ -11,7 +11,10 @@ import com.lambda.client.util.threads.runSafe
 import com.lambda.client.util.threads.safeListener
 import net.minecraft.entity.Entity
 import net.minecraft.entity.item.EntityBoat
-import net.minecraft.network.play.client.*
+import net.minecraft.network.play.client.CPacketInput
+import net.minecraft.network.play.client.CPacketPlayer
+import net.minecraft.network.play.client.CPacketSteerBoat
+import net.minecraft.network.play.client.CPacketUseEntity
 import net.minecraft.network.play.server.SPacketEntityTeleport
 import net.minecraft.network.play.server.SPacketMoveVehicle
 import net.minecraft.network.play.server.SPacketPlayerPosLook
@@ -21,8 +24,8 @@ import net.minecraft.util.math.Vec3d
 
 object BoatFly : Module(
     name = "BoatFly",
-    category = Category.MOVEMENT,
-    description = "Fly using boats"
+    description = "Fly using boats",
+    category = Category.MOVEMENT
 ) {
     private val speed by setting("Speed", 1.0f, 0.1f..50.0f, 0.1f)
     private val upSpeed by setting("Up Speed", 1.0f, 0.0f..10.0f, 0.1f)
@@ -52,8 +55,8 @@ object BoatFly : Module(
             if (ridingEntity !is EntityBoat || !cancelPlayer) return@safeListener
 
             if (it.packet is CPacketPlayer
-                || it.packet is CPacketInput
-                || it.packet is CPacketSteerBoat) {
+                    || it.packet is CPacketInput
+                    || it.packet is CPacketSteerBoat) {
                 if (it.packet is CPacketInput && it.packet == CPacketInput(0.0f, 0.0f, false, true)) {
                     return@safeListener
                 } else {
@@ -86,8 +89,8 @@ object BoatFly : Module(
                 }
                 is SPacketPlayerPosLook -> {
                     if (antiForceLook) {
-                        it.packet.rotationYaw = player.rotationYaw
-                        it.packet.rotationPitch = player.rotationPitch
+                        it.packet.playerPosLookYaw = player.rotationYaw
+                        it.packet.playerPosLookPitch = player.rotationPitch
                     }
                 }
                 is SPacketEntityTeleport -> {

@@ -2,13 +2,13 @@ package com.lambda.client.manager.managers
 
 import com.lambda.client.event.events.PacketEvent
 import com.lambda.client.manager.Manager
-import com.lambda.client.mixin.extension.packetMessage
+import com.lambda.client.mixin.extension.chatMessage
 import com.lambda.client.module.AbstractModule
 import com.lambda.client.module.modules.client.ChatSetting
 import com.lambda.client.util.TaskState
 import com.lambda.client.util.TickTimer
 import com.lambda.client.util.threads.safeListener
-import com.lambda.event.listener.listener
+import com.lambda.client.event.listener.listener
 import net.minecraft.network.play.client.CPacketChatMessage
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import java.util.*
@@ -124,7 +124,7 @@ object MessageManager : Manager {
          * @return true if [queuedMessage] have been modified
          */
         fun apply(queuedMessage: QueuedMessage) = filter(queuedMessage).also {
-            if (it) queuedMessage.packet.packetMessage = modifier(queuedMessage)
+            if (it) queuedMessage.packet.chatMessage = modifier(queuedMessage)
         }
 
         override fun compareTo(other: MessageModifier): Int {

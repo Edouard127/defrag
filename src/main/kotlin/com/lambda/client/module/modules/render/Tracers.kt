@@ -11,8 +11,8 @@ import com.lambda.client.util.color.ColorHolder
 import com.lambda.client.util.color.HueCycler
 import com.lambda.client.util.graphics.ESPRenderer
 import com.lambda.client.util.threads.safeListener
-import com.lambda.commons.utils.MathUtils.convertRange
-import com.lambda.event.listener.listener
+import com.lambda.client.commons.utils.MathUtils.convertRange
+import com.lambda.client.event.listener.listener
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraftforge.fml.common.gameevent.TickEvent
@@ -35,7 +35,6 @@ object Tracers : Module(
     private val neutral by setting("Neutral Mobs", true, { page == Page.ENTITY_TYPE && mobs })
     private val hostile by setting("Hostile Mobs", true, { page == Page.ENTITY_TYPE && mobs })
     private val invisible by setting("Invisible", true, { page == Page.ENTITY_TYPE })
-    private val boat by setting("Boats", false, { page == Page.ENTITY_TYPE })
     private val range by setting("Range", 64, 8..512, 8, { page == Page.ENTITY_TYPE })
 
     /* Color settings */

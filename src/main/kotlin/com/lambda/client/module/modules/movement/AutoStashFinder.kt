@@ -3,6 +3,7 @@ package com.lambda.client.module.modules.movement
 import baritone.api.BaritoneAPI
 import baritone.api.utils.BetterBlockPos
 import com.lambda.client.event.events.RenderWorldEvent
+import com.lambda.client.event.listener.listener
 import com.lambda.client.manager.managers.PlayerPacketManager.sendPlayerPacket
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
@@ -16,7 +17,6 @@ import com.lambda.client.util.sendChatMessage
 import com.lambda.client.util.text.MessageSendHelper
 import com.lambda.client.util.threads.runSafeR
 import com.lambda.client.util.threads.safeListener
-import com.lambda.event.listener.listener
 import net.minecraft.init.Items
 import net.minecraft.item.ItemStack
 import net.minecraft.util.math.BlockPos

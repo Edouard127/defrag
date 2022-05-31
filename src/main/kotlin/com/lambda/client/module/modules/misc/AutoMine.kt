@@ -3,6 +3,7 @@ package com.lambda.client.module.modules.misc
 import com.lambda.client.command.CommandManager
 import com.lambda.client.event.events.BaritoneCommandEvent
 import com.lambda.client.event.events.ConnectionEvent
+import com.lambda.client.event.listener.listener
 import com.lambda.client.mixin.extension.sendClickBlockToController
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
@@ -12,7 +13,6 @@ import com.lambda.client.util.text.formatValue
 import com.lambda.client.util.threads.runSafe
 import com.lambda.client.util.threads.runSafeR
 import com.lambda.client.util.threads.safeListener
-import com.lambda.event.listener.listener
 import net.minecraftforge.fml.common.gameevent.TickEvent
 
 object AutoMine : Module(

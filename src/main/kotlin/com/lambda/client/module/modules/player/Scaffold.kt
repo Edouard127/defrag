@@ -26,7 +26,7 @@ import com.lambda.client.util.threads.safeListener
 import com.lambda.client.util.world.PlaceInfo
 import com.lambda.client.util.world.getNeighbour
 import com.lambda.client.util.world.placeBlock
-import com.lambda.event.listener.listener
+import com.lambda.client.event.listener.listener
 import net.minecraft.item.ItemBlock
 import net.minecraft.network.play.client.CPacketEntityAction
 import net.minecraft.network.play.server.SPacketPlayerPosLook
@@ -43,8 +43,8 @@ import kotlin.math.roundToInt
  */
 object Scaffold : Module(
     name = "Scaffold",
-    category = Category.PLAYER,
     description = "Places blocks under you",
+    category = Category.PLAYER,
     modulePriority = 500
 ) {
     private val tower by setting("Tower", true)
@@ -121,7 +121,7 @@ object Scaffold : Module(
         }
     }
 
-    fun SafeClientEvent.calcNextPos(): BlockPos? {
+    private fun SafeClientEvent.calcNextPos(): BlockPos? {
         val posVec = player.positionVector
         val blockPos = posVec.toBlockPos()
         return checkPos(blockPos)

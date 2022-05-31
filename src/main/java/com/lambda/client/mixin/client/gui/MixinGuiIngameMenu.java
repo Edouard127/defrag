@@ -2,7 +2,6 @@ package com.lambda.client.mixin.client.gui;
 
 import com.lambda.client.gui.mc.DefragLoadMusic;
 import com.lambda.client.gui.mc.LambdaGuiAntiDisconnect;
-import com.lambda.client.gui.mc.LambdaGuiPluginManager;
 import com.lambda.client.module.modules.misc.AntiDisconnect;
 import com.lambda.client.util.Wrapper;
 import net.minecraft.client.gui.GuiButton;
@@ -40,8 +39,6 @@ public class MixinGuiIngameMenu extends GuiScreen {
 
                 callbackInfo.cancel();
             }
-        } else if (button.id == 11000) {
-            mc.displayGuiScreen(new LambdaGuiPluginManager(this));
         }
         if(button.id == 1044){
             mc.displayGuiScreen(new DefragLoadMusic());

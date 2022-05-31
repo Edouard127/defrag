@@ -3,14 +3,14 @@ package com.lambda.client.module.modules.player
 import com.lambda.client.event.SafeClientEvent
 import com.lambda.client.event.events.ConnectionEvent
 import com.lambda.client.event.events.PacketEvent
-import com.lambda.client.mixin.extension.x
-import com.lambda.client.mixin.extension.y
-import com.lambda.client.mixin.extension.z
+import com.lambda.client.event.listener.listener
+import com.lambda.client.mixin.extension.playerX
+import com.lambda.client.mixin.extension.playerY
+import com.lambda.client.mixin.extension.playerZ
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.util.threads.runSafe
 import com.lambda.client.util.threads.safeListener
-import com.lambda.event.listener.listener
 import net.minecraft.client.entity.EntityOtherPlayerMP
 import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraftforge.fml.common.gameevent.TickEvent
@@ -18,8 +18,8 @@ import java.util.*
 
 object Blink : Module(
     name = "Blink",
-    category = Category.PLAYER,
-    description = "Cancels server side packets"
+    description = "Cancels server side packets",
+    category = Category.PLAYER
 ) {
     private val cancelPacket by setting("Cancel Packets", false)
     private val autoReset by setting("Auto Reset", true)
@@ -79,7 +79,7 @@ object Blink : Module(
         mc.addScheduledTask {
             runSafe {
                 if (cancelPacket) {
-                    packets.peek()?.let { player.setPosition(it.x, it.y, it.z) }
+                    packets.peek()?.let { player.setPosition(it.playerX, it.playerY, it.playerZ) }
                     packets.clear()
                 } else {
                     sending = true

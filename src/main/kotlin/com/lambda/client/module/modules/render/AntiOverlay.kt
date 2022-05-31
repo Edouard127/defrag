@@ -3,7 +3,7 @@ package com.lambda.client.module.modules.render
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.util.threads.safeListener
-import com.lambda.event.listener.listener
+import com.lambda.client.event.listener.listener
 import net.minecraft.client.tutorial.TutorialSteps
 import net.minecraft.init.MobEffects
 import net.minecraftforge.client.event.RenderBlockOverlayEvent

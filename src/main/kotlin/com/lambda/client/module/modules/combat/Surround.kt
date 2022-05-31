@@ -4,6 +4,7 @@ import com.lambda.client.event.SafeClientEvent
 import com.lambda.client.manager.managers.CombatManager
 import com.lambda.client.manager.managers.HotbarManager.resetHotbar
 import com.lambda.client.manager.managers.HotbarManager.spoofHotbar
+import com.lambda.client.manager.managers.PlayerPacketManager.sendPlayerPacket
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.module.modules.movement.Speed
@@ -22,7 +23,6 @@ import com.lambda.client.util.text.MessageSendHelper
 import com.lambda.client.util.threads.defaultScope
 import com.lambda.client.util.threads.isActiveOrFalse
 import com.lambda.client.util.threads.safeListener
-import com.lambda.client.util.world.PlaceInfo
 import com.lambda.client.util.world.buildStructure
 import com.lambda.client.util.world.isPlaceable
 import kotlinx.coroutines.Job
@@ -34,11 +34,11 @@ import net.minecraftforge.fml.common.gameevent.TickEvent
 @CombatManager.CombatModule
 object Surround : Module(
     name = "Surround",
-    category = Category.COMBAT,
     description = "Surrounds you with obsidian to take less damage",
-    modulePriority = 400
+    category = Category.COMBAT,
+    modulePriority = 200
 ) {
-    private val placeSpeed by setting("Places Per Tick", 4f, 0.25f..50f, 0.25f)
+    private val placeSpeed by setting("Places Per Tick", 4f, 0.25f..5f, 0.25f)
     private val disableStrafe by setting("Disable Strafe", true)
     private val strictDirection by setting("Strict Direction", false)
     private val autoDisable by setting("Auto Disable", AutoDisableMode.OUT_OF_HOLE)
@@ -110,9 +110,9 @@ object Surround : Module(
                 job = runSurround()
             } else if (job.isActiveOrFalse) {
                 spoofObby()
-                /*sendPlayerPacket {
+                sendPlayerPacket {
                     cancelAll()
-                }*/
+                }
             } else if (isEnabled && CombatManager.isOnTopPriority(Surround)) {
                 resetHotbar()
             }
@@ -130,7 +130,7 @@ object Surround : Module(
         }
     }
 
-    private fun SafeClientEvent.inHoleCheck() = player.onGround && player.speed < 0.15 && checkHole(player) == SurroundUtils.HoleType.OBBY
+    fun SafeClientEvent.inHoleCheck() = player.onGround && player.speed < 0.15 && checkHole(player) == SurroundUtils.HoleType.OBSIDIAN
 
     private fun outOfHoleCheck() {
         if (autoDisable == AutoDisableMode.OUT_OF_HOLE) {
@@ -168,11 +168,12 @@ object Surround : Module(
 
     private fun SafeClientEvent.runSurround() = defaultScope.launch {
         spoofObby()
+
         buildStructure(
             player.flooredPosition,
             SurroundUtils.surroundOffset,
             placeSpeed,
-            5,
+            2,
             4.25f,
             strictDirection
         ) {

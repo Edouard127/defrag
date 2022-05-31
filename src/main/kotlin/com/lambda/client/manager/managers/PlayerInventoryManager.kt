@@ -11,7 +11,7 @@ import com.lambda.client.util.TpsCalculator
 import com.lambda.client.util.items.clickSlot
 import com.lambda.client.util.items.removeHoldingItem
 import com.lambda.client.util.threads.safeListener
-import com.lambda.event.listener.listener
+import com.lambda.client.event.listener.listener
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.inventory.ClickType
 import java.util.*
@@ -56,6 +56,8 @@ object PlayerInventoryManager : Manager {
             actionQueue.removeIf { it.isDone }
             actionQueue.firstOrNull()
         }
+
+    fun isDone() = actionQueue.isEmpty()
 
     /**
      * Adds a new task to the inventory manager

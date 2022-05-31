@@ -16,7 +16,7 @@ import java.util.*
 
 
 object IRC : Module(
-    name = "IRC Chata",
+    name = "IRC Chat",
     description = "Talk with strangers",
     category = Category.CLIENT
 ) {

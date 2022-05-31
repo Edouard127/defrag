@@ -1,6 +1,7 @@
 package com.lambda.client.gui.rgui.windows
 
 import com.lambda.client.gui.rgui.component.*
+import com.lambda.client.module.modules.client.ClickGUI
 import com.lambda.client.setting.settings.AbstractSetting
 import com.lambda.client.setting.settings.impl.number.NumberSetting
 import com.lambda.client.setting.settings.impl.other.BindSetting
@@ -10,7 +11,7 @@ import com.lambda.client.setting.settings.impl.primitive.EnumSetting
 import com.lambda.client.setting.settings.impl.primitive.StringSetting
 import com.lambda.client.util.graphics.font.FontRenderAdapter
 import com.lambda.client.util.math.Vec2f
-import com.lambda.commons.extension.sumByFloat
+import com.lambda.client.commons.extension.sumByFloat
 import org.lwjgl.input.Keyboard
 
 abstract class SettingWindow<T : Any>(
@@ -24,7 +25,7 @@ abstract class SettingWindow<T : Any>(
     override val minWidth: Float get() = 100.0f
     override val minHeight: Float get() = draggableHeight
     override var height: Float = 0.0f
-        get() = children.filter { it.visible }.sumByFloat { it.height + lineSpace } + lineSpace + 6.0f + FontRenderAdapter.getFontHeight()
+        get() = children.filter { it.visible }.sumByFloat { it.height + ClickGUI.entryMargin } + ClickGUI.entryMargin + 6.0f + FontRenderAdapter.getFontHeight()
 
     override val minimizable get() = false
 

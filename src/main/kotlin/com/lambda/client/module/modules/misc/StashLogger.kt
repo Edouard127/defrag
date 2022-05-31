@@ -1,6 +1,7 @@
 package com.lambda.client.module.modules.misc
 
 
+import com.lambda.client.commons.extension.synchronized
 import com.lambda.client.manager.managers.WaypointManager
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
@@ -13,7 +14,6 @@ import com.lambda.client.util.text.MessageSendHelper
 import com.lambda.client.util.threads.defaultScope
 import com.lambda.client.util.threads.onMainThread
 import com.lambda.client.util.threads.safeListener
-import com.lambda.commons.extension.synchronized
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import net.minecraft.client.audio.PositionedSoundRecord

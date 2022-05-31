@@ -16,7 +16,6 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.item.EntityEnderCrystal
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.entity.item.EntityTNTPrimed
-import net.minecraft.entity.item.EntityBoat
 import net.minecraft.entity.item.EntityXPOrb
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.projectile.EntityArrow
@@ -26,8 +25,8 @@ import org.lwjgl.opengl.GL11.*
 
 object Chams : Module(
     name = "Chams",
-    category = Category.RENDER,
-    description = "Modify entity rendering"
+    description = "Modify entity rendering",
+    category = Category.RENDER
 ) {
     private val page by setting("Page", Page.ENTITY_TYPE)
 
@@ -40,7 +39,6 @@ object Chams : Module(
     private val items by setting("Items", false, { page == Page.ENTITY_TYPE && !all })
     private val tnt by setting("Primed TNT", false, { page == Page.ENTITY_TYPE && !all })
     private val crystals by setting("Crystals", false, { page == Page.ENTITY_TYPE && !all })
-    private val boat by setting("Boats", false, { page == Page.ENTITY_TYPE && !all })
     private val players by setting("Players", true, { page == Page.ENTITY_TYPE && !all })
     private val friends by setting("Friends", false, { page == Page.ENTITY_TYPE && !all && players })
     private val sleeping by setting("Sleeping", false, { page == Page.ENTITY_TYPE && !all && players })
@@ -125,7 +123,5 @@ object Chams : Module(
                 || tnt && entity is EntityTNTPrimed
                 || players && entity is EntityPlayer && EntityUtils.playerTypeCheck(entity, friends, sleeping)
                 || mobTypeSettings(entity, mobs, passive, neutral, hostile)
-                || boat && entity is EntityBoat
-
             )
 }

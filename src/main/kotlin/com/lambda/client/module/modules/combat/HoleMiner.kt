@@ -32,8 +32,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent
 @CombatManager.CombatModule
 object HoleMiner : Module(
     name = "HoleMiner",
-    category = Category.COMBAT,
     description = "Mines your opponent's hole",
+    category = Category.COMBAT,
     modulePriority = 100
 ) {
     private val delay by setting("Delay", 2, 1..10, 1)
@@ -49,7 +49,7 @@ object HoleMiner : Module(
             runSafeR {
                 val target = CombatManager.target
                 if (target != null) {
-                    if (checkHole(target) != SurroundUtils.HoleType.OBBY) {
+                    if (checkHole(target) != SurroundUtils.HoleType.OBSIDIAN) {
                         MessageSendHelper.sendChatMessage("$chatName Target is not in a valid hole, disabling")
                         disable()
                     } else {

@@ -3,9 +3,7 @@ package com.lambda.client.module.modules.movement
 import com.lambda.client.event.events.PacketEvent
 import com.lambda.client.mixin.client.entity.MixinEntity
 import com.lambda.client.mixin.client.world.MixinBlockLiquid
-import com.lambda.client.mixin.extension.packetMotionX
-import com.lambda.client.mixin.extension.packetMotionY
-import com.lambda.client.mixin.extension.packetMotionZ
+import com.lambda.client.mixin.extension.*
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.util.threads.safeListener
@@ -24,9 +22,9 @@ import kotlin.math.sqrt
  */
 object Velocity : Module(
     name = "Velocity",
-    alias = arrayOf("Knockback", "AntiKnockBack", "NoPush"),
-    category = Category.MOVEMENT,
     description = "Modify player knockback by altering velocity",
+    category = Category.MOVEMENT,
+    alias = arrayOf("Knockback", "AntiKnockBack", "NoPush")
 ) {
     private val horizontal by setting("Horizontal", 0f, -5f..5f, 0.05f)
     private val vertical by setting("Vertical", 0f, -5f..5f, 0.05f)
@@ -42,9 +40,9 @@ object Velocity : Module(
                     if (isZero) {
                         it.cancel()
                     } else {
-                        packetMotionX = (packetMotionX * horizontal).toInt()
-                        packetMotionY = (packetMotionY * vertical).toInt()
-                        packetMotionZ = (packetMotionZ * horizontal).toInt()
+                        entityVelocityMotionX = (entityVelocityMotionX * horizontal).toInt()
+                        entityVelocityMotionY = (entityVelocityMotionY * vertical).toInt()
+                        entityVelocityMotionZ = (entityVelocityMotionZ * horizontal).toInt()
                     }
                 }
             } else if (it.packet is SPacketExplosion) {
@@ -52,9 +50,9 @@ object Velocity : Module(
                     if (isZero) {
                         it.cancel()
                     } else {
-                        packetMotionX *= horizontal
-                        packetMotionY *= vertical
-                        packetMotionZ *= horizontal
+                        explosionMotionX *= horizontal
+                        explosionMotionY *= vertical
+                        explosionMotionZ *= horizontal
                     }
                 }
             }

@@ -166,7 +166,7 @@ class TextComponent(private val separator: String = " ") {
 
     }
 
-    class TextElement(textIn: Any, val color: ColorHolder = ColorHolder(255, 255, 255), style: Style = Style.REGULAR, val scale: Float = 1f) {
+    class TextElement(textIn: String, val color: ColorHolder = ColorHolder(255, 255, 255), style: Style = Style.REGULAR, val scale: Float = 1f) {
         val text = "${style.code}$textIn"
 
         override fun toString(): String {

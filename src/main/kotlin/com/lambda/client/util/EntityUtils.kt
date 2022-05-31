@@ -5,15 +5,14 @@ import com.lambda.client.manager.managers.FriendManager
 import com.lambda.client.util.MovementUtils.calcMoveYaw
 import com.lambda.client.util.items.id
 import com.lambda.client.util.math.VectorUtils.toBlockPos
-import com.lambda.commons.extension.ceilToInt
-import com.lambda.commons.extension.floorToInt
+import com.lambda.client.commons.extension.ceilToInt
+import com.lambda.client.commons.extension.floorToInt
 import net.minecraft.block.BlockLiquid
 import net.minecraft.client.Minecraft
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityAgeable
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.EnumCreatureType
-import net.minecraft.entity.item.EntityBoat
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.entity.monster.EntityEnderman
 import net.minecraft.entity.monster.EntityIronGolem
@@ -28,6 +27,7 @@ import kotlin.math.sin
 
 object EntityUtils {
     private val mc = Minecraft.getMinecraft()
+
     val Entity.flooredPosition get() = BlockPos(posX.floorToInt(), posY.floorToInt(), posZ.floorToInt())
     val Entity.prevPosVector get() = Vec3d(this.prevPosX, this.prevPosY, this.prevPosZ)
 
@@ -70,8 +70,13 @@ object EntityUtils {
         }
     }
 
-    fun mobTypeSettings(entity: Entity, mobs: Boolean, passive: Boolean, neutral: Boolean, hostile: Boolean): Boolean {
-        return mobs && (passive && entity.isPassive || neutral && entity.isNeutral || hostile && entity.isHostile)
+    fun mobTypeSettings(entity: Entity, mobs: Boolean, passive: Boolean, neutral: Boolean, hostile: Boolean, tamable: Boolean = false): Boolean {
+        val tamed = when (entity) {
+            is EntityTameable -> entity.isTamed || entity.ownerId != null
+            is AbstractHorse -> entity.isTame || entity.ownerUniqueId != null
+            else -> false
+        }
+        return mobs && (passive && entity.isPassive || neutral && entity.isNeutral || hostile && entity.isHostile || tamable && tamed)
     }
 
     /**
@@ -115,7 +120,6 @@ object EntityUtils {
         for (entity in clonedList) {
             /* Entity type check */
             if (entity !is EntityLivingBase) continue
-            if (entity is EntityBoat) continue
             if (ignoreSelf && entity.name == mc.player.name) continue
             if (entity == mc.renderViewEntity) continue
             if (entity is EntityPlayer) {
@@ -161,7 +165,7 @@ object EntityUtils {
     fun SafeClientEvent.getDroppedItems(itemId: Int, range: Float): ArrayList<EntityItem> {
         val entityList = ArrayList<EntityItem>()
         for (entity in world.loadedEntityList) {
-            if (entity !is EntityItem) continue /* Entites that are dropped item */
+            if (entity !is EntityItem) continue /* Entities that are dropped item */
             if (entity.item.item.id != itemId) continue /* Dropped items that are has give item id */
             if (entity.getDistance(player) > range) continue /* Entities within specified  blocks radius */
 
@@ -191,7 +195,7 @@ object EntityUtils {
         }
     }
 
-    public fun SafeClientEvent.isBorderingChunk(entity: Entity, motionX: Double, motionZ: Double, antiStuck: Boolean): Boolean {
+    private fun SafeClientEvent.isBorderingChunk(entity: Entity, motionX: Double, motionZ: Double, antiStuck: Boolean): Boolean {
         return antiStuck && world.getChunk((entity.posX + motionX).toInt() shr 4, (entity.posZ + motionZ).toInt() shr 4) is EmptyChunk
     }
 }

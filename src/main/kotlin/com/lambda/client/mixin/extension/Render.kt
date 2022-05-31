@@ -1,11 +1,9 @@
 package com.lambda.client.mixin.extension
 
-import com.lambda.client.mixin.client.accessor.render.AccessorRenderGlobal
-import com.lambda.client.mixin.client.accessor.render.AccessorRenderManager
-import com.lambda.client.mixin.client.accessor.render.AccessorShaderGroup
-import com.lambda.client.mixin.client.accessor.render.AccessorViewFrustum
+import com.lambda.client.mixin.client.accessor.render.*
 import net.minecraft.client.renderer.RenderGlobal
 import net.minecraft.client.renderer.ViewFrustum
+import net.minecraft.client.renderer.chunk.RenderChunk
 import net.minecraft.client.renderer.entity.RenderManager
 import net.minecraft.client.shader.Framebuffer
 import net.minecraft.client.shader.Shader
@@ -23,4 +21,4 @@ val ShaderGroup.listShaders: List<Shader> get() = (this as AccessorShaderGroup).
 val ShaderGroup.listFrameBuffers: List<Framebuffer> get() = (this as AccessorShaderGroup).listFramebuffers
 
 // Unused, but kept for consistency. Java equivalent used in Mixins
-fun ViewFrustum.getRenderChunk(pos: BlockPos) = (this as AccessorViewFrustum).invokeGetRenderChunk(pos)
+fun ViewFrustum.getRenderChunk(pos: BlockPos): RenderChunk = (this as AccessorViewFrustum).invokeGetRenderChunk(pos)

@@ -13,7 +13,7 @@ import com.lambda.client.module.modules.client.HudEditor
 import com.lambda.client.util.graphics.GlStateUtils
 import com.lambda.client.util.graphics.VertexHelper
 import com.lambda.client.util.math.Vec2f
-import com.lambda.event.listener.listener
+import com.lambda.client.event.listener.listener
 import net.minecraftforge.fml.common.gameevent.InputEvent
 import org.lwjgl.input.Keyboard
 import org.lwjgl.opengl.GL11.*
@@ -57,7 +57,7 @@ object LambdaHudGui : AbstractLambdaGui<HudSettingWindow, AbstractHudElement>() 
 
     internal fun register(hudElement: AbstractHudElement) {
         val button = HudButton(hudElement)
-        hudWindows[hudElement.category]!!.children.add(button)
+        hudWindows[hudElement.category]!!.add(button)
         windowList.add(hudElement)
     }
 
@@ -76,7 +76,10 @@ object LambdaHudGui : AbstractLambdaGui<HudSettingWindow, AbstractHudElement>() 
     }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {
-        if (keyCode == Keyboard.KEY_ESCAPE || HudEditor.bind.value.isDown(keyCode) && !searching && settingWindow?.listeningChild == null) {
+        if (keyCode == Keyboard.KEY_ESCAPE ||
+            (keyCode == ClickGUI.bind.value.key ||
+                keyCode == HudEditor.bind.value.key)
+            && !searching && settingWindow?.listeningChild == null) {
             HudEditor.disable()
         } else {
             super.keyTyped(typedChar, keyCode)

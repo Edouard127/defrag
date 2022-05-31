@@ -4,6 +4,7 @@ import com.lambda.client.event.Phase
 import com.lambda.client.event.SafeClientEvent
 import com.lambda.client.event.events.RenderEntityEvent
 import com.lambda.client.event.events.RenderWorldEvent
+import com.lambda.client.event.listener.listener
 import com.lambda.client.mixin.extension.*
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
@@ -16,7 +17,6 @@ import com.lambda.client.util.graphics.LambdaTessellator
 import com.lambda.client.util.graphics.ShaderHelper
 import com.lambda.client.util.threads.runSafe
 import com.lambda.client.util.threads.safeListener
-import com.lambda.event.listener.listener
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.shader.Shader
 import net.minecraft.entity.Entity
@@ -32,8 +32,8 @@ import org.lwjgl.opengl.GL11.GL_PROJECTION
 
 object ESP : Module(
     name = "ESP",
-    category = Category.RENDER,
-    description = "Highlights entities"
+    description = "Highlights entities",
+    category = Category.RENDER
 ) {
     private val page by setting("Page", Page.ENTITY_TYPE)
 
@@ -55,13 +55,14 @@ object ESP : Module(
 
     /* Rendering settings */
     private val mode = setting("Mode", ESPMode.SHADER, { page == Page.RENDERING })
+    private val color by setting("Color", GuiColors.primary, false, { page == Page.RENDERING && mode.value == ESPMode.SHADER })
     private val hideOriginal by setting("Hide Original", false, { page == Page.RENDERING && mode.value == ESPMode.SHADER })
     private val filled by setting("Filled", false, { page == Page.RENDERING && (mode.value == ESPMode.BOX || mode.value == ESPMode.SHADER) })
     private val outline by setting("Outline", true, { page == Page.RENDERING && (mode.value == ESPMode.BOX || mode.value == ESPMode.SHADER) })
     private val aFilled by setting("Filled Alpha", 63, 0..255, 1, { page == Page.RENDERING && (mode.value == ESPMode.BOX || mode.value == ESPMode.SHADER) })
     private val aOutline by setting("Outline Alpha", 255, 0..255, 1, { page == Page.RENDERING && (mode.value == ESPMode.BOX || mode.value == ESPMode.SHADER) })
     private val blurRadius by setting("Blur Radius", 0f, 0f..16f, 0.5f, { page == Page.RENDERING && mode.value == ESPMode.SHADER })
-    private val width by setting("Width", 2f, 1f..8f, 0.25f, { page == Page.RENDERING })
+    private val width by setting("Width", 1.5f, 1f..8f, 0.25f, { page == Page.RENDERING })
 
     private enum class Page {
         ENTITY_TYPE, RENDERING
@@ -101,7 +102,7 @@ object ESP : Module(
                     renderer.aOutline = if (outline) aOutline else 0
                     renderer.thickness = width
                     for (entity in entityList) {
-                        renderer.add(entity, GuiColors.primary)
+                        renderer.add(entity, color)
                     }
                     renderer.render(true)
                 }
@@ -234,7 +235,7 @@ object ESP : Module(
     }
 
     private fun setShaderSettings(shader: Shader) {
-        shader.shaderManager.getShaderUniform("color")?.set(GuiColors.primary.r / 255f, GuiColors.primary.g / 255f, GuiColors.primary.b / 255f)
+        shader.shaderManager.getShaderUniform("color")?.set(color.r / 255f, color.g / 255f, color.b / 255f)
         shader.shaderManager.getShaderUniform("outlineAlpha")?.set(if (outline) aOutline / 255f else 0f)
         shader.shaderManager.getShaderUniform("filledAlpha")?.set(if (filled) aFilled / 255f else 0f)
         shader.shaderManager.getShaderUniform("width")?.set(width)

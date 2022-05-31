@@ -6,7 +6,7 @@ import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.util.StopTimer
 import com.lambda.client.util.threads.safeListener
-import com.lambda.event.listener.listener
+import com.lambda.client.event.listener.listener
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import org.lwjgl.input.Keyboard
 import kotlin.math.round
@@ -18,18 +18,19 @@ object ClickGUI : Module(
     showOnArray = false,
     alwaysListening = true
 ) {
-    private val scaleSetting = setting("Scale", 90, 50..400, 5)
-    val radius by setting("Corner Radius", 0.2, 0.0..10.0, 0.2)
+    private val scaleSetting = setting("Scale", 100, 50..400, 5)
+    val radius by setting("Corner Radius", 2.0, 0.0..10.0, 0.2)
     val blur by setting("Blur", 0.0f, 0.0f..1.0f, 0.05f)
     val windowOutline by setting("Window Outline", false)
     val buttonOutline by setting("Button Outline", false)
-    val outlineWidth by setting("Outline Width", 2.5f, 0.5f..3.5f,0.5f, { windowOutline || buttonOutline })
+    val outlineWidth by setting("Outline Width", 2.5f, 0.5f..3.5f, 0.5f, { windowOutline || buttonOutline })
     val entryMargin by setting("Margin", 0.0f, 0.0f..10.0f, 0.5f)
     val darkness by setting("Darkness", 0.25f, 0.0f..1.0f, 0.05f)
     val fadeInTime by setting("Fade In Time", 0.25f, 0.0f..1.0f, 0.05f)
     val fadeOutTime by setting("Fade Out Time", 0.1f, 0.0f..1.0f, 0.05f)
     val showModifiedInBold by setting("Show Modified In Bold", false, description = "Display modified settings in a bold font")
     private val resetComponents = setting("Reset Positions", false)
+    private val resetScale = setting("Reset Scale", false)
     val sortBy = setting("Sort By", SortByOptions.ALPHABETICALLY)
 
     private var prevScale = scaleSetting.value / 100.0f
@@ -40,7 +41,7 @@ object ClickGUI : Module(
         ALPHABETICALLY, FREQUENCY, CUSTOM
     }
 
-    fun resetScale() {
+    private fun resetScale() {
         scaleSetting.value = 100
         prevScale = 1.0f
         scale = 1.0f
@@ -53,7 +54,7 @@ object ClickGUI : Module(
     init {
         safeListener<TickEvent.ClientTickEvent> {
             prevScale = scale
-            if (settingTimer.stop() > 500L) {
+            if (settingTimer.stop() > 1000L) {
                 val diff = scale - getRoundedScale()
                 when {
                     diff < -0.025 -> scale += 0.025f
@@ -74,6 +75,11 @@ object ClickGUI : Module(
                 it.resetPosition()
             }
             resetComponents.value = false
+        }
+
+        resetScale.listeners.add {
+            resetScale()
+            resetScale.value = false
         }
     }
 

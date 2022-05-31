@@ -16,7 +16,7 @@ import com.lambda.client.util.math.Vec2d
 import com.lambda.client.util.math.VectorUtils.distanceTo
 import com.lambda.client.util.math.VectorUtils.toVec3dCenter
 import com.lambda.client.util.threads.safeListener
-import com.lambda.event.listener.listener
+import com.lambda.client.event.listener.listener
 import net.minecraft.util.math.AxisAlignedBB
 import net.minecraft.util.math.BlockPos
 import net.minecraftforge.fml.common.gameevent.TickEvent
@@ -30,7 +30,6 @@ object WaypointRender : Module(
     description = "Render saved waypoints",
     category = Category.RENDER
 ) {
-
     private val renderMode by setting("Mode", RenderMode.BOTH)
     private val page by setting("Page", Page.INFO_BOX)
 

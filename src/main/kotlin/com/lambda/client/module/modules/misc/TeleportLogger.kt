@@ -6,14 +6,14 @@ import com.lambda.client.module.Module
 import com.lambda.client.util.EntityUtils.isFakeOrSelf
 import com.lambda.client.util.text.MessageSendHelper
 import com.lambda.client.util.threads.safeListener
-import com.lambda.commons.utils.MathUtils
+import com.lambda.client.commons.utils.MathUtils
 import net.minecraft.util.math.BlockPos
 import net.minecraftforge.fml.common.gameevent.TickEvent
 
 object TeleportLogger : Module(
     name = "TeleportLogger",
-    category = Category.MISC,
-    description = "Logs when a player teleports somewhere"
+    description = "Logs when a player teleports somewhere",
+    category = Category.MISC
 ) {
     private val saveToWaypoints by setting("Save To Waypoints", true)
     private val remove by setting("Remove In Range", true)

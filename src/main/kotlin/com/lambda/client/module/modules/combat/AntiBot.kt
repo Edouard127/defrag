@@ -3,12 +3,12 @@ package com.lambda.client.module.modules.combat
 import com.lambda.client.event.SafeClientEvent
 import com.lambda.client.event.events.PlayerAttackEvent
 import com.lambda.client.event.events.ConnectionEvent
+import com.lambda.client.event.listener.listener
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.module.modules.misc.FakePlayer
 import com.lambda.client.util.math.Vec2d
 import com.lambda.client.util.threads.safeListener
-import com.lambda.event.listener.listener
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraftforge.fml.common.gameevent.TickEvent
@@ -53,14 +53,14 @@ object AntiBot : Module(
 
     fun isBot(entity: Entity) = isEnabled && entity is EntityPlayer && botSet.contains(entity)
 
-    private fun SafeClientEvent.isBot(entity: EntityPlayer) = entity.name == player.name
+    private fun SafeClientEvent.isBot(entity: EntityPlayer) = (entity.name == player.name
         || entity.name == FakePlayer.playerName
         || tabList && connection.getPlayerInfo(entity.name) == null
-        || ping && connection.getPlayerInfo(entity.name)?.responseTime ?: -1 <= 0
+        || ping && (connection.getPlayerInfo(entity.name)?.responseTime ?: -1) <= 0
         || hp && entity.health !in 0f..20f
         || sleeping && entity.isPlayerSleeping && !entity.onGround
         || hoverOnTop && hoverCheck(entity)
-        || entity.ticksExisted < ticksExists
+        || entity.ticksExisted < ticksExists)
 
     private fun SafeClientEvent.hoverCheck(entity: EntityPlayer): Boolean {
         val distXZ = Vec2d(entity.posX, entity.posZ).minus(player.posX, player.posZ).lengthSquared()

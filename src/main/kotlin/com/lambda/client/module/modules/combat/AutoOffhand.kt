@@ -14,7 +14,7 @@ import com.lambda.client.util.combat.CombatUtils.scaledHealth
 import com.lambda.client.util.items.*
 import com.lambda.client.util.text.MessageSendHelper
 import com.lambda.client.util.threads.safeListener
-import com.lambda.commons.extension.next
+import com.lambda.client.commons.extension.next
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.entity.item.EntityEnderCrystal
 import net.minecraft.entity.monster.EntityMob
@@ -30,7 +30,6 @@ import net.minecraft.potion.PotionUtils
 import net.minecraftforge.fml.common.gameevent.InputEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import org.lwjgl.input.Keyboard
-import org.lwjgl.input.Mouse
 import java.lang.Float.max
 import kotlin.math.ceil
 
@@ -39,7 +38,7 @@ object AutoOffhand : Module(
     description = "Manages item in your offhand",
     category = Category.COMBAT
 ) {
-    public var type by setting("Type", Type.TOTEM)
+    private val type by setting("Type", Type.TOTEM)
 
     // Totem
     private val hpThreshold by setting("Hp Threshold", 5f, 1f..20f, 0.5f, { type == Type.TOTEM })
@@ -56,8 +55,6 @@ object AutoOffhand : Module(
     private val checkAuraG by setting("Check Aura G", true, { type == Type.GAPPLE && offhandGapple })
     private val checkWeaponG by setting("Check Weapon G", false, { type == Type.GAPPLE && offhandGapple })
     private val checkCAGapple by setting("Check CrystalAura G", true, { type == Type.GAPPLE && offhandGapple && !offhandCrystal })
-    public var forceGapple by setting("Force keeping gapple", false)
-    public var forceGappleValue: Boolean = false
 
     // Strength
     private val offhandStrength by setting("Offhand Strength", false, { type == Type.STRENGTH })
@@ -78,7 +75,7 @@ object AutoOffhand : Module(
     private val confirmTimeout by setting("Confirm Timeout", 5, 1..20, 1,
         description = "Maximum ticks to wait for confirm packets from server")
 
-    enum class Type(val filter: (ItemStack) -> Boolean) {
+    private enum class Type(val filter: (ItemStack) -> Boolean) {
         TOTEM({ it.item.id == 449 }),
         GAPPLE({ it.item is ItemAppleGold }),
         STRENGTH({ it -> it.item is ItemPotion && PotionUtils.getEffectsFromStack(it).any { it.potion == MobEffects.STRENGTH } }),
@@ -90,11 +87,10 @@ object AutoOffhand : Module(
         HOTBAR, INVENTORY
     }
 
-    val transactionLog = HashMap<Short, Boolean>()
-    val confirmTimer = TickTimer(TimeUnit.TICKS)
-    val movingTimer = TickTimer(TimeUnit.TICKS)
+    private val transactionLog = HashMap<Short, Boolean>()
+    private val confirmTimer = TickTimer(TimeUnit.TICKS)
+    private val movingTimer = TickTimer(TimeUnit.TICKS)
     private var maxDamage = 0f
-
 
     init {
         safeListener<InputEvent.KeyInputEvent> {
@@ -104,10 +100,8 @@ object AutoOffhand : Module(
                 bindGapple.isDown(key) -> switchToType(Type.GAPPLE)
                 bindStrength.isDown(key) -> switchToType(Type.STRENGTH)
                 bindCrystal.isDown(key) -> switchToType(Type.CRYSTAL)
-
             }
         }
-
 
         safeListener<PacketEvent.Receive> {
             if (it.packet !is SPacketConfirmTransaction || it.packet.windowId != 0 || !transactionLog.containsKey(it.packet.actionNumber)) return@safeListener
@@ -119,14 +113,12 @@ object AutoOffhand : Module(
         }
 
         safeListener<TickEvent.ClientTickEvent>(1100) {
-
             if (player.isDead || player.health <= 0.0f) return@safeListener
 
             if (!confirmTimer.tick(confirmTimeout.toLong(), false)) return@safeListener
             if (!movingTimer.tick(delay.toLong(), false)) return@safeListener // Delays `delay` ticks
 
             updateDamage()
-
 
             if (!player.inventory.itemStack.isEmpty) { // If player is holding an in inventory
                 if (mc.currentScreen is GuiContainer) { // If inventory is open (playing moving item)
@@ -136,25 +128,8 @@ object AutoOffhand : Module(
                 }
                 return@safeListener
             }
-            if(forceGapple){
-                var forceGappleValue: Boolean = false
-            }
-            if(Mouse.getEventButtonState()){
-                forceGappleValue = true
-            } //Event when any fucking button on the mouse is pressed
-            if(!Mouse.getEventButtonState()){
-                forceGappleValue = false
-            }
-            /*while(Mouse.next()){
-                MessageSendHelper.sendChatMessage("hergbrihy")
-            }*/ //Event when mouse is moved
-            if(!forceGappleValue) {
-                switchToType(getType(), true)
-            }
-            if(player.health <= 2){
-                switchToType(Type.TOTEM)
 
-            }
+            switchToType(getType(), true)
         }
     }
 
@@ -207,9 +182,9 @@ object AutoOffhand : Module(
         }
     }
 
-    fun SafeClientEvent.checkOffhandItem(type: Type) = type.filter(player.heldItemOffhand)
+    private fun SafeClientEvent.checkOffhandItem(type: Type) = type.filter(player.heldItemOffhand)
 
-    fun SafeClientEvent.getItemSlot(type: Type, attempts: Int): Pair<Slot, Type>? =
+    private fun SafeClientEvent.getItemSlot(type: Type, attempts: Int): Pair<Slot, Type>? =
         getSlot(type)?.to(type)
             ?: if (attempts > 1) {
                 getItemSlot(type.next(), attempts - 1)

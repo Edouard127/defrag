@@ -8,7 +8,7 @@ import com.lambda.client.util.graphics.RenderUtils2D
 import com.lambda.client.util.graphics.VertexHelper
 import com.lambda.client.util.math.Vec2d
 import com.lambda.client.util.math.Vec2f
-import com.lambda.commons.interfaces.Nameable
+import com.lambda.client.commons.interfaces.Nameable
 
 /**
  * Window with rectangle rendering
@@ -32,7 +32,16 @@ open class BasicWindow(
             ClickGUI.radius,
             color = GuiColors.backGround
         )
-
+        if (ClickGUI.windowOutline) {
+            RenderUtils2D.drawRoundedRectOutline(
+                vertexHelper,
+                Vec2d(0.0, 0.0),
+                Vec2f(renderWidth, renderHeight).toVec2d(),
+                ClickGUI.radius,
+                lineWidth = ClickGUI.outlineWidth,
+                color = GuiColors.outline
+            )
+        }
     }
 
 }

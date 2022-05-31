@@ -2,6 +2,7 @@ package com.lambda.client.module.modules.client
 
 import com.lambda.client.event.events.BaritoneSettingsInitEvent
 import com.lambda.client.event.events.RenderRadarEvent
+import com.lambda.client.event.listener.listener
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.util.BaritoneUtils
@@ -9,13 +10,12 @@ import com.lambda.client.util.color.ColorHolder
 import com.lambda.client.util.graphics.RenderUtils2D
 import com.lambda.client.util.math.Vec2d
 import com.lambda.client.util.threads.safeListener
-import com.lambda.event.listener.listener
 import net.minecraft.util.math.BlockPos
 
 object Baritone : Module(
     name = "Baritone",
-    category = Category.CLIENT,
     description = "Configures Baritone settings",
+    category = Category.CLIENT,
     showOnArray = false,
     alwaysEnabled = true
 ) {
@@ -33,7 +33,6 @@ object Baritone : Module(
     private val renderGoal by setting("Render Goals", true)
     private val failureTimeout by setting("Fail Timeout", 2, 1..20, 1)
     private val blockReachDistance by setting("Reach Distance", 4.5f, 1.0f..10.0f, 0.5f)
-    private val chatControl by setting("Chat Control", true)
 
     init {
         settingList.forEach {
@@ -70,7 +69,7 @@ object Baritone : Module(
 
     private fun sync() {
         BaritoneUtils.settings?.let {
-            it.chatControl.value = chatControl
+            it.chatControl.value = false // enable chatControlAnyway if you want to use it
             it.allowBreak.value = allowBreak
             it.allowSprint.value = allowSprint
             it.allowPlace.value = allowPlace

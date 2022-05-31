@@ -3,19 +3,17 @@ package com.lambda.client.gui.hudgui.elements.world
 import com.lambda.client.event.SafeClientEvent
 import com.lambda.client.gui.hudgui.LabelHud
 import com.lambda.client.manager.managers.FriendManager
-import com.lambda.client.module.modules.client.popbob.poop
-import com.lambda.client.module.modules.client.popbob.popbobOwO
 import com.lambda.client.util.AsyncCachedValue
 import com.lambda.client.util.color.ColorGradient
 import com.lambda.client.util.color.ColorHolder
 import com.lambda.client.util.color.DyeColors
 import com.lambda.client.util.threads.runSafeR
-import com.lambda.commons.utils.MathUtils
+import com.lambda.client.commons.utils.MathUtils
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.MobEffects
 
 internal object TextRadar : LabelHud(
-    name = "PlayerList",
+    name = "TextRadar",
     category = Category.WORLD,
     description = "List of players nearby"
 ) {
@@ -83,8 +81,7 @@ internal object TextRadar : LabelHud(
 
     private fun addName(player: EntityPlayer) {
         val color = if (FriendManager.isFriend(player.name)) DyeColors.GREEN.color else primaryColor
-        if(poop) displayText.add(popbobOwO, color)
-        else displayText.add(player.name, color)
+        displayText.add(player.name, color)
     }
 
     private fun SafeClientEvent.addPing(player: EntityPlayer) {

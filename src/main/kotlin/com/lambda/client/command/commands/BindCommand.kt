@@ -15,7 +15,7 @@ object BindCommand : ClientCommand(
             execute("List used module binds") {
                 val binds = ModuleManager.modules.asSequence()
                     .filter { it.bind.value.key in 1..255 }
-                    .map { "${formatValue(it.bind)} ${it.name}" }
+                    .map { "${formatValue(it.name)} ${it.name}" }
                     .sorted()
                     .toList()
 

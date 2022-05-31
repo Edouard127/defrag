@@ -19,11 +19,10 @@ import net.minecraftforge.fml.common.gameevent.TickEvent
 
 object AutoArmor : Module(
     name = "AutoArmor",
-    category = Category.COMBAT,
     description = "Automatically equips armour",
+    category = Category.COMBAT,
     modulePriority = 500
 ) {
-
     private val delay by setting("Delay", 5, 1..10, 1)
 
     private val timer = TickTimer(TimeUnit.TICKS)
@@ -41,7 +40,7 @@ object AutoArmor : Module(
             if (!timer.tick(delay.toLong()) || !lastTask.done) return@safeListener
 
             if (!player.inventory.itemStack.isEmpty) {
-                if (mc.currentScreen is GuiContainer) timer.reset(350L) // Wait for 3 extra ticks if player is moving item
+                if (mc.currentScreen is GuiContainer) timer.reset(150L) // Wait for 3 extra ticks if player is moving item
                 else removeHoldingItem()
                 return@safeListener
             }

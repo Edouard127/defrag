@@ -3,9 +3,9 @@ package com.lambda.client.util
 import com.google.gson.JsonParser
 import com.lambda.client.LambdaMod
 import com.lambda.client.util.threads.mainScope
-import com.lambda.commons.utils.ConnectionUtils
+import com.lambda.client.commons.utils.ConnectionUtils
 import kotlinx.coroutines.launch
-import net.minecraft.client.Minecraft
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 import java.awt.Desktop
 import java.io.BufferedReader
 import java.io.FileOutputStream
@@ -21,7 +21,37 @@ object WebUtils {
 
     fun updateCheck() {
         mainScope.launch {
+            try {
+                LambdaMod.LOG.info("Attempting Lambda update check...")
 
+                val rawJson = ConnectionUtils.requestRawJsonFrom(LambdaMod.RELEASES_API) {
+                    throw it
+                }
+
+                rawJson?.let { json ->
+                    val jsonTree = JsonParser().parse(json).asJsonArray
+                    latestVersion = jsonTree[0]?.asJsonObject?.get("tag_name")?.asString
+
+                    latestVersion?.let {
+                        val remoteVersion = DefaultArtifactVersion(it)
+                        val localVersion = DefaultArtifactVersion(LambdaMod.VERSION)
+                        when {
+                            remoteVersion == localVersion -> {
+                                LambdaMod.LOG.info("Your Lambda (" + LambdaMod.VERSION + ") is up-to-date with the latest stable release.")
+                            }
+                            remoteVersion > localVersion -> {
+                                isLatestVersion = false
+                                LambdaMod.LOG.warn("Your Lambda is outdated.\nCurrent: ${LambdaMod.VERSION}\nLatest: $latestVersion")
+                            }
+                            remoteVersion < localVersion -> {
+                                LambdaMod.LOG.info("Your Lambda (" + LambdaMod.VERSION + ") is ahead of time.")
+                            }
+                        }
+                    }
+                }
+            } catch (e: IOException) {
+                LambdaMod.LOG.error("An exception was thrown during the update check.", e)
+            }
         }
     }
 

@@ -20,7 +20,6 @@ object SearchCommand : ClientCommand(
                         val blockName = blockArg.value.registryName.toString()
                         addBlock(blockName)
                     }
-
                 }
 
                 execute("Add a block to search list") {
@@ -29,7 +28,7 @@ object SearchCommand : ClientCommand(
                     if (warningBlocks.contains(blockName)) {
                         MessageSendHelper.sendWarningMessage("Your world contains lots of ${formatValue(blockName)}, " +
                             "it might cause extreme lag to add it. " +
-                            "If you are sure you want to add it run ${formatValue("$prefixName add force $blockName")}"
+                            "If you are sure you want to add it run ${formatValue("$prefixName add $blockName force")}"
                         )
                     } else {
                         addBlock(blockName)

@@ -149,7 +149,7 @@ object BaritoneCommand : ClientCommand(
         literal("version") {
             executeSafe {
                 exec("version")
-                MessageSendHelper.sendBaritoneMessage("Running on Defrag ${LambdaMod.VERSION}")
+                MessageSendHelper.sendBaritoneMessage("Running on Lambda ${LambdaMod.VERSION}")
             }
         }
 
@@ -162,9 +162,6 @@ object BaritoneCommand : ClientCommand(
 
     private fun exec(vararg args: String) {
         val safeArgs = CommandManager.tryParseArgument(args.joinToString(" ")) ?: return
-        if(args[0] == "goto" && args!![1] == "bitches"){
-            return MessageSendHelper.sendChatMessage("No Bitches ?")
-        }
         MessageSendHelper.sendBaritoneCommand(*safeArgs)
     }
 }

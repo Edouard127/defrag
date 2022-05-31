@@ -1,6 +1,10 @@
 package com.lambda.client.command
 
 import com.lambda.client.LambdaMod
+import com.lambda.client.command.utils.CommandNotFoundException
+import com.lambda.client.command.utils.SubCommandNotFoundException
+import com.lambda.client.commons.utils.ClassUtils
+import com.lambda.client.commons.utils.ClassUtils.instance
 import com.lambda.client.event.ClientExecuteEvent
 import com.lambda.client.event.LambdaEventBus
 import com.lambda.client.module.modules.client.CommandConfig
@@ -9,13 +13,6 @@ import com.lambda.client.util.text.MessageSendHelper
 import com.lambda.client.util.text.formatValue
 import com.lambda.client.util.threads.defaultScope
 import com.lambda.client.util.threads.onMainThread
-import com.lambda.command.AbstractCommandManager
-import com.lambda.command.Command
-import com.lambda.command.CommandBuilder
-import com.lambda.command.utils.CommandNotFoundException
-import com.lambda.command.utils.SubCommandNotFoundException
-import com.lambda.commons.utils.ClassUtils
-import com.lambda.commons.utils.ClassUtils.instance
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking

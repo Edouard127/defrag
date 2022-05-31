@@ -1,11 +1,11 @@
 package com.lambda.client.module.modules.misc
 
 import com.lambda.client.event.events.GuiEvent
+import com.lambda.client.event.listener.listener
 import com.lambda.client.mixin.extension.editLine
 import com.lambda.client.mixin.extension.tileSign
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
-import com.lambda.event.listener.listener
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.inventory.GuiEditSign
 import net.minecraft.tileentity.TileEntitySign

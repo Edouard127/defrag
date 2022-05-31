@@ -1,7 +1,7 @@
 package com.lambda.client.util.math
 
 import com.lambda.client.event.SafeClientEvent
-import com.lambda.commons.extension.toDegree
+import com.lambda.client.commons.extension.toDegree
 import net.minecraft.entity.Entity
 import net.minecraft.util.math.Vec3d
 import kotlin.math.*
@@ -74,12 +74,6 @@ object RotationUtils {
         val xz = hypot(vec.x, vec.z)
         val yaw = normalizeAngle(Math.toDegrees(atan2(vec.z, vec.x)) - 90.0)
         val pitch = normalizeAngle(Math.toDegrees(-atan2(vec.y, xz)))
-        return Vec2f(yaw, pitch)
-    }
-    fun getRotationFromVecWithoutNormalization(vec: Vec3d): Vec2f {
-        val xz = hypot(vec.x, vec.z)
-        val yaw = Math.toDegrees(atan2(vec.z, vec.x)) - 90.0
-        val pitch = Math.toDegrees(-atan2(vec.y, xz))
         return Vec2f(yaw, pitch)
     }
 

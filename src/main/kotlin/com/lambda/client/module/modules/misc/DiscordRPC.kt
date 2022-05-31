@@ -2,9 +2,11 @@ package com.lambda.client.module.modules.misc
 
 import club.minnced.discord.rpc.DiscordEventHandlers
 import club.minnced.discord.rpc.DiscordRichPresence
-import com.lambda.capeapi.CapeType
 import com.lambda.client.LambdaMod
+import com.lambda.client.capeapi.CapeType
+import com.lambda.client.commons.utils.MathUtils
 import com.lambda.client.event.events.ShutdownEvent
+import com.lambda.client.event.listener.listener
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.util.InfoCalculator
@@ -19,8 +21,6 @@ import com.lambda.client.util.threads.BackgroundJob
 import com.lambda.client.util.threads.BackgroundScope
 import com.lambda.client.util.threads.runSafeR
 import com.lambda.client.util.threads.safeListener
-import com.lambda.commons.utils.MathUtils
-import com.lambda.event.listener.listener
 import net.minecraft.client.Minecraft
 import net.minecraftforge.fml.common.gameevent.TickEvent
 

@@ -4,13 +4,13 @@ import com.lambda.client.event.events.PacketEvent
 import com.lambda.client.mixin.extension.windowID
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
-import com.lambda.event.listener.listener
+import com.lambda.client.event.listener.listener
 import net.minecraft.network.play.client.CPacketCloseWindow
 
 object XCarry : Module(
     name = "XCarry",
-    category = Category.PLAYER,
-    description = "Store items in crafting slots"
+    description = "Store items in crafting slots",
+    category = Category.PLAYER
 ) {
     init {
         listener<PacketEvent.Send> {

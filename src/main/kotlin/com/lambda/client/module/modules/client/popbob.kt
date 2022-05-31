@@ -1,11 +1,11 @@
 package com.lambda.client.module.modules.client
 
+import com.lambda.client.event.listener.listener
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.module.modules.chat.AntiSpam
 import com.lambda.client.util.text.MessageDetection
 import com.lambda.client.util.text.MessageSendHelper.sendRawChatMessage
-import com.lambda.event.listener.listener
 import com.mojang.realmsclient.dto.PlayerInfo
 import net.minecraft.client.Minecraft
 import net.minecraft.client.entity.EntityPlayerSP

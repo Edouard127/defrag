@@ -2,8 +2,6 @@ package com.lambda.client.util.combat
 
 import com.lambda.client.event.SafeClientEvent
 import com.lambda.client.util.Wrapper
-import com.lambda.client.util.math.RotationUtils
-import com.lambda.client.util.math.Vec2f
 import com.lambda.client.util.math.VectorUtils
 import com.lambda.client.util.math.VectorUtils.distanceTo
 import net.minecraft.block.material.Material
@@ -29,7 +27,6 @@ object CrystalUtils {
         return VectorUtils.getBlockPosInSphere(centerPos, radius).filter { canPlace(it, target) }
     }
 
-
     fun SafeClientEvent.getCrystalList(center: Vec3d, range: Float): List<EntityEnderCrystal> =
         world.loadedEntityList.toList()
             .filterIsInstance<EntityEnderCrystal>()
@@ -52,7 +49,6 @@ object CrystalUtils {
     fun SafeClientEvent.canPlaceOn(pos: BlockPos): Boolean {
         val block = mc.world?.getBlockState(pos)?.block
         return block == Blocks.BEDROCK || block == Blocks.OBSIDIAN
-
     }
 
     private fun isValidMaterial(material: Material) =
@@ -80,7 +76,6 @@ object CrystalUtils {
         } ?: false
     }
     /* End of position finding */
-
 
     /* Damage calculation */
     fun SafeClientEvent.calcCrystalDamage(crystal: EntityEnderCrystal, entity: EntityLivingBase, entityPos: Vec3d? = entity.positionVector, entityBB: AxisAlignedBB? = entity.entityBoundingBox) =

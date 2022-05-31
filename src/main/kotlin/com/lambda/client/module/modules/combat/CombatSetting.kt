@@ -26,8 +26,8 @@ import com.lambda.client.util.threads.defaultScope
 import com.lambda.client.util.threads.isActiveOrFalse
 import com.lambda.client.util.threads.runSafeR
 import com.lambda.client.util.threads.safeListener
-import com.lambda.commons.extension.ceilToInt
-import com.lambda.event.listener.listener
+import com.lambda.client.commons.extension.ceilToInt
+import com.lambda.client.event.listener.listener
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import net.minecraft.entity.Entity
@@ -83,7 +83,6 @@ object CombatSetting : Module(
     /* Render */
     private val renderPredictedPos = setting("Render Predicted Position", false, { page == Page.RENDER })
 
-
     private enum class Page {
         TARGETING, IN_COMBAT, RENDER
     }
@@ -117,11 +116,10 @@ object CombatSetting : Module(
             && player.heldItemMainhand.item is ItemPickaxe
             && playerController.isHittingBlock
 
-     fun SafeClientEvent.checkEating() =
+    private fun SafeClientEvent.checkEating() =
         pauseForEating
             && (PauseProcess.isPausing(AutoEat) || player.isHandActive && player.activeItemStack.item is ItemFood)
             && (!ignoreOffhandEating || player.activeHand != EnumHand.OFF_HAND)
-
 
     override fun isActive() = KillAura.isActive() || BedAura.isActive() || CrystalAura.isActive() || Surround.isActive()
 
@@ -180,16 +178,6 @@ object CombatSetting : Module(
         val prediction = target?.let { getPrediction(it) }
 
         for (pos in getPlacePos(target, player, 8f)) {
-            /*var storeValueCA = CrystalAura.isEnabled.value
-            if(CrystalAura.isEnabled){
-            if(player.heldItemMainhand.item == GOLDEN_APPLE){
-                CrystalAura.enabled.value = false
-                CrystalAura.enabled.value = storeValueCA as Boolean
-            }
-            if(player.heldItemMainhand.item !== GOLDEN_APPLE){
-                CrystalAura.enabled.value = true
-            }
-            }*/
             val dist = eyePos.distanceTo(pos.toVec3dCenter(0.0, 0.5, 0.0))
             val damage = target?.let { calcCrystalDamage(pos, it, prediction?.first, prediction?.second) } ?: 0.0f
             val selfDamage = calcCrystalDamage(pos, player)

@@ -3,7 +3,9 @@ package com.lambda.client
 import club.minnced.discord.rpc.*
 import club.minnced.discord.rpc.DiscordEventHandlers.*
 import com.lambda.client.event.ForgeEventProcessor
+import com.lambda.client.gui.clickgui.LambdaClickGui
 import com.lambda.client.util.ConfigUtils
+import com.lambda.client.util.KamiCheck
 import com.lambda.client.util.WebUtils
 import com.lambda.client.util.threads.BackgroundScope
 import net.minecraft.client.Minecraft
@@ -80,7 +82,10 @@ class LambdaMod {
         ConfigUtils.loadAll()
 
         BackgroundScope.start()
+        WebUtils.updateCheck()
+        LambdaClickGui.populateRemotePlugins()
 
+        KamiCheck.runCheck()
         LOG.info("$NAME initialized!")
     }
 

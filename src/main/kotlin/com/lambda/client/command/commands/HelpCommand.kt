@@ -45,7 +45,8 @@ object HelpCommand : ClientCommand(
                 "How do I see all commands? - ${formatValue("$prefix${name} commands")}\n" +
                 "How do I use Baritone? - ${formatValue("${prefix}b")}\n" +
                 "How do I change ${TextFormatting.GRAY};${TextFormatting.RESET} to something else? - ${formatValue("${prefix}prefix")}\n" +
-                "How do I get a Cape? - Contribute to the project.\n"
+                "How do I get a Cape? - Contribute to the project.\n" +
+                "Other questions? - Get support at ${TextFormatting.BLUE}${LambdaMod.DISCORD_INVITE}"
             )
         }
     }

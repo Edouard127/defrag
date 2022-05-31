@@ -56,7 +56,7 @@ object MovementUtils {
             speed * (1.0 + (it.amplifier + 1) * 0.2)
         } ?: speed
 
-    public fun EntityPlayerSP.centerPlayer(): Boolean {
+    fun EntityPlayerSP.centerPlayer(): Boolean {
         val center = this.flooredPosition.toVec3d(0.5, 0.0, 0.5)
         val centered = isCentered(this.flooredPosition)
 

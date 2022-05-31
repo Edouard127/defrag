@@ -18,8 +18,8 @@ import net.minecraft.util.math.AxisAlignedBB
 
 object HoleESP : Module(
     name = "HoleESP",
-    category = Category.COMBAT,
-    description = "Show safe holes for crystal pvp"
+    description = "Show safe holes for crystal pvp",
+    category = Category.COMBAT
 ) {
     private val range by setting("Render Distance", 8, 4..32, 1)
     private val filled by setting("Filled", true)
@@ -72,7 +72,7 @@ object HoleESP : Module(
 
                 val bb = AxisAlignedBB(if (renderMode == Mode.BLOCK_FLOOR) pos.down() else pos)
 
-                if (holeType == SurroundUtils.HoleType.OBBY && shouldAddObsidian()) {
+                if (holeType == SurroundUtils.HoleType.OBSIDIAN && shouldAddObsidian()) {
                     cached.add(Triple(bb, colorObsidian, side))
                 }
 

@@ -209,7 +209,6 @@ abstract class AbstractLambdaGui<S : SettingWindow<*>, E : Any> : GuiScreen() {
         updateWindowOrder()
     }
 
-
     override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
         val mousePos = getRealMousePos()
         hoveredWindow?.onRelease(mousePos, state)
@@ -253,9 +252,9 @@ abstract class AbstractLambdaGui<S : SettingWindow<*>, E : Any> : GuiScreen() {
         when {
             keyCode == Keyboard.KEY_BACK || keyCode == Keyboard.KEY_DELETE -> {
                 typedString = typedString.dropLast(1)
-                lastTypedTime = 0L
-                stringWidth = typedString.length.toFloat()
-                prevStringWidth = 0.0f
+                lastTypedTime = System.currentTimeMillis()
+                stringWidth = FontRenderAdapter.getStringWidth(typedString, 2.0f)
+                prevStringWidth = typedString.length.toFloat()
             }
             typedChar.isLetter() || typedChar == ' ' -> {
                 typedString += typedChar
