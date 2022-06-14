@@ -198,11 +198,10 @@ internal object PluginManager : AsyncLoader<List<PluginLoader>> {
 
             LambdaClickGui.updateRemoteStates()
             loadedPluginLoader.add(loader)
-            plugin
         }
 
-        LambdaMod.LOG.info("Loaded plugin ${plugin.name} v${plugin.version}")
-        MessageSendHelper.sendChatMessage("[Plugin Manager] ${LambdaClickGui.printInfo(plugin.name, plugin.version)} loaded.")
+        LambdaMod.LOG.info("Loaded plugin ${loader.info.name} v${loader.info.version}")
+        MessageSendHelper.sendChatMessage("[Plugin Manager] ${LambdaClickGui.printInfo(loader.info.name, loader.info.version)} loaded.")
     }
 
     fun unloadAll() {

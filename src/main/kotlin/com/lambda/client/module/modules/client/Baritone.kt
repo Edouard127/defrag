@@ -33,6 +33,7 @@ object Baritone : Module(
     private val renderGoal by setting("Render Goals", true)
     private val failureTimeout by setting("Fail Timeout", 2, 1..20, 1)
     private val blockReachDistance by setting("Reach Distance", 4.5f, 1.0f..10.0f, 0.5f)
+    private val chatControl by setting("Chat Control", true)
 
     init {
         settingList.forEach {
@@ -69,7 +70,8 @@ object Baritone : Module(
 
     private fun sync() {
         BaritoneUtils.settings?.let {
-            it.chatControl.value = false // enable chatControlAnyway if you want to use it
+            it.chatControl.value = chatControl
+            it.chatControlAnyway.value = chatControl
             it.allowBreak.value = allowBreak
             it.allowSprint.value = allowSprint
             it.allowPlace.value = allowPlace

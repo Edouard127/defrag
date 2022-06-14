@@ -39,7 +39,9 @@ object PlayMusicButton : BooleanSlider("Play", 0.0, "Play mp3 files") {
 
     override fun onClick(mousePos: Vec2f, buttonId: Int) {
         super.onClick(mousePos, buttonId)
-        if (buttonId == 0) LambdaClickGui.toggleRemotePluginWindow()
+        if (buttonId == 0) {
+            //PlayMusic.play(this.musicName)
+        }
     }
 
     override fun onRelease(mousePos: Vec2f, buttonId: Int) {

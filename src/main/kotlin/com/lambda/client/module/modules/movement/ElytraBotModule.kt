@@ -12,6 +12,7 @@ import com.lambda.client.mixin.extension.tickLength
 import com.lambda.client.mixin.extension.timer
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
+import com.lambda.client.module.modules.combat.TotemPopCounter
 import com.lambda.client.util.MovementUtils.speed
 import com.lambda.client.util.TickTimer
 import com.lambda.client.util.TimeUnit
@@ -28,17 +29,20 @@ import com.lambda.client.util.math.VectorUtils
 import com.lambda.client.util.math.VectorUtils.distanceTo
 import com.lambda.client.util.math.VectorUtils.multiply
 import com.lambda.client.util.math.VectorUtils.toVec3d
+import com.lambda.client.util.text.MessageSendHelper
 import com.lambda.client.util.text.MessageSendHelper.sendChatMessage
 import com.lambda.client.util.threads.runSafe
 import com.lambda.client.util.threads.runSafeR
 import com.lambda.client.util.threads.safeListener
 import com.lambda.client.util.world.getGroundPos
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Items
 import net.minecraft.init.SoundEvents
 import net.minecraft.item.ItemStack
 import net.minecraft.network.play.client.CPacketEntityAction
 import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraft.network.play.client.CPacketPlayerTryUseItem
+import net.minecraft.network.play.server.SPacketEntityStatus
 import net.minecraft.util.EnumHand
 import net.minecraft.util.SoundCategory
 import net.minecraft.util.math.BlockPos
@@ -113,6 +117,10 @@ object ElytraBotModule : Module(
     init {
         onEnable {
             runSafeR {
+                if(goal != null && directional) {
+                    sendChatMessage("Please disable directional to use goals")
+                    disable()
+                }
                 if (directional) {
                     //Calculate the direction so it will put it to diagonal if the player is on diagonal highway.
                     goal = BlockPos(Direction.fromEntity(player).directionVec.multiply(6942069))
@@ -135,6 +143,17 @@ object ElytraBotModule : Module(
                 blocksPerSecondCounter = 0
                 lastSecondPos = null
                 jumpY = -1.0
+            }
+        }
+        safeListener<PacketEvent.Receive> {
+            if(toggleOnPop){
+                if (it.packet !is SPacketEntityStatus || it.packet.opCode.toInt() != 35 || !player.isEntityAlive) return@safeListener
+                val player = (it.packet.getEntity(world) as? EntityPlayer) ?: return@safeListener
+                val isSelf = player == this.player
+                if(isSelf){
+                    MessageSendHelper.sendErrorMessage("Oh no, your totem popped, sorry for this :(, disabling...")
+                    disable()
+                }
             }
         }
 

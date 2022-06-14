@@ -71,7 +71,8 @@ object IRC : Module(
                                 if(Minecraft.getMinecraft().currentServerData != null && line!!.containsWhitelist(arrayOfWhiteList)){
                                     val string = line!!.split(":")
                                     val username = string[1].split("!")[0]
-                                    val message = string[2]
+                                    var message = string[2]
+                                    if(message.contains("@$nickname")) message = message.replace("@$nickname", "§4@$nickname§7")
                                     MessageSendHelper.sendChatMessage("IRC <$username>: $message")
                                 }
                             }
@@ -89,7 +90,8 @@ object IRC : Module(
                         if(Minecraft.getMinecraft().currentServerData != null && line1.containsWhitelist(arrayOfWhiteList)){
                             val string = line1.split(":")
                             val username = string[1].split("!")[0]
-                            val message = string[2]
+                            var message = string[2]
+                            if(message.contains("@$nickname")) message = message.replace("@$nickname", "§4@$nickname§7")
                             MessageSendHelper.sendChatMessage("IRC <$username>: $message")
                         }
                         if (line1.get(0) == '/') {

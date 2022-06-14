@@ -34,8 +34,8 @@ class LambdaMod {
         const val ID = "defrag"
         const val DIRECTORY = "defrag/"
 
-        const val VERSION = "Defrag 1.4.3"
-        const val VERSION_MAJOR = "Defrag 1.4.3"
+        const val VERSION = "Defrag 1.4.4"
+        const val VERSION_MAJOR = "Defrag 1.4.4"
         const val VERSION_SIMPLE = VERSION
 
         const val APP_ID = "953143990386065430" //discordrpc

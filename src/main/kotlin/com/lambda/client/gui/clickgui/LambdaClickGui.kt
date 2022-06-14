@@ -17,12 +17,15 @@ import com.lambda.client.util.math.Vec2f
 import com.lambda.client.util.text.MessageSendHelper
 import com.lambda.client.util.threads.defaultScope
 import com.lambda.client.commons.utils.ConnectionUtils
+import com.lambda.client.gui.mc.i
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.minecraft.client.gui.GuiButton
 import net.minecraft.util.text.TextFormatting
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 import org.lwjgl.input.Keyboard
 import scala.tools.nsc.typechecker.MethodSynthesis.MethodSynth.`AnyBeanGetter$class`.category
+import java.io.File
 import java.io.IOException
 import java.net.URL
 import java.nio.file.Files
@@ -34,7 +37,6 @@ object LambdaClickGui : AbstractLambdaGui<ModuleSettingWindow, AbstractModule>()
     private val windows = ArrayList<ListWindow>()
     private val windows_ = ArrayList<ListWindow>()
     var pluginWindow: ListWindow
-    lateinit var musicWindow: ListWindow
     var remotePluginWindow: ListWindow
     var disabledRemotes = ArrayList<RemotePluginButton>()
     private var moduleCount = ModuleManager.modules.size
@@ -74,15 +76,14 @@ object LambdaClickGui : AbstractLambdaGui<ModuleSettingWindow, AbstractModule>()
         remotePluginWindow.visible = false
         windows.add(remotePluginWindow)
 
-        /* Music */
-        /*musicWindow = PluginWindow("Music", posX, posY)
+        /* Music
+        musicWindow = PluginWindow("Music", posX, posY)
         musicWindow.add(PlayMusicButton)
         musicWindow.add(DownloadMusicButton)
-        windows_.add(musicWindow)*/
+        windows.add(musicWindow)*/
 
 
         windowList.addAll(windows)
-        //windowList.addAll(windows_)
     }
 
     override fun onDisplayed() {
@@ -323,4 +324,5 @@ object LambdaClickGui : AbstractLambdaGui<ModuleSettingWindow, AbstractModule>()
             else -> this.sortedBy { it.name }
         }
     }
+
 }

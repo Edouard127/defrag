@@ -23,6 +23,8 @@ import com.lambda.client.util.threads.runSafeR
 import com.lambda.client.util.threads.safeListener
 import net.minecraft.client.Minecraft
 import net.minecraftforge.fml.common.gameevent.TickEvent
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 object DiscordRPC : Module(
     name = "DiscordRPC",
@@ -34,9 +36,13 @@ object DiscordRPC : Module(
     private val line2Left by setting("Line 2 Left", LineInfo.DIMENSION) // state left
     private val line2Right by setting("Line 2 Right", LineInfo.HEALTH) // state right
     private val coordsConfirm by setting("Coords Confirm", false, { showCoordsConfirm() })
+    private val imageKey by setting("Image Key", Image.NORMAL)
 
     private enum class LineInfo {
         VERSION, WORLD, DIMENSION, USERNAME, HEALTH, HUNGER, SERVER_IP, COORDS, SPEED, HELD_ITEM, FPS, TPS, NONE
+    }
+    private enum class Image(val type: String) {
+        HOMOSEXUAL("protogen"), NORMAL("defrag")
     }
 
     private val presence = DiscordRichPresence()
@@ -98,7 +104,7 @@ object DiscordRPC : Module(
     private fun updateRPC() {
         presence.details = getLine(line1Left) + getSeparator(0) + getLine(line1Right)
         presence.state = getLine(line2Left) + getSeparator(1) + getLine(line2Right)
-        presence.largeImageKey = "protogen"
+        presence.largeImageKey = imageKey.type
         rpc.Discord_UpdatePresence(presence)
     }
 
@@ -109,7 +115,10 @@ object DiscordRPC : Module(
             }
             LineInfo.WORLD -> {
                 when {
-                    mc.isIntegratedServerRunning -> "No friends"
+                    mc.isIntegratedServerRunning -> when(imageKey){
+                        Image.NORMAL -> "Singleplayer"
+                        Image.HOMOSEXUAL -> "Jerking off"
+                    }
                     mc.currentServerData != null -> "Multiplayer"
                     else -> "Jerking off"
                 }
@@ -141,7 +150,10 @@ object DiscordRPC : Module(
                 } ?: "No Speed"
             }
             LineInfo.HELD_ITEM -> {
-                "Holding ${mc.player?.heldItemMainhand?.displayName ?: "kami's balls owo"}" // Holding air meme
+                when(imageKey) {
+                    Image.NORMAL -> "Holding ${mc.player?.heldItemMainhand?.displayName ?: "air"}"
+                    Image.HOMOSEXUAL -> "balls owo"
+                }
             }
             LineInfo.FPS -> {
                 "${Minecraft.getDebugFPS()} FPS"
@@ -169,11 +181,13 @@ object DiscordRPC : Module(
         presence.smallImageText = when (capeType) {
             CapeType.DEV -> "Developer"
             CapeType.MATRIX -> "Based"
-            else -> "faggot"
+            CapeType.POPBOB -> "popbob"
+            else -> "nn"
         }
     }
 
     init {
-        presence.largeImageText = "protogen"
+        presence.largeImageText = imageKey.type
+        presence.startTimestamp = System.currentTimeMillis()
     }
 }
