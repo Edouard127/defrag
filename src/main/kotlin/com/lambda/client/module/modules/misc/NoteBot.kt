@@ -4,11 +4,15 @@ import com.lambda.client.event.SafeClientEvent
 import com.lambda.client.event.events.PacketEvent
 import com.lambda.client.event.events.RenderWorldEvent
 import com.lambda.client.event.listener.listener
+import com.lambda.client.manager.managers.PlayerPacketManager.sendPlayerPacket
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.util.FolderUtils
 import com.lambda.client.util.TickTimer
 import com.lambda.client.util.TimeUnit
+import com.lambda.client.util.math.RotationUtils
+import com.lambda.client.util.math.RotationUtils.getRotationToEntityClosest
+import com.lambda.client.util.math.VectorUtils.toVec3d
 import com.lambda.client.util.text.MessageSendHelper
 import com.lambda.client.util.threads.defaultScope
 import com.lambda.client.util.threads.runSafe
@@ -41,12 +45,13 @@ import kotlin.math.roundToInt
 
 object NoteBot : Module(
     name = "NoteBot",
-    description = "Plays music with note blocks; put .mid or .nbs songs in .minecraft/lambda/songs",
+    description = "Plays music with note blocks; put .mid or .nbs songs in .minecraft/defrag/songs",
     category = Category.MISC
 ) {
     private val togglePlay = setting("Toggle Play", false)
     private val reloadSong = setting("Reload Song", false)
     private val songName by setting("Song Name", "Unchanged")
+    private val debug by setting("Debug", false)
     private val channel1 = setting("Channel 1", NoteBlockEvent.Instrument.PIANO, { !isNbsFormat })
     private val channel2 = setting("Channel 2", NoteBlockEvent.Instrument.PIANO, { !isNbsFormat })
     private val channel3 = setting("Channel 3", NoteBlockEvent.Instrument.PIANO, { !isNbsFormat })
@@ -286,6 +291,10 @@ object NoteBot : Module(
             runSafe {
                 if (noteBlocks.isNotEmpty()) {
                     val pos = noteBlocks.removeLast()
+                    sendPlayerPacket {
+                        rotate(RotationUtils.getRotationTo(mc.player.position.toVec3d(), pos.toVec3d()))
+                    }
+                    if(debug) MessageSendHelper.sendChatMessage("Rotating to $pos")
                     clickBlock(pos)
                     clickedBlocks.add(pos)
                 } else if (noteBlocks.isNotEmpty() && soundTimer.tick(5L, false)) {
@@ -361,6 +370,9 @@ object NoteBot : Module(
             if (note.track == 9 && !isNbsFormat) {
                 val instrument = getPercussionInstrument(note.note) ?: continue
                 noteBlockMap[instrument]?.firstOrNull()?.let {
+                    sendPlayerPacket {
+                        rotate(RotationUtils.getRotationTo(mc.player.position.toVec3d(), it.toVec3d()))
+                    }
                     clickBlock(it)
                 }
             } else {
@@ -368,6 +380,9 @@ object NoteBot : Module(
                 val pitch = note.noteBlockNote
 
                 noteBlockMap[instrument]?.get(pitch)?.let {
+                    sendPlayerPacket {
+                        rotate(RotationUtils.getRotationTo(mc.player.position.toVec3d(), it.toVec3d()))
+                    }
                     clickBlock(it)
                 }
             }
