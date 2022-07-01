@@ -35,6 +35,7 @@ object FakePlayer : Module(
     private val maxArmor by setting("Max Armor", false)
     private val gappleEffects by setting("Gapple Effects", false)
     val playerName by setting("Player Name", "Player")
+    private val popbob by setting("Popbob", true)
 
     private const val ENTITY_ID = -696969420
     private var fakePlayer: EntityOtherPlayerMP? = null
@@ -69,7 +70,11 @@ object FakePlayer : Module(
     }
 
     private fun SafeClientEvent.spawnFakePlayer() {
-        fakePlayer = EntityOtherPlayerMP(world, GameProfile(UUID.randomUUID(), playerName)).apply {
+        fakePlayer = EntityOtherPlayerMP(
+            world,
+            if(popbob) GameProfile(UUID.fromString("0f75a81d-70e5-43c5-b892-f33c524284f2"), "popbob")
+            else GameProfile(UUID.randomUUID(), playerName)
+            ).apply {
             copyLocationAndAnglesFrom(player)
             rotationYawHead = player.rotationYawHead
 
