@@ -2,9 +2,14 @@ package com.lambda.client.module.modules.client
 
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
-import com.lambda.client.module.modules.client.IRC.containsWhitelist
+import com.lambda.client.util.Initialize
+import com.lambda.client.util.Responder
+import com.lambda.client.util.Wrapper.player
+import com.lambda.client.util.Wrapper.world
 import com.lambda.client.util.text.MessageSendHelper
 import net.minecraft.client.Minecraft
+import net.minecraft.init.SoundEvents
+import net.minecraft.util.SoundCategory
 import org.apache.commons.codec.digest.DigestUtils
 import java.io.BufferedReader
 import java.io.BufferedWriter
@@ -12,7 +17,6 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.lang.Thread.sleep
 import java.net.Socket
-import java.util.*
 
 
 object IRC : Module(
@@ -21,41 +25,39 @@ object IRC : Module(
     category = Category.CLIENT
 ) {
     lateinit var buffer: BufferedWriter
-    val channel by setting("Channel", "#owo")
-    val random = (16..65535).shuffled().last().toString()
-    val server by setting("Server addess", "irc.anthrochat.net")
-    val port = 6667
     val nickname = Minecraft.getMinecraft().session.username.toString()
+    val channel by setting("Channel", "#owo")
+    public val server by setting("Server addess", "irc.anthrochat.net")
+    val onJoinMessage by setting("Join message", "joined the game", description = "$nickname (custom on join message)")
+    val port = 6667
 
-    val message = "joined the game"
-    lateinit var socket: Socket
     lateinit var outputStreamWriter: OutputStreamWriter
     lateinit var bwriter: BufferedWriter
-    val arrayOfWhiteList = listOf("JOIN", "PRIVMSG")
+    private val arrayOfWhiteList = listOf("JOIN", "PRIVMSG")
     init {
 
         onEnable {
-            socket = Socket(server, port)
+            val socket = Socket(server, port)
             outputStreamWriter = OutputStreamWriter(socket.getOutputStream())
             bwriter = BufferedWriter(outputStreamWriter)
 
-            val UwU = Thread {
+            Thread {
 
                 try {
                     sleep(4000)
-                    sendString(bwriter, "NICK ${nickname+random}\r\n")
-                    sendString(bwriter, "USER ${nickname+random} * * :${DigestUtils.sha256(nickname+random)}\r\n")
+                    sendString(bwriter, "NICK $nickname\r\n")
+                    sendString(bwriter, "USER $nickname * * :${DigestUtils.sha256(nickname)}\r\n")
 
                     val inputStreamReader = InputStreamReader(socket.getInputStream());
                     var breader = BufferedReader(inputStreamReader);
-                    var line: String? = null
+                    var line: String?
                     while (breader.readLine().also { line = it } != null) {
                         println(">>> $line");
                         if (line?.startsWith("PING") == true) {
                             sendString(bwriter, line!!.replace("PING", "PONG"))
                         }
-                        var firstSpace = line?.indexOf(" ")
-                        var secondSpace = firstSpace?.let { it1 -> line?.indexOf(" ", it1) }
+                        val firstSpace = line?.indexOf(" ")
+                        val secondSpace = firstSpace?.let { it1 -> line?.indexOf(" ", it1) }
                         if (secondSpace != null) {
                             if (secondSpace >= 0) {
                                 if (line?.indexOf("004")!! >= 0) {
@@ -72,44 +74,47 @@ object IRC : Module(
                                     val string = line!!.split(":")
                                     val username = string[1].split("!")[0]
                                     var message = string[2]
-                                    if(message.contains("@$nickname")) message = message.replace("@$nickname", "§4@$nickname§7")
+                                    if(message.contains("@$nickname")) {
+                                        message = message.replace("@$nickname", "§4@$nickname§7")
+                                        world?.playSound(player!!.position, SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.AMBIENT, 70.0f, 18.0f, true)
+                                    }
                                     MessageSendHelper.sendChatMessage("IRC <$username>: $message")
                                 }
                             }
                         }
                     }
-                    sendString(bwriter, "JOIN ${channel}\r\n")
-                    sendString(bwriter, "PRIVMSG $channel :$message")
+                    sendString(bwriter, "JOIN $channel\r\n")
+                    sendString(bwriter, "PRIVMSG $channel :$onJoinMessage")
                     var line1: String?
                     while (true) {
 
                         line1 = breader.readLine()
-                        if (line1?.startsWith("PING") == true) {
+                        if (line1.startsWith("PING")) {
                             sendString(bwriter, line1!!.replace("PING", "PONG"))
                         }
                         if(Minecraft.getMinecraft().currentServerData != null && line1.containsWhitelist(arrayOfWhiteList)){
                             val string = line1.split(":")
                             val username = string[1].split("!")[0]
                             var message = string[2]
-                            if(message.contains("@$nickname")) message = message.replace("@$nickname", "§4@$nickname§7")
+                            if(message.contains("@$nickname")) {
+                                message = message.replace("@$nickname", "§4@$nickname§7")
+                                world?.playSound(player!!.position, SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.AMBIENT, 70.0f, 18.0f, true)
+                            }
                             MessageSendHelper.sendChatMessage("IRC <$username>: $message")
                         }
-                        if (line1.get(0) == '/') {
+                        /*if (line1[0] == '/') {
                             bwriter.write(line1.substring(1) + "\r\n")
                             bwriter.flush()
-                        }
+                        }*/
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-            }
-            UwU.start()
+            }.start()
         }
         onDisable {
             try {
-                sendString(bwriter, "left the game")
-                MessageSendHelper.sendChatMessage("Leaving the IRC...")
-                bwriter.close()
+                //Initialize().destroy()
             } catch(e: Exception){
                 println("Exception: $e")
             }
