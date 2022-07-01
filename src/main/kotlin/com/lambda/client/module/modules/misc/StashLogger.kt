@@ -7,6 +7,7 @@ import com.lambda.client.module.Category
 import com.lambda.client.module.Module
 import com.lambda.client.module.modules.movement.AutoWalk
 import com.lambda.client.util.BaritoneUtils
+import com.lambda.client.util.InfoCalculator
 import com.lambda.client.util.TickTimer
 import com.lambda.client.util.TimeUnit
 import com.lambda.client.util.math.CoordinateConverter.asString
@@ -99,6 +100,7 @@ object StashLogger : Module(
 
                 try {
                     val center = chunkStats.center().asString()
+                    val server = mc.currentServerData?.serverIP
                     val connection: HttpsURLConnection = URL(webhookUrl).openConnection() as HttpsURLConnection
                     connection.setRequestMethod("POST")
                     connection.setRequestProperty("Content-Type", "application/json")
@@ -106,7 +108,7 @@ object StashLogger : Module(
                     connection.setDoOutput(true)
                     connection.getOutputStream().use { outputStream ->
                         // Handle backslashes.
-                        outputStream.write("{\"content\":\"Found a potential stash at: $center\"}".toByteArray(StandardCharsets.UTF_8))
+                        outputStream.write("{\"content\":\"Found a potential stash at: $center on the server $server in the ${InfoCalculator.dimension()}\"}".toByteArray(StandardCharsets.UTF_8))
                     }
                     connection.getInputStream()
                 } catch (error: Exception) {
