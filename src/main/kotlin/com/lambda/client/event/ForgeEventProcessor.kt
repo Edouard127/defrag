@@ -18,6 +18,7 @@ import net.minecraftforge.event.world.ChunkEvent
 import net.minecraftforge.fml.common.eventhandler.EventPriority
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.InputEvent
+import net.minecraftforge.fml.common.gameevent.PlayerEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import net.minecraftforge.fml.common.network.FMLNetworkEvent
 import org.lwjgl.input.Keyboard
@@ -150,6 +151,10 @@ internal object ForgeEventProcessor {
 
     @SubscribeEvent
     fun onRenderFogColors(event: EntityViewRenderEvent.FogColors) {
+        LambdaEventBus.post(event)
+    }
+    @SubscribeEvent
+    fun itemPickupEvent(event: PlayerEvent.ItemPickupEvent) {
         LambdaEventBus.post(event)
     }
 }
