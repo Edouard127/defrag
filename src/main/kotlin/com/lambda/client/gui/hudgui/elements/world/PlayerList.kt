@@ -12,7 +12,7 @@ import com.lambda.client.commons.utils.MathUtils
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.MobEffects
 
-internal object TextRadar : LabelHud(
+internal object PlayerList : LabelHud(
     name = "PlayerRadar",
     category = Category.WORLD,
     description = "List of players nearby"
@@ -22,7 +22,7 @@ internal object TextRadar : LabelHud(
     private val ping by setting("Ping", false)
     private val combatPotion by setting("Combat Potion", true)
     private val distance by setting("Distance", true)
-    private val friend by setting("Friend", true)
+    val friend by setting("Friend", true)
     private val maxEntries by setting("Max Entries", 8, 4..32, 1)
     private val range by setting("Range", 64, 16..256, 2)
 
