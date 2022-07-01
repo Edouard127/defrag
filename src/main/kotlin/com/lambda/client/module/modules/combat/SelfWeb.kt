@@ -211,7 +211,7 @@ object SelfWeb : Module(
         return slot
     }
 
-    private fun SafeClientEvent.getPlaceableSide(pos: BlockPos): EnumFacing? {
+    fun SafeClientEvent.getPlaceableSide(pos: BlockPos): EnumFacing? {
         for (side in EnumFacing.values()) {
             val neighbour = pos.offset(side)
             if (!mc.world.getBlockState(neighbour).block.canCollideCheck(mc.world.getBlockState(neighbour), false) || mc.world.getBlockState(neighbour).material.isReplaceable) continue
