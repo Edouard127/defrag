@@ -28,8 +28,6 @@ object AutoArmor : Module(
     private val timer = TickTimer(TimeUnit.TICKS)
     private var lastTask = TaskState(true)
 
-    var isPaused = false
-
     init {
         onToggle {
             isPaused = false

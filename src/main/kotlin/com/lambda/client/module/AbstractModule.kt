@@ -42,6 +42,7 @@ abstract class AbstractModule(
 
     val isEnabled: Boolean get() = enabled.value || alwaysEnabled
     val isDisabled: Boolean get() = !isEnabled
+    var isPaused = false
     val chatName: String get() = "[${name}]"
     val isVisible: Boolean get() = visible.value
 
@@ -56,6 +57,7 @@ abstract class AbstractModule(
 
     fun toggle() {
         enabled.value = !enabled.value
+        isPaused = false
         if (enabled.value) clicks.value++
     }
 
@@ -66,6 +68,16 @@ abstract class AbstractModule(
 
     fun disable() {
         enabled.value = false
+    }
+
+    fun pause() {
+        isPaused = true
+        LambdaEventBus.unsubscribe(this)
+    }
+
+    fun unpause() {
+        isPaused = false
+        LambdaEventBus.subscribe(this)
     }
 
     open fun isActive(): Boolean {
