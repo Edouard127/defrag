@@ -103,7 +103,6 @@ object CombatSetting : Module(
         { it: SafeClientEvent -> it.updatePlacingList() } to null,
         { it: SafeClientEvent -> it.updateCrystalList() } to null
     )
-    fun setPaused(setPause: Boolean) { paused = setPause }
 
     val pause
         get() = runSafeR {

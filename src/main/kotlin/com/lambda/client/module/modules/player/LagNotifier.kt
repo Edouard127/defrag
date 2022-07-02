@@ -41,11 +41,11 @@ object LagNotifier : Module(
     private val lastRubberBandTimer = TickTimer()
     private var text = ""
 
-    var paused = false; private set
+    var _paused = false; private set
 
     init {
         onDisable {
-            unpause()
+            _unpause()
         }
 
         listener<RenderOverlayEvent> {
@@ -62,7 +62,7 @@ object LagNotifier : Module(
 
         safeListener<TickEvent.ClientTickEvent> {
             if (mc.isIntegratedServerRunning) {
-                unpause()
+                _unpause()
                 text = ""
             } else {
                 val timeoutMillis = (timeout * 1000.0f).toLong()
@@ -72,14 +72,14 @@ object LagNotifier : Module(
                         else "Server Not Responding! "
 
                         text += timeDifference(lastPacketTimer.time)
-                        pause()
+                        _pause()
                     }
                     detectRubberBand && !lastRubberBandTimer.tick(timeoutMillis, false) -> {
                         text = "RubberBand Detected! ${timeDifference(lastRubberBandTimer.time)}"
-                        pause()
+                        _pause()
                     }
                     else -> {
-                        unpause()
+                        _unpause()
                     }
                 }
             }
@@ -102,22 +102,22 @@ object LagNotifier : Module(
         }
     }
 
-    private fun pause() {
-        if (!paused && pauseBaritone && feedback) {
+    private fun _pause() {
+        if (!_paused && pauseBaritone && feedback) {
             MessageSendHelper.sendBaritoneMessage("Paused due to lag!")
         }
 
         pauseBaritone()
-        paused = true
+        _paused = true
     }
 
-    private fun unpause() {
-        if (paused && pauseBaritone && feedback) {
+    private fun _unpause() {
+        if (_paused && pauseBaritone && feedback) {
             MessageSendHelper.sendBaritoneMessage("Unpaused!")
         }
 
         unpauseBaritone()
-        paused = false
+        _paused = false
         text = ""
     }
 

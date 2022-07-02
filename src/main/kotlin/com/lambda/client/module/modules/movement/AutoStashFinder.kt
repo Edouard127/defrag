@@ -7,13 +7,11 @@ import com.lambda.client.event.listener.listener
 import com.lambda.client.manager.managers.PlayerPacketManager.sendPlayerPacket
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
-import com.lambda.client.module.modules.movement.ElytraBotModule.setting
 import com.lambda.client.util.color.ColorHolder
 import com.lambda.client.util.graphics.ESPRenderer
 import com.lambda.client.util.math.RotationUtils.getRotationTo
 import com.lambda.client.util.math.VectorUtils
 import com.lambda.client.util.math.VectorUtils.toVec3d
-import com.lambda.client.util.sendChatMessage
 import com.lambda.client.util.text.MessageSendHelper
 import com.lambda.client.util.threads.runSafeR
 import com.lambda.client.util.threads.safeListener
