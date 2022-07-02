@@ -1,7 +1,0 @@
-<root>
-    <item name='net.minecraft.client.renderer.chunk.ChunkRenderDispatcher void uploadDisplayList(net.minecraft.client.renderer.BufferBuilder, int, net.minecraft.client.renderer.chunk.RenderChunk)'>
-        <annotation name='org.jetbrains.annotations.Contract'>
-            <val name="pure" val="true"/>
-        </annotation>
-    </item>
-</root>
