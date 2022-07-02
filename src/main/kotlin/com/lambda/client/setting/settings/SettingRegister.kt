@@ -3,6 +3,7 @@ package com.lambda.client.setting.settings
 import com.lambda.client.setting.settings.impl.number.DoubleSetting
 import com.lambda.client.setting.settings.impl.number.FloatSetting
 import com.lambda.client.setting.settings.impl.number.IntegerSetting
+import com.lambda.client.setting.settings.impl.number.LongSetting
 import com.lambda.client.setting.settings.impl.other.BindSetting
 import com.lambda.client.setting.settings.impl.other.ColorSetting
 import com.lambda.client.setting.settings.impl.primitive.BooleanSetting
@@ -98,6 +99,18 @@ interface SettingRegister<T : Any> {
         consumer: (prev: String, input: String) -> String = { _, input -> input },
         description: String = ""
     ) = setting(StringSetting(name, value, visibility, consumer, description))
+
+    /** Long Setting*/
+    fun T.setting(
+        name: String,
+        value: Long,
+        range: LongRange,
+        step: Long,
+        visibility: () -> Boolean = { true },
+        consumer: (prev: Long, input: Long) -> Long = { _, input -> input },
+        description: String = "",
+        fineStep: Long = step,
+    ) = setting(LongSetting(name, value, range, step, visibility, consumer, description, fineStep))
     /* End of setting registering */
 
     fun <T : Any> AbstractSetting<T>.atValue(page: T): () -> Boolean = {
