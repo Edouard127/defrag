@@ -13,6 +13,7 @@ import com.lambda.client.util.graphics.GlStateUtils
 import com.lambda.client.util.graphics.LambdaTessellator
 import com.lambda.client.util.threads.safeListener
 import net.minecraft.block.material.Material
+import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.ActiveRenderInfo
 import net.minecraft.init.Items
 import net.minecraft.item.ItemStack
@@ -34,6 +35,8 @@ object Trajectories : Module(
     description = "Draws lines to where trajectories are going to fall",
     category = Category.RENDER
 ) {
+
+
     private val showEntity by setting("Show Entity", true)
     private val showBlock by setting("Show Block", false)
     private val color by setting("Color", ColorHolder(255, 255, 255))
@@ -42,6 +45,7 @@ object Trajectories : Module(
     private val thickness by setting("Thickness", 2f, 0.25f..5f, 0.25f)
 
     private var prevItemUseCount = 0
+
 
     init {
         safeListener<LivingEntityUseItemEvent.Tick> {
@@ -88,7 +92,7 @@ object Trajectories : Module(
                 renderer.render(true)
 
                 renderer.aFilled = 0
-                if (showEntity && it.entityHit != null) renderer.add(it.entityHit, color)
+                if (showEntity && (it.entityHit != null)) renderer.add(it.entityHit, color)
                 else if (showBlock) renderer.add(it.blockPos, color)
                 renderer.render(true)
             }
@@ -118,8 +122,7 @@ object Trajectories : Module(
     private class FlightPath(val throwingType: ThrowingType, val event: SafeClientEvent) {
         private val halfSize = if (throwingType == ThrowingType.BOW) 0.25 else 0.125
 
-        var position: Vec3d = mc.player?.getPositionEyes(LambdaTessellator.pTicks()) ?: Vec3d.ZERO
-            private set
+        var position: Vec3d = LambdaTessellator.camPos; private set
         private var motion = Vec3d.ZERO
         private var boundingBox: AxisAlignedBB = AxisAlignedBB(
             position.x - halfSize,
@@ -145,6 +148,7 @@ object Trajectories : Module(
             if (collision == null) {
                 val resultList = ArrayList<RayTraceResult>()
                 for (entity in event.world.loadedEntityList) {
+                    if(entity.entityId == -6969420) continue
                     if (!entity.canBeCollidedWith()) continue
                     if (entity == event.player) continue
                     val box = entity.entityBoundingBox.grow(0.30000001192092896) ?: continue
