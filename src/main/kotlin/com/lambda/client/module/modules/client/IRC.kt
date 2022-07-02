@@ -2,8 +2,6 @@ package com.lambda.client.module.modules.client
 
 import com.lambda.client.module.Category
 import com.lambda.client.module.Module
-import com.lambda.client.util.Initialize
-import com.lambda.client.util.Responder
 import com.lambda.client.util.Wrapper.player
 import com.lambda.client.util.Wrapper.world
 import com.lambda.client.util.text.MessageSendHelper
