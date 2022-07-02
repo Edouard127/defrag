@@ -1,10 +1,12 @@
 package com.lambda.client.module.modules.combat
 
+import com.lambda.client.commons.interfaces.DisplayEnum
 import com.lambda.client.event.SafeClientEvent
 import com.lambda.client.event.events.RenderWorldEvent
 import com.lambda.client.gui.hudgui.elements.world.PlayerList
 import com.lambda.client.manager.managers.CombatManager
 import com.lambda.client.manager.managers.FriendManager
+import com.lambda.client.manager.managers.HotbarManager
 import com.lambda.client.manager.managers.HotbarManager.resetHotbar
 import com.lambda.client.manager.managers.HotbarManager.serverSideItem
 import com.lambda.client.manager.managers.HotbarManager.spoofHotbar
@@ -27,9 +29,9 @@ import com.lambda.client.util.threads.safeListener
 import com.lambda.client.util.world.*
 import kotlinx.coroutines.launch
 import net.minecraft.block.Block
+import net.minecraft.client.entity.EntityPlayerSP
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
-import net.minecraft.item.ItemStack
 import net.minecraft.network.Packet
 import net.minecraft.network.play.client.CPacketPlayer
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock
@@ -42,23 +44,29 @@ import kotlin.math.sqrt
 
 @Suppress("UNUSED")
 object HoleFiller :
-    Module(name = "HoleFiller", description = "Fill holes", category = Category.COMBAT, modulePriority = 90) {
+    Module(name = "HoleFiller", description = "Fill holes", category = Category.COMBAT) {
+    private val page = setting("Page", Page.GENERAL)
     private val range by setting("Hole Distance", 4, 0..4, 1)
     private val obby by setting("FillWith", Obby.OBSIDIAN)
     private val mode by setting("Mode", Mode.CONSTANT)
     private val playerRange by setting("Player Range", 4.0, 0.0..4.0, 0.25, { mode == Mode.SURPRISE })
     private val fillPlayerRange by setting("Fill Player Range", 2.0, 0.0..4.0, 0.25, { mode == Mode.SURPRISE })
     private val disableOnFinish by setting("DisableOnFinish", true, { mode == Mode.CONSTANT }, description = "Disable when no more holes")
+    private val autoSwap by setting("Auto Swap", false)
+    private val spoofHotbar by setting("Spoof Hotbar", true)
     private val holeType by setting("Hole Type", HoleType.BOTH)
     private val legitPlace by setting("Legit Place", false)
-    private val spoofHotbar by setting("Spoof Hotbar", true)
+    private val rotate by setting("Rotate", true)
+    private val yLevel by setting("Y Level Check", true)
     private val hand by setting("Hand", Hand.MAIN)
     private val debug by setting("debug", false)
     private val render by setting("Render", false, { debug })
     private val statusMessage by setting("Status Messages", false, { debug })
     private val visibleCheck by setting("VisibleCheck", false)
-    private val rotate by setting("Rotate", true, { debug })
 
+    private enum class Page {
+        GENERAL, PLACE
+    }
     @Suppress("UNUSED")
     private enum class Hand(val enumHand: EnumHand) {
         MAIN(EnumHand.MAIN_HAND),
@@ -84,102 +92,21 @@ object HoleFiller :
     private val timer = TickTimer()
     private val cached = ArrayList<Triple<AxisAlignedBB, ColorHolder, Int>>()
     private var placePacket: CPacketPlayerTryUseItemOnBlock? = null
+    private lateinit var closestPlayer: EntityPlayer
     init {
         safeListener<TickEvent.ClientTickEvent> {
-            if(!isOnTopPriority) return@safeListener
             defaultScope.launch {
                 for (x in -range..range) for (y in -range..range) for (z in -range..range) {
+                    if(!canPlace()) continue
                     if (x == 0 && y == 0 && z == 0) continue
                     val playerPos = player.positionVector.toBlockPos()
-                    var pos = playerPos.add(x, y, z)
+                    pos = playerPos.add(x, y, z)
                     val holeType = checkHole(pos)
-                    if (holeType == SurroundUtils.HoleType.NONE) continue
-                    if (shouldFill()) {
+                    if (holeType.shouldFill()) {
                         if(render) cached.add(Triple(AxisAlignedBB(pos), ColorHolder(255, 0, 0, 125), GeometryMasks.Quad.DOWN))
+                        if (!isHoldingObby) swapToObby()
 
-                        val placeInfo = getNeighbour(pos, 1)
-                        if (placeInfo != null) {
-                            val slot = player.hotbarSlots.firstBlock(obby.block) ?: return@launch
-                            if (!isHoldingObby) if(spoofHotbar) spoofHotbar(slot.hotbarSlot) else swapToSlot(slot.hotbarSlot)
-                            val vec = (if(visibleCheck) getClosestVisibleSide(pos) else EnumFacing.UP)?.let { it -> getHitVec(pos, it) } ?: continue
-                            val rotations: Any = if(legitPlace) getLegitRotations(vec) else getRotationTo(vec)
-                            var rotationPacket: Any? = null
-                            when(rotations){
-                                is FloatArray -> {
-                                    rotationPacket =
-                                        CPacketPlayer.Rotation(
-                                            rotations[0],
-                                            rotations[1],
-                                            player.onGround
-                                        )
-                                }
-                                is Vec2f -> {
-                                    rotationPacket =
-                                        CPacketPlayer.PositionRotation(
-                                        player.posX,
-                                        player.posY,
-                                        player.posZ,
-                                        rotations.x,
-                                        rotations.y,
-                                        player.onGround
-                                    )
-                                }
-                            }
-                            placePacket =
-                                CPacketPlayerTryUseItemOnBlock(
-                                    placeInfo.pos,
-                                    placeInfo.side,
-                                    hand.enumHand,
-                                    placeInfo.hitVecOffset.x.toFloat(),
-                                    placeInfo.hitVecOffset.y.toFloat(),
-                                    placeInfo.hitVecOffset.z.toFloat()
-                                )
-                            val range = AxisAlignedBB(
-                                player.posX - playerRange,
-                                player.posY - playerRange,
-                                player.posZ - playerRange,
-                                player.posX + playerRange,
-                                player.posY + playerRange,
-                                player.posZ + playerRange
-                            )
-                            val closestPlayer =
-                                player.world.getEntitiesWithinAABB(EntityPlayer::class.java, range)
-                                    .toList().asSequence()
-                                    .filter { it != null && !it.isDead && it.health > 0.0f }
-                                    .filter { it != player && it != mc.renderViewEntity }
-                                    .filter { PlayerList.friend || !FriendManager.isFriend(it.name) }.firstOrNull()
-                                    ?: continue
-                            if(debug && statusMessage) MessageSendHelper.sendChatMessage("${player.distanceTo(closestPlayer.position.toVec3d())}")
-                            if(player.distanceTo(closestPlayer.position.toVec3d()) > fillPlayerRange) continue
-                            val playerIsNotInsideTheHole = closestPlayer.position != pos
-                            when(mode){
-                                Mode.SURPRISE -> {
-                                    if(debug && statusMessage) MessageSendHelper.sendChatMessage("${closestPlayer.distanceTo(pos.toVec3d())}")
-                                    if (player.distanceTo(closestPlayer.position.toVec3d()) <= fillPlayerRange &&
-                                        playerIsNotInsideTheHole
-                                    ) {
-                                        CombatSetting.setPaused(true)
-                                        player.swingArm(hand.enumHand)
-                                        if (rotate) (rotationPacket as? Packet<*>)?.let { it -> connection.sendPacket(it) }
-                                        placePacket?.let { it -> connection.sendPacket(it) }
-                                        resetHotbar()
-                                        CombatSetting.setPaused(false)
-                                        placePacket = null
-                                        if(render) cached.clear()
-                                    }
-                                }
-                                Mode.CONSTANT -> {
-                                    CombatSetting.setPaused(true)
-                                    player.swingArm(hand.enumHand)
-                                    if (rotate) (rotationPacket as? Packet<*>)?.let { it -> connection.sendPacket(it) }
-                                    placePacket?.let { it -> connection.sendPacket(it) }
-                                    resetHotbar()
-                                    CombatSetting.setPaused(false)
-                                    placePacket = null
-                                    if(render) cached.clear()
-                                }
-                            }
-                        }
+                        place()
                     }
                 }
                 if (debug && statusMessage) MessageSendHelper.sendChatMessage("Filled all holes")
@@ -194,22 +121,141 @@ object HoleFiller :
             renderer.render(false)
         }
     }
-    private val SafeClientEvent.isHoldingObby
-        get() = isObby(player.heldItemMainhand) || isObby(player.serverSideItem)
-    private val isOnTopPriority
-        get() = CombatManager.isOnTopPriority(HoleFiller)
+    private val isHoldingObby
+        get() = mc.player.serverSideItem.item.block.isObby()
 
-    private fun isObby(itemStack: ItemStack) =
-        itemStack.item.block == Blocks.OBSIDIAN || itemStack.item.block == Blocks.WEB
+    private fun SafeClientEvent.canPlace() =
+                player.allSlots.countBlock(obby.block) > 0
 
-    private fun shouldFill() =
-        holeType == HoleType.OBSIDIAN || holeType == HoleType.BEDROCK || holeType == HoleType.BOTH
 
-    private fun updateRenderer() {
-        renderer.aFilled = 30
-        renderer.aOutline = 128
-        renderer.replaceAll(cached)
+    private fun SafeClientEvent.swapToObby() {
+        if (autoSwap && player.heldItemOffhand.item.block.isObby()) {
+            if (spoofHotbar) {
+                val slot = if (player.serverSideItem.item.block.isObby()) HotbarManager.serverSideHotbar
+                else player.getObbySlot()?.hotbarSlot
+
+                if (slot != null) {
+                    spoofHotbar(slot, 1000L)
+                }
+            } else {
+                if (player.serverSideItem.item != obby.block) {
+                    player.getObbySlot()?.let {
+                        swapToSlot(it)
+                    }
+                }
+            }
+        }
     }
+
+    private var rotationPacket: Any? = null
+    private lateinit var pos: BlockPos
+
+
+    private fun SafeClientEvent.place(){
+        closestPlayer =
+            mc.player.world.getEntitiesWithinAABB(EntityPlayer::class.java, rangeBB)
+                .toList().asSequence()
+                .filter { it != null && !it.isDead && it.health > 0.0f }
+                .filter { it != mc.player && it != mc.renderViewEntity }
+                .filter { PlayerList.friend || !FriendManager.isFriend(it.name) }.firstOrNull() ?: return
+
+        if(player.distanceTo(closestPlayer.position.toVec3d()) > fillPlayerRange) return
+        if(yLevel) if(closestPlayer.position.y > pos.y) return
+
+        val playerIsNotInsideTheHole = closestPlayer.position != pos
+        placePacket = placeInfo?.let {
+            CPacketPlayerTryUseItemOnBlock(
+                it.pos,
+                it.side,
+                hand.enumHand,
+                it.hitVecOffset.x.toFloat(),
+                it.hitVecOffset.y.toFloat(),
+                it.hitVecOffset.z.toFloat()
+            )
+        }
+        when(mode){
+            Mode.SURPRISE -> {
+                if (player.distanceTo(closestPlayer.position.toVec3d()) <= fillPlayerRange &&
+                    playerIsNotInsideTheHole
+                ) {
+                    player.swingArm(hand.enumHand)
+                    if (rotate) (rotationPacket() as? Packet<*>)?.let { it -> connection.sendPacket(it) }
+                    placePacket?.let { connection.sendPacket(it) }
+                    resetHotbar()
+                    placePacket = null
+                    if(render) cached.clear()
+                }
+            }
+            Mode.CONSTANT -> {
+                player.swingArm(hand.enumHand)
+                if (rotate) (rotationPacket() as? Packet<*>)?.let { it -> connection.sendPacket(it) }
+                placePacket?.let { connection.sendPacket(it) }
+                resetHotbar()
+                placePacket = null
+                if(render) cached.clear()
+            }
+        }
+
+    }
+
+    private fun SafeClientEvent.rotationPacket(): Any? {
+        when(val rotations: Any = if(legitPlace) getLegitRotations(vec) else getRotationTo(vec)){
+            is FloatArray -> {
+                rotationPacket =
+                    CPacketPlayer.Rotation(
+                        rotations[0],
+                        rotations[1],
+                        player.onGround
+                    )
+            }
+            is Vec2f -> {
+                rotationPacket =
+                    CPacketPlayer.PositionRotation(
+                        player.posX,
+                        player.posY,
+                        player.posZ,
+                        rotations.x,
+                        rotations.y,
+                        player.onGround
+                    )
+            }
+        }
+        return rotationPacket
+    }
+
+
+
+    private fun EntityPlayerSP.getObbySlot() =
+        this.hotbarSlots.firstBlock(obby.block)
+
+    private fun Block.isObby() =
+        this == Blocks.OBSIDIAN || this == Blocks.WEB
+
+    private fun SurroundUtils.HoleType.shouldFill() =
+        this == SurroundUtils.HoleType.OBSIDIAN || this == SurroundUtils.HoleType.BEDROCK
+
+
+
+
+    private val rangeBB
+        get() = AxisAlignedBB(
+            mc.player.posX - playerRange,
+            mc.player.posY - playerRange,
+            mc.player.posZ - playerRange,
+            mc.player.posX + playerRange,
+            mc.player.posY + playerRange,
+            mc.player.posZ + playerRange
+        )
+
+
+    private val SafeClientEvent.vec
+        get() = getHitVec(pos, (if(visibleCheck) getClosestVisibleSide(pos) else EnumFacing.UP))
+
+    private val SafeClientEvent.placeInfo: PlaceInfo?
+        get() = getNeighbour(pos, 1)
+
+
+
     private fun getLegitRotations(vec: Vec3d): FloatArray {
         val eyesPos: Vec3d = mc.player.getPositionEyes(1.0f)
         val diffX = vec.x - eyesPos.x
@@ -219,5 +265,13 @@ object HoleFiller :
         val yaw = Math.toDegrees(atan2(diffZ, diffX)).toFloat() - 90.0f
         val pitch = (-Math.toDegrees(atan2(diffY, diffXZ))).toFloat()
         return floatArrayOf(mc.player.rotationYaw + MathHelper.wrapDegrees(yaw - mc.player.rotationYaw), mc.player.rotationPitch + MathHelper.wrapDegrees(pitch - mc.player.rotationPitch))
+    }
+
+
+
+    private fun updateRenderer() {
+        renderer.aFilled = 30
+        renderer.aOutline = 128
+        renderer.replaceAll(cached)
     }
 }
