@@ -71,7 +71,7 @@ fun SafeClientEvent.getNeighbour(
     range: Float = 4.25f,
     visibleSideCheck: Boolean = false,
     sides: Array<EnumFacing> = EnumFacing.values()
-) =
+): PlaceInfo? =
     getNeighbour(player.getPositionEyes(1.0f), pos, attempts, range, visibleSideCheck, sides, HashSet())
 
 private fun SafeClientEvent.getNeighbour(
@@ -177,7 +177,8 @@ private fun EnumSet<EnumFacing>.checkAxis(diff: Double, negativeSide: EnumFacing
         }
     }
 
-fun getHitVec(pos: BlockPos, facing: EnumFacing): Vec3d {
+fun getHitVec(pos: BlockPos, facing: EnumFacing?): Vec3d {
+    if(facing == null) return Vec3d.ZERO
     val vec = facing.directionVec
     return Vec3d(vec.x * 0.5 + 0.5 + pos.x, vec.y * 0.5 + 0.5 + pos.y, vec.z * 0.5 + 0.5 + pos.z)
 }
