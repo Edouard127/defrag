@@ -57,7 +57,7 @@ object HoleFiller :
     private val holeType by setting("Hole Type", HoleType.BOTH)
     private val legitPlace by setting("Legit Place", false)
     private val rotate by setting("Rotate", true)
-    private val yLevel by setting("Y Level Check", true)
+    private val yLevel by setting("Y Level Check", true, description = "Don't fill holes higher than the enemy Y axis")
     private val hand by setting("Hand", Hand.MAIN)
     private val debug by setting("debug", false)
     private val render by setting("Render", false, { debug })
@@ -92,21 +92,23 @@ object HoleFiller :
     private val timer = TickTimer()
     private val cached = ArrayList<Triple<AxisAlignedBB, ColorHolder, Int>>()
     private var placePacket: CPacketPlayerTryUseItemOnBlock? = null
-    private lateinit var closestPlayer: EntityPlayer
+    private var closestPlayer: EntityPlayer? = null
     init {
         safeListener<TickEvent.ClientTickEvent> {
             defaultScope.launch {
                 for (x in -range..range) for (y in -range..range) for (z in -range..range) {
+                    closestPlayer = getClosestPlayer() as EntityPlayer?
                     if(!canPlace()) continue
                     if (x == 0 && y == 0 && z == 0) continue
                     val playerPos = player.positionVector.toBlockPos()
                     pos = playerPos.add(x, y, z)
                     val holeType = checkHole(pos)
                     if (holeType.shouldFill()) {
+                        closestPlayer ?: continue
                         if(render) cached.add(Triple(AxisAlignedBB(pos), ColorHolder(255, 0, 0, 125), GeometryMasks.Quad.DOWN))
                         if (!isHoldingObby) swapToObby()
 
-                        place()
+                        place(closestPlayer ?: continue)
                     }
                 }
                 if (debug && statusMessage) MessageSendHelper.sendChatMessage("Filled all holes")
@@ -129,7 +131,7 @@ object HoleFiller :
 
 
     private fun SafeClientEvent.swapToObby() {
-        if (autoSwap && player.heldItemOffhand.item.block.isObby()) {
+        if (!player.heldItemOffhand.item.block.isObby()) {
             if (spoofHotbar) {
                 val slot = if (player.serverSideItem.item.block.isObby()) HotbarManager.serverSideHotbar
                 else player.getObbySlot()?.hotbarSlot
@@ -151,16 +153,10 @@ object HoleFiller :
     private lateinit var pos: BlockPos
 
 
-    private fun SafeClientEvent.place(){
-        closestPlayer =
-            mc.player.world.getEntitiesWithinAABB(EntityPlayer::class.java, rangeBB)
-                .toList().asSequence()
-                .filter { it != null && !it.isDead && it.health > 0.0f }
-                .filter { it != mc.player && it != mc.renderViewEntity }
-                .filter { PlayerList.friend || !FriendManager.isFriend(it.name) }.firstOrNull() ?: return
+    private fun SafeClientEvent.place(closestPlayer: EntityPlayer){
 
         if(player.distanceTo(closestPlayer.position.toVec3d()) > fillPlayerRange) return
-        if(yLevel) if(closestPlayer.position.y > pos.y) return
+        if(yLevel) if(closestPlayer.position.y < pos.y) return
 
         val playerIsNotInsideTheHole = closestPlayer.position != pos
         placePacket = placeInfo?.let {
@@ -175,7 +171,8 @@ object HoleFiller :
         }
         when(mode){
             Mode.SURPRISE -> {
-                if (player.distanceTo(closestPlayer.position.toVec3d()) <= fillPlayerRange &&
+                if (player.distanceTo(closestPlayer.position) <= playerRange &&
+                    player.distanceTo(pos) <= fillPlayerRange &&
                     playerIsNotInsideTheHole
                 ) {
                     player.swingArm(hand.enumHand)
@@ -195,6 +192,15 @@ object HoleFiller :
                 if(render) cached.clear()
             }
         }
+
+    }
+
+    private fun SafeClientEvent.getClosestPlayer(): Any? {
+            return player.world.getEntitiesWithinAABB(EntityPlayer::class.java, rangeBB)
+                .toList().asSequence()
+                .filter { it != null && !it.isDead && it.health > 0.0f }
+                .filter { it != player && it != mc.renderViewEntity }
+                .filter { PlayerList.friend || !FriendManager.isFriend(it.name) }.firstOrNull()
 
     }
 
@@ -252,7 +258,7 @@ object HoleFiller :
         get() = getHitVec(pos, (if(visibleCheck) getClosestVisibleSide(pos) else EnumFacing.UP))
 
     private val SafeClientEvent.placeInfo: PlaceInfo?
-        get() = getNeighbour(pos, 1)
+        get() = getNeighbour(pos, 1, fillPlayerRange.toFloat())
 
 
 
